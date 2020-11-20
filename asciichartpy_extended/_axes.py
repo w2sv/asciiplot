@@ -1,0 +1,148 @@
+from typing import List, Union
+import re
+import dataclasses
+
+from asciichartpy_extended._types import _Chart
+from asciichartpy_extended._config import Config, _NOT_TO_BE_ALTERED
+from asciichartpy_extended._params import _Params
+from asciichartpy_extended import colors
+
+
+def _add_y_axis(chart: _Chart, config: Config, params: _Params):
+    """ Adds labeled y-axis to chart """
+
+    SEGMENTS = ['┼', '┤']
+    label_divisor = [1, params.n_rows][bool(params.n_rows)]
+
+    for i in range(params.min, params.max + 1):
+        # compute label
+        label = config.max - ((i - params.min) * config.y_value_spread / label_divisor)
+        if config.decimal_places_y_labels != _NOT_TO_BE_ALTERED:
+            label = round(label, config.decimal_places_y_labels)
+        label_string = str(label)
+
+        # set label, axis segment
+        chart[i - params.min][max(config.offset - len(label_string), 0)] = label_string
+        chart[i - params.min][config.offset - 1] = SEGMENTS[[1, 0][i == 0]]
+
+
+def _add_x_axis(chart: _Chart, config: Config, last_sequence_point_row_indices: List[int]):
+    """ Adds x-axis to chart """
+
+    SEGMENTS = ['┼', '┤', '┬', '─']
+    SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE = {
+        '┤': '┼',
+        '─': '┬',
+        '╰': '├',
+        '╯': '┤'
+    }
+
+    def is_data_point(point_index: int) -> bool:
+        """ Returns:
+                flag whether or not point corresponding to point_index is actual
+                data point denoted in original sequences instead of interpolated
+                one """
+
+        return point_index % (config.columns_between_points + 1) == 0
+
+    last_row = chart[-1]
+
+    if not extract_color(last_row[config.offset - 1]):
+        last_row[config.offset - 1] = SEGMENTS[0]
+
+    for i, parcel in enumerate(last_row[config.offset:]):
+        # add straight horizontal axis segment if parcel doesn't contain
+        # a sequence segment, otherwise convert present sequence segment
+        # to one comprising both the sequence and axis segment in color
+        # of respective sequence
+
+        _is_data_point = is_data_point(i + 1)
+        if parcel == ' ':
+            if _is_data_point:
+                last_row[i + config.offset] = SEGMENTS[2]
+            else:
+                last_row[i + config.offset] = SEGMENTS[3]
+        elif _is_data_point:
+            if color := extract_color(parcel):
+                parcel = colorless_segment(parcel)
+
+            last_row[i + config.offset] = color + SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE[parcel] + colors.RESET
+
+    # add singular sequence extension segment to those occupying
+    # the last column in order to not make chart abruptly stop
+    # directly at the last tick
+    for row_index in last_sequence_point_row_indices:
+        chart[-row_index - 1][-1] = extract_color(parcel=chart[-row_index-1][-2]) + SEGMENTS[3] + colors.RESET
+
+
+_ANSI_ESCAPE_PATTERN = re.compile(r'\x1b[^m]*m')
+
+def extract_color(parcel: str) -> str:
+    """
+    >>> extract_color(parcel='\033[30m-\033[0m')
+    '\033[30m'
+    >>> extract_color(parcel='┤')
+    '┤' """
+
+    if len((ansi_sequences := re.findall(_ANSI_ESCAPE_PATTERN, parcel))):
+        return ansi_sequences[0]
+    return ''
+
+
+def colorless_segment(parcel: str):
+    """ Assumes color presence
+
+    >>> colorless_segment(parcel='\033[30m-\033[0m')
+    '-' """
+
+    return re.split(_ANSI_ESCAPE_PATTERN, parcel)[1]
+
+
+@dataclasses.dataclass
+class _Tick:
+    """ Serving the creation of helper objects facilitating the computation
+    of whitespace sequences in between ticks """
+
+    label: str
+    negative_protrusion: int  # n columns occupied towards the left starting from tick column
+    positive_protrusion: int  # n columns occupied towards the right starting from tick column
+
+    def __init__(self, label: Union[str, int]):
+        """ Initialize such that center of sequentialized label right beneath tick
+        in case of odd string length, otherwise shift by one column towards the right
+
+        >>> tick = _Tick(234)
+        tick(label='234', negative_protrusion=1, positive_protrusion=1)
+        >>> tick = _Tick(23)
+        tick(label='23', negative_protrusion=0, positive_protrusion=1)
+        >>> tick = _Tick(2)
+        tick(label='234', negative_protrusion=0, positive_protrusion=0) """
+
+        self.label = str(label)
+        is_of_even_length: bool = len(self.label) % 2 == 0
+        self.negative_protrusion: int = len(self.label) // 2 - int(is_of_even_length)
+        self.positive_protrusion: int = self.negative_protrusion + int(is_of_even_length)
+
+
+def _x_label_row(config: Config) -> str:
+    """ Returns:
+            x-label-row indented according to offset """
+
+    assert config.x_labels is not None
+
+    # provide label sequences containing empty strings as labels for ticks,
+    # for which none were given and create tick objects
+    padded_label_sequence = [config.x_labels.get(i, '') for i in range(config.n_data_points)]
+    ticks: List[_Tick] = list(map(_Tick, padded_label_sequence))
+
+    # add offset + first tick to label row
+    label_row = f'{" " * (config.offset - ticks[0].negative_protrusion + 7)}{ticks[0].label}'
+
+    # add consecutive ticks
+    for i in range(1, len(ticks)):
+        n_whitespaces = config.columns_between_points - ticks[i - 1].positive_protrusion - ticks[i].negative_protrusion
+        assert n_whitespaces >= 1
+
+        label_row += f'{" " * n_whitespaces}{ticks[i].label}'
+
+    return label_row

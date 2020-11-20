@@ -7,7 +7,7 @@ from asciichartpy_extended._config import Config
 
 
 @dataclass
-class Params:
+class _Params:
     min: int
     max: int
 
@@ -17,8 +17,8 @@ class Params:
     chart_width: int
 
     def __init__(self, sequences: _Sequences, config: Config):
-        self.min = int(floor(config.min * config.ratio))
-        self.max = int(ceil(config.max * config.ratio))
+        self.min = int(floor(config.min * config.delta_y))
+        self.max = int(ceil(config.max * config.delta_y))
 
         self.n_rows = self.max - self.min
 

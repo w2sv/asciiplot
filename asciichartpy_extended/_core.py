@@ -1,30 +1,23 @@
 from __future__ import annotations
 from typing import *
-from math import isfinite
-import re
-from dataclasses import dataclass
+import math
+from functools import partial
 
+from asciichartpy_extended._types import _Sequences, _Chart
+from asciichartpy_extended._axes import _add_x_axis, _add_y_axis, _x_label_row
 from asciichartpy_extended._config import Config
-from asciichartpy_extended._params import Params
-from asciichartpy_extended._types import _Sequences
+from asciichartpy_extended._params import _Params
 from asciichartpy_extended import colors
 
 
-def colored(string: str, color: str) -> str:
-    return color + string + colors.RESET
-
-
-_PLOT_SEGMENTS = ['┼', '┤', '╶', '╴', '─', '╰', '╭', '╮', '╯', '│', '┬']
-_Chart = List[List[str]]
-
-
-def plot(*sequences: List[float], config=Config()) -> str:
+def render_chart(*sequences: List[float], config=Config()) -> str:
     sequences = config.process(sequences)
+    params = _Params(sequences, config)
 
-    params = Params(sequences, config)
+    # create serialized chart
+    serialized_chart = _serialize_chart(chart=_render_chart(sequences, config, params))
 
-    serialized_chart = '\n'.join([''.join(row).rstrip() for row in _get_chart(sequences, config, params)]) + '\n'
-
+    # add desired chart ornaments
     if config.title:
         serialized_chart = _title_header(config, params) + serialized_chart
     if config.x_labels:
@@ -33,12 +26,13 @@ def plot(*sequences: List[float], config=Config()) -> str:
     return serialized_chart
 
 
-def _title_header(config: Config, params: Params) -> str:
-    assert config.title is not None
-    return ' ' * (config.offset + params.plot_width // 2 + len(config.title) // 2) + config.title + '\n'
+def _serialize_chart(chart: _Chart) -> str:
+    return '\n'.join([''.join(row).rstrip() for row in chart]) + '\n'
 
 
-def _get_chart(sequences: _Sequences, config: Config, params: Params) -> _Chart:
+def _render_chart(sequences: _Sequences, config: Config, params: _Params) -> _Chart:
+    """ Creates chart with y-axis and x-axis if desired """
+
     chart = [[' '] * params.chart_width for _ in range(params.n_rows + 1)]
     _add_y_axis(chart, config, params)
     last_row_indices = _add_sequences(sequences, chart, config, params)
@@ -49,129 +43,85 @@ def _get_chart(sequences: _Sequences, config: Config, params: Params) -> _Chart:
     return chart
 
 
-def _add_y_axis(chart: _Chart, config: Config, params: Params):
-    divisor = [1, params.n_rows][bool(params.n_rows)]
+def _add_sequences(sequences: _Sequences, chart: _Chart, config: Config, params: _Params) -> List[int]:
+    """ Adds ascii-ized sequences to chart
 
-    for i in range(params.min, params.max + 1):
-        label = config.format.format(config.max - ((i - params.min) * config.y_value_spread / divisor))
-        chart[i - params.min][max(config.offset - len(label), 0)] = label
-        chart[i - params.min][config.offset - 1] = _PLOT_SEGMENTS[[1, 0][i == 0]]
+        Returns:
+            last_column_occupying_segment_row_indices: List[int], row indices of sequence ends occupying
+                the last chart column """
 
+    SEGMENTS = ['┼', '─', '╰', '╭', '╮', '╯', '│']
+    INIT_VALUE = -1
 
-def _add_sequences(sequences: _Sequences, chart: _Chart, config: Config, params: Params) -> List[int]:
-    _INIT_VALUE = -1
+    scaled = partial(_scaled,
+                     desired_minimum=config.min,
+                     desired_maximum=config.max,
+                     actual_minimum=params.min,
+                     delta_y=config.delta_y)
 
-    def scaled(value: float):
-        clamped_value = min(max(value, config.min), config.max)
-        return int(round(clamped_value * config.ratio) - params.min)
-
-    last_sequence_point_row_indices: List[int] = []
+    last_column_occupying_segment_row_indices: List[int] = []
     for i, sequence in enumerate(sequences):
-        color = config.colors[i % len(config.colors)]
+        color = config.sequence_colors[i % len(config.sequence_colors)]
 
-        # add '┼' at sequence beginning
-        if isfinite(sequence[0]):
-            chart[params.n_rows - scaled(sequence[0])][config.offset - 1] = colored(_PLOT_SEGMENTS[0], color)
+        # add '┼' at sequence beginning where sequences overlaps with y-axis
+        if math.isfinite(sequence[0]):
+            chart[params.n_rows - scaled(sequence[0])][config.offset - 1] = _colored(SEGMENTS[0], color)
 
-        # add symbols corresponding to singular sequences
-        j = _INIT_VALUE
-        y0, y1 = _INIT_VALUE, _INIT_VALUE
+        # ascii-ize sequence
+        j = INIT_VALUE
+        y0, y1 = INIT_VALUE, INIT_VALUE
         while (j := j + 1) < len(sequence) - 1:
 
             def set_parcel(row_subtrahend: int, segment: str):
-                chart[params.n_rows - row_subtrahend][j + config.offset] = colored(segment, color)
+                chart[params.n_rows - row_subtrahend][j + config.offset] = _colored(segment, color)
 
             y0 = scaled(sequence[j])
             y1 = scaled(sequence[j + 1])
 
             if y0 == y1:
-                set_parcel(y0, _PLOT_SEGMENTS[4])
+                set_parcel(y0, SEGMENTS[1])
 
             else:
                 if y0 > y1:
-                    symbol_y0, symbol_y1 = _PLOT_SEGMENTS[7], _PLOT_SEGMENTS[5]
+                    symbol_y0, symbol_y1 = SEGMENTS[4], SEGMENTS[2]
                 else:
-                    symbol_y0, symbol_y1 = _PLOT_SEGMENTS[8], _PLOT_SEGMENTS[6]
+                    symbol_y0, symbol_y1 = SEGMENTS[5], SEGMENTS[3]
 
                 set_parcel(y0, symbol_y0)
                 set_parcel(y1, symbol_y1)
 
+                # add vertical segmentation in case of consecutive sequence
+                # value steepness
                 for y in range(min(y0, y1) + 1, max(y0, y1)):
-                    chart[params.n_rows - y][j + config.offset] = colored(_PLOT_SEGMENTS[9], color)
+                    chart[params.n_rows - y][j + config.offset] = _colored(SEGMENTS[6], color)
 
+        # add row index of last added segment to last_column_occupying_segment_row_indices
+        # if segment end occupies last chart column
         if j + 1 + config.offset == params.chart_width:
-            last_point = [min, max][y1 > y0](y0, y1)
-            last_sequence_point_row_indices.append(last_point)
+            last_column_occupying_segment_row_indices.append([min, max][y1 > y0](y0, y1))
 
-    return last_sequence_point_row_indices
-
-
-def _add_x_axis(chart: _Chart, config: Config, last_sequence_point_row_indices: List[int]):
-    _SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE = {
-        '┤': '┼',
-        '─': '┬',
-        '╰': '├',
-        '╯': '┤'
-    }
-
-    ANSI_ESCAPE_PATTERN = re.compile(r'\x1b[^m]*m')
-
-    def _extract_color(chart_parcel: str) -> str:
-        if len((ansi_sequences := re.findall(ANSI_ESCAPE_PATTERN, chart_parcel))):
-            return ansi_sequences[0]
-        return ''
-
-    def is_data_point(point_index: int) -> bool:
-        return point_index % (config.horizontal_point_spacing + 1) == 0
-
-    last_row = chart[-1]
-
-    if not _extract_color(last_row[config.offset - 1]):
-        last_row[config.offset - 1] = _PLOT_SEGMENTS[0]
-
-    for i, segment in enumerate(last_row[config.offset:]):
-        _is_data_point = is_data_point(i + 1)
-
-        if segment == ' ':
-            if _is_data_point:
-                last_row[i + config.offset] = _PLOT_SEGMENTS[-1]
-            else:
-                last_row[i + config.offset] = _PLOT_SEGMENTS[4]
-        elif _is_data_point:
-            if color := _extract_color(segment):
-                segment = re.split(ANSI_ESCAPE_PATTERN, segment)[1]
-
-            last_row[i + config.offset] = color + _SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE[segment] + colors.RESET
-
-    for row_index in last_sequence_point_row_indices:
-        last_column_segment = chart[-row_index - 1][-2]
-        chart[-row_index - 1][-1] = _extract_color(last_column_segment) + _PLOT_SEGMENTS[4] + colors.RESET
+    return last_column_occupying_segment_row_indices
 
 
-@dataclass
-class _Tick:
-    label: str
-    negative_protrusion: int
-    positive_protrusion: int
+def _scaled(value: float,
+            desired_minimum: float,
+            desired_maximum: float,
+            actual_minimum: float,
+            delta_y: float) -> int:
+    """ Scales sequence point clamped to desired extrema to
+    corresponding point within chart value range """
 
-    def __init__(self, label: Union[str, int]):
-        self.label = str(label)
-        is_of_even_length: bool = len(self.label) % 2 == 0
-        self.negative_protrusion: int = len(self.label) // 2 - int(is_of_even_length)
-        self.positive_protrusion: int = self.negative_protrusion + int(is_of_even_length)
+    clamped_value = min(max(value, desired_minimum), desired_maximum)
+    return int(round(clamped_value * delta_y) - actual_minimum)
 
 
-def _x_label_row(config: Config) -> str:
-    assert config.x_labels is not None
+def _colored(string: str, color: str) -> str:
+    return color + string + colors.RESET
 
-    padded_labels = [config.x_labels.get(i) for i in range(config.n_data_points)]
-    ticks: List[_Tick] = list(map(_Tick, padded_labels))
 
-    label_row = f'{" " * (config.offset - ticks[0].negative_protrusion + 7)}{ticks[0].label}'
-    for i in range(1, len(ticks)):
-        n_whitespaces = config.horizontal_point_spacing - ticks[i-1].positive_protrusion - ticks[i].negative_protrusion
-        assert n_whitespaces >= 1
+def _title_header(config: Config, params: _Params) -> str:
+    """ Returns:
+            title header indented by offset with successive newline """
 
-        label_row += f'{" " * n_whitespaces}{ticks[i].label}'
-
-    return label_row
+    assert config.title is not None
+    return ' ' * (config.offset + params.plot_width // 2 + len(config.title) // 2) + config.title + '\n'
