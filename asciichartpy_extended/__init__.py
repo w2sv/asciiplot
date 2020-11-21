@@ -5,7 +5,8 @@ options to tune the output.
 """
 
 from asciichartpy_extended.version import __version__
-from asciichartpy_extended._core import render_chart, _colored
+from asciichartpy_extended._rendering import render_chart
+from asciichartpy_extended._sequences import _colored
 from asciichartpy_extended._config import Config
 from asciichartpy_extended import colors
 
@@ -13,15 +14,16 @@ from asciichartpy_extended import colors
 if __name__ == '__main__':
     from random import randint
 
-    p = render_chart([randint(0, 100) for _ in range(20)], config=Config(
+    p = render_chart([14, 3, 8], [5, 3, 6], config=Config(
+        x_axis_description='YOLO',
+        y_axis_description='SWAG',
         decimal_places_y_labels=1,
-        columns_between_points=5,
-        offset=30,
-        sequence_colors=[colors.RED],
+        columns_between_points=25,
+        offset=70,
+        sequence_colors=[colors.RED, colors.GREEN],
         display_x_axis=True,
-        height=15,
         title='SICKPLOT',
-        x_labels={i: i + 99 * 10 ** 3 for i in range(20)}
+        x_labels={i: i for i in range(3)}
     ))
 
     print(p)

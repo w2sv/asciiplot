@@ -22,6 +22,9 @@ class Config:
     min: float = math.inf
     max: float = -math.inf
 
+    x_axis_description: Optional[str] = None
+    y_axis_description: Optional[str] = None
+
     offset: int = 3
     height: int = 5
 
@@ -43,8 +46,6 @@ class Config:
             self.decimal_places_y_labels = None
 
     def process(self, sequences: _Sequences) -> _Sequences:
-        """  """
-
         self.n_data_points = max(map(len, sequences))
 
         finite_values = list(filter(math.isfinite, itertools.chain(*sequences)))

@@ -1,32 +1,31 @@
-from typing import List, Union
+from typing import List, Union, Tuple
 import re
 import dataclasses
 
 from asciichartpy_extended._types import _Chart
-from asciichartpy_extended._config import Config, _NOT_TO_BE_ALTERED
+from asciichartpy_extended._config import Config
 from asciichartpy_extended._params import _Params
 from asciichartpy_extended import colors
 
 
-def _add_y_axis(chart: _Chart, config: Config, params: _Params):
+def _y_axis_comprising_chart(chart: _Chart, params: _Params) -> Tuple[List[str], int]:
     """ Adds labeled y-axis to chart """
 
-    SEGMENTS = ['┼', '┤']
-    label_divisor = [1, params.n_rows][bool(params.n_rows)]
+    SEGMENT_REPLACEMENTS = {
+        '─': '┤',
+        '|': '┼'
+    }
 
-    for i in range(params.min, params.max + 1):
-        # compute label
-        label = config.max - ((i - params.min) * config.y_value_spread / label_divisor)
-        if config.decimal_places_y_labels != _NOT_TO_BE_ALTERED:
-            label = round(label, config.decimal_places_y_labels)
-        label_string = str(label)
+    for i in range(params.n_rows + 1):
+        if (parcel := chart[i][0]) == ' ':
+            chart[i][0] = '┤'
+        else:
+            chart[i][0] = extract_color(parcel) + SEGMENT_REPLACEMENTS.get(colorless_segment(parcel), parcel) + colors.RESET
 
-        # set label, axis segment
-        chart[i - params.min][max(config.offset - len(label_string), 0)] = label_string
-        chart[i - params.min][config.offset - 1] = SEGMENTS[[1, 0][i == 0]]
+    return [[label.rjust(params.label_length)] + row for label, row in zip(params.labels, chart)]
 
 
-def _add_x_axis(chart: _Chart, config: Config, last_sequence_point_row_indices: List[int]):
+def _add_x_axis(chart: _Chart, config: Config):
     """ Adds x-axis to chart """
 
     SEGMENTS = ['┼', '┤', '┬', '─']
@@ -47,32 +46,26 @@ def _add_x_axis(chart: _Chart, config: Config, last_sequence_point_row_indices: 
 
     last_row = chart[-1]
 
-    if not extract_color(last_row[config.offset - 1]):
-        last_row[config.offset - 1] = SEGMENTS[0]
+    if not extract_color(last_row[0]):
+        last_row[0] = SEGMENTS[0]
 
-    for i, parcel in enumerate(last_row[config.offset:]):
+    for i, parcel in enumerate(last_row):
         # add straight horizontal axis segment if parcel doesn't contain
         # a sequence segment, otherwise convert present sequence segment
         # to one comprising both the sequence and axis segment in color
         # of respective sequence
 
-        _is_data_point = is_data_point(i + 1)
+        _is_data_point = is_data_point(i)
         if parcel == ' ':
             if _is_data_point:
-                last_row[i + config.offset] = SEGMENTS[2]
+                last_row[i] = SEGMENTS[2]
             else:
-                last_row[i + config.offset] = SEGMENTS[3]
+                last_row[i] = SEGMENTS[3]
         elif _is_data_point:
             if color := extract_color(parcel):
                 parcel = colorless_segment(parcel)
 
-            last_row[i + config.offset] = color + SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE[parcel] + colors.RESET
-
-    # add singular sequence extension segment to those occupying
-    # the last column in order to not make chart abruptly stop
-    # directly at the last tick
-    for row_index in last_sequence_point_row_indices:
-        chart[-row_index - 1][-1] = extract_color(parcel=chart[-row_index-1][-2]) + SEGMENTS[3] + colors.RESET
+            last_row[i] = color + SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE.get(parcel, parcel) + colors.RESET
 
 
 _ANSI_ESCAPE_PATTERN = re.compile(r'\x1b[^m]*m')
@@ -82,7 +75,7 @@ def extract_color(parcel: str) -> str:
     >>> extract_color(parcel='\033[30m-\033[0m')
     '\033[30m'
     >>> extract_color(parcel='┤')
-    '┤' """
+      """
 
     if len((ansi_sequences := re.findall(_ANSI_ESCAPE_PATTERN, parcel))):
         return ansi_sequences[0]
@@ -124,7 +117,7 @@ class _Tick:
         self.positive_protrusion: int = self.negative_protrusion + int(is_of_even_length)
 
 
-def _x_label_row(config: Config) -> str:
+def _x_label_row(config: Config, params: _Params) -> str:
     """ Returns:
             x-label-row indented according to offset """
 
@@ -136,7 +129,7 @@ def _x_label_row(config: Config) -> str:
     ticks: List[_Tick] = list(map(_Tick, padded_label_sequence))
 
     # add offset + first tick to label row
-    label_row = f'{" " * (config.offset - ticks[0].negative_protrusion + 7)}{ticks[0].label}'
+    label_row = f'{" " * ticks[0].negative_protrusion}{ticks[0].label}'
 
     # add consecutive ticks
     for i in range(1, len(ticks)):
@@ -145,4 +138,4 @@ def _x_label_row(config: Config) -> str:
 
         label_row += f'{" " * n_whitespaces}{ticks[i].label}'
 
-    return label_row
+    return ' ' * (params.label_length + config.offset) + label_row
