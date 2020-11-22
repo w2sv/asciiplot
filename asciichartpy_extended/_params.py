@@ -1,44 +1,61 @@
 from __future__ import annotations
 from typing import List
-from dataclasses import dataclass
+import dataclasses
 import math
+import itertools
+
 
 from asciichartpy_extended._types import _Sequences
 from asciichartpy_extended._config import Config, _NOT_TO_BE_ALTERED
 
 
-@dataclass
+@dataclasses.dataclass
 class _Params:
-    min: int
-    max: int
+    sequence_values_min: int
 
-    n_rows: int
+    target_min: int
+    target_max: int
 
-    plot_width: int
+    definition_area_magnitude: int
+
     chart_width: int
-    offset: int
+    horizontal_y_axis_offset: int
 
     labels: List[str]
-    label_length: int
+    label_columns: int
+
+    y_value_spread: int
+    delta_y: float
 
     def __init__(self, sequences: _Sequences, config: Config):
-        self.min = int(math.floor(config.actual_min))
-        self.max = int(math.ceil(config.actual_max))
+        # sequence value extrema
+        finite_values = list(filter(math.isfinite, itertools.chain(*sequences)))
 
-        self.n_rows = config.height
+        self.sequence_values_min = int(math.floor(min(finite_values)))
+        sequence_values_max = int(math.ceil(max(finite_values)))
 
-        self.plot_width = max(map(len, sequences))
+        # target extrema
+        self.target_min = max([self.sequence_values_min, config.min])
+        self.target_max = min([sequence_values_max, config.max])
 
+        # y value parameters
+        self.y_value_spread = self.target_max - self.target_min
+        self.delta_y = config.height / self.y_value_spread
+
+        # label parameters
         self.labels = self._compute_labels(config)
-        self.label_length = max(map(len, self.labels))
+        self.label_columns = max(map(len, self.labels))
 
-        self.offset = self.label_length + config.offset
-        self.chart_width = self.offset + self.plot_width
+        # widths
+        self.definition_area_magnitude = max(map(len, sequences))
+
+        self.horizontal_y_axis_offset = self.label_columns + config.offset
+        self.chart_width = self.horizontal_y_axis_offset + self.definition_area_magnitude
 
     def _compute_labels(self, config: Config) -> List[str]:
         labels: List[str] = []
-        for i in range(self.n_rows + 1):
-            label = config.max - (i * config.y_value_spread / self.n_rows)
+        for i in range(config.height + 1):
+            label = self.target_max - (i * self.y_value_spread / config.height)
             if config.decimal_places_y_labels != _NOT_TO_BE_ALTERED:
                 label = round(label, config.decimal_places_y_labels)
             labels.append(str(label))

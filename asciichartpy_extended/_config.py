@@ -1,13 +1,13 @@
-from typing import Optional, Sequence, List, Union, Dict
-import itertools
+from typing import Optional, Sequence, Union, Dict
 import math
 import dataclasses
 
-from asciichartpy_extended._types import _Sequences
 from asciichartpy_extended import colors
 
 
 _NOT_TO_BE_ALTERED = -1
+_INIT_MIN = -math.inf
+_INIT_MAX = math.inf
 
 
 @dataclasses.dataclass
@@ -19,93 +19,33 @@ class Config:
                 than length of longest sequence
             title: displayed in centered manner above chart """
 
-    min: float = math.inf
-    max: float = -math.inf
-
-    actual_min: float = dataclasses.field(init=False)
-    actual_max: float = dataclasses.field(init=False)
-
-    x_axis_description: Optional[str] = None
-    y_axis_description: Optional[str] = None
+    min: float = _INIT_MIN
+    max: float = _INIT_MAX
 
     offset: int = 3
     height: int = 5
+    columns_between_points: int = 0
 
     sequence_colors: Sequence[str] = (colors.WHITE,)
     decimal_places_y_labels: Optional[int] = _NOT_TO_BE_ALTERED
 
-    columns_between_points: int = 0
     display_x_axis: bool = False
     x_labels: Optional[Dict[int, Union[str, float]]] = None
 
+    x_axis_description: Optional[str] = None
+    y_axis_description: Optional[str] = None
+
     title: Optional[str] = None
 
-    y_value_spread: float = dataclasses.field(init=False)
-    n_data_points: int = dataclasses.field(init=False)
-    delta_y: float = dataclasses.field(init=False)
-
     def __post_init__(self):
+        # process decimal_places_y_labels
         if not self.decimal_places_y_labels:
             self.decimal_places_y_labels = None
 
-    def process(self, sequences: _Sequences) -> _Sequences:
-        self.n_data_points = max(map(len, sequences))
-
-        finite_values = list(filter(math.isfinite, itertools.chain(*sequences)))
-
-        self.actual_min = min(finite_values)
-        self.actual_max = max(finite_values)
-
-        self.min = min(self.min, self.actual_min)
-        self.max = max(self.max, self.actual_max)
-
-        if self.min > self.max:
+        # assert extrema correctness in case of passing of any
+        if self.min != _INIT_MIN or self.max != _INIT_MAX and self.min > self.max:
             raise ValueError("Min value shan't exceed max value")
 
-        self.y_value_spread = self.max - self.min
-        self.delta_y = self.height / self.y_value_spread
-
-        if self.x_labels and len(self.x_labels) > self.n_data_points:
-            raise ValueError('Number of x-labels exceeds number of x-values')
-
-        if self.columns_between_points:
-            sequences = self._padded_sequences(sequences)
-
-        return sequences
-
-    def _padded_sequences(self, sequences: _Sequences) -> _Sequences:
-        """
-        >>> config = Config(columns_between_points=2)
-        >>> config._padded_sequences([list(range(4))])
-        [[0, 0.3333333333333333, 0.6666666666666666, 1, 1.3333333333333333, 1.6666666666666665, 2, 2.3333333333333335, 2.666666666666667, 3]] """
-
-        padded_sequences = []
-        for sequence in sequences:
-            padded_sequence = []
-            for i in range(len(sequence[:-1])):
-                padded_sequence.append(sequence[i])
-                padded_sequence.extend(_fill_points(
-                    start=sequence[i],
-                    end=sequence[i + 1],
-                    n=self.columns_between_points
-                ))
-            padded_sequences.append(padded_sequence + [sequence[-1]])
-        return tuple(padded_sequences)
-
-
-def _fill_points(start: float, end: float, n: int) -> List[float]:
-    """ Returns:
-            List of n points of equal step size in between the value range from start to end,
-            excluding start and end themselves
-
-        >>> _fill_points(3, 7, n=4)
-        [3.8, 4.6, 5.3999999999999995, 6.199999999999999]
-        >>> _fill_points(0, 1, 2)
-        [0.3333333333333333, 0.6666666666666666] """
-
-    step_size = (end - start) / (n + 1)
-    return list(itertools.accumulate([start] + [step_size] * n))[1:]
-
-
-if __name__ == '__main__':
-    print(_fill_points(0, 1, 2))
+        # assert enablement of display_x_axis in case of passed x_axis_description
+        if self.x_axis_description and not self.display_x_axis:
+            raise ValueError("Setting of x axis description requires display of x axis")

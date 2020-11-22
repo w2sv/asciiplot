@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import *
 
-from asciichartpy_extended._sequences import _add_sequences
+from asciichartpy_extended._sequences import _add_sequences, _padded_sequences
 from asciichartpy_extended._types import _Sequences, _Chart
 from asciichartpy_extended._axes import _add_x_axis, _y_axis_comprising_chart, _x_label_row
 from asciichartpy_extended._config import Config
@@ -9,7 +9,9 @@ from asciichartpy_extended._params import _Params
 
 
 def render_chart(*sequences: List[float], config=Config()) -> str:
-    sequences = config.process(sequences)
+    if config.columns_between_points:
+        sequences = _padded_sequences(sequences, config.columns_between_points)
+
     params = _Params(sequences, config)
 
     chart_grid = _render_chart_grid(sequences, config, params)
@@ -21,7 +23,7 @@ def render_chart(*sequences: List[float], config=Config()) -> str:
 
     # add desired chart ornaments
     if config.y_axis_description:
-        description_row = ' ' * (params.offset - len(config.y_axis_description) // 2) + config.y_axis_description + '\n'
+        description_row = ' ' * (params.horizontal_y_axis_offset - len(config.y_axis_description) // 2) + config.y_axis_description + '\n'
         serialized_chart = description_row + serialized_chart
     if config.title:
         serialized_chart = _title_header(config, params) + serialized_chart
@@ -34,14 +36,14 @@ def render_chart(*sequences: List[float], config=Config()) -> str:
 def _render_chart_grid(sequences: _Sequences, config: Config, params: _Params) -> _Chart:
     """ Creates chart with y-axis and x-axis if desired """
 
-    chart = [[' '] * params.plot_width for _ in range(params.n_rows + 1)]
+    chart = [[' '] * params.definition_area_magnitude for _ in range(config.height + 1)]
 
     _add_sequences(sequences, chart, config, params)
 
     if config.display_x_axis:
         _add_x_axis(chart, config)
 
-    chart = _y_axis_comprising_chart(chart, params)
+    chart = _y_axis_comprising_chart(chart, config, params)
 
     if config.offset:
         indentation = ' ' * config.offset
@@ -59,4 +61,4 @@ def _title_header(config: Config, params: _Params) -> str:
             aptly indented title header with successive newline """
 
     assert config.title is not None
-    return ' ' * ((params.plot_width // 2) + params.offset - len(config.title) // 2) + config.title + '\n'
+    return ' ' * ((params.definition_area_magnitude // 2) + params.horizontal_y_axis_offset - len(config.title) // 2) + config.title + '\n'
