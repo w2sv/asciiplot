@@ -5,16 +5,16 @@ import itertools
 
 from asciichartpy_extended import colors
 from asciichartpy_extended._params import _Params
-from asciichartpy_extended._types import _Sequences, _Chart
+from asciichartpy_extended._types import _Sequences, _ChartGrid
 from asciichartpy_extended._config import Config
 
 
 # ---------------
 # Padding
 # ---------------
-def _padded_sequences(sequences: _Sequences, columns_between_points: int) -> _Sequences:
+def _stretched_sequences(sequences: _Sequences, columns_between_points: int) -> _Sequences:
     """
-    >>> _padded_sequences([list(range(4))])
+    >>> _stretched_sequences([list(range(4))])
     [[0, 0.3333333333333333, 0.6666666666666666, 1, 1.3333333333333333, 1.6666666666666665, 2, 2.3333333333333335, 2.666666666666667, 3]] """
 
     padded_sequences = []
@@ -48,7 +48,7 @@ def _fill_points(start: float, end: float, n: int) -> List[float]:
 # ---------------
 # Rendering
 # ---------------
-def _add_sequences(sequences: _Sequences, chart: _Chart, config: Config, params: _Params):
+def _add_sequences(sequences: _Sequences, chart: _ChartGrid, config: Config, params: _Params):
     """ Adds ascii-ized sequences to chart
 
         Returns:
@@ -69,7 +69,7 @@ def _add_sequences(sequences: _Sequences, chart: _Chart, config: Config, params:
         j = INIT_VALUE
 
         def set_parcel(row_subtrahend: int, segment: str):
-            chart[config.height - row_subtrahend][j + 1] = colored(segment, color)
+            chart[config.plot_height - row_subtrahend][j + 1] = colored(segment, color)
 
         # add '┼' at sequence beginning where sequences overlaps with y-axis
         if math.isfinite(sequence[0]):

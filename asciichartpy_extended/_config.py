@@ -13,21 +13,22 @@ _INIT_MAX = math.inf
 @dataclasses.dataclass
 class Config:
     """ Fields:
-            offset: between outer left terminal bound and y-labels
-            height: of chart in n rows
-            x_labels: may contain less, however not more elements
-                than length of longest sequence
+            label_column_offset: between outer left terminal bound and y-labels
+            columns_between_points: leads to consistent, linearly interpolated
+                stretching of sequences
+            plot_height: number of rows
+            x_labels: may contain more or less elements than definition area
             title: displayed in centered manner above chart """
 
     min: float = _INIT_MIN
     max: float = _INIT_MAX
 
-    offset: int = 3
-    height: int = 5
+    plot_height: int = 5
+    label_column_offset: int = 0
     columns_between_points: int = 0
 
     sequence_colors: Sequence[str] = (colors.WHITE,)
-    decimal_places_y_labels: Optional[int] = _NOT_TO_BE_ALTERED
+    y_label_decimal_places: Optional[int] = _NOT_TO_BE_ALTERED
 
     display_x_axis: bool = False
     x_labels: Optional[Dict[int, Union[str, float]]] = None
@@ -38,9 +39,11 @@ class Config:
     title: Optional[str] = None
 
     def __post_init__(self):
-        # process decimal_places_y_labels
-        if not self.decimal_places_y_labels:
-            self.decimal_places_y_labels = None
+        """ Processes parameters, asserts value correctness """
+
+        # process y_label_decimal_places
+        if not self.y_label_decimal_places:
+            self.y_label_decimal_places = None
 
         # assert extrema correctness in case of passing of any
         if self.min != _INIT_MIN or self.max != _INIT_MAX and self.min > self.max:

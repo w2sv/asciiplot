@@ -2,21 +2,22 @@ from typing import List, Union
 import re
 import dataclasses
 
-from asciichartpy_extended._types import _Chart
+from asciichartpy_extended._types import _ChartGrid
 from asciichartpy_extended._config import Config
 from asciichartpy_extended._params import _Params
 from asciichartpy_extended import colors
 
 
-def _y_axis_comprising_chart(chart: _Chart, config: Config, params: _Params) -> List[str]:
-    """ Adds labeled y-axis to chart """
+def _y_axis_comprising_chart(chart: _ChartGrid, config: Config, params: _Params) -> _ChartGrid:
+    """ Returns:
+            y-axis comprising chart grid """
 
     SEGMENT_REPLACEMENTS = {
         '─': '┤',
         '|': '┼'
     }
 
-    for i in range(config.height + 1):
+    for i in range(config.plot_height + 1):
         if (parcel := chart[i][0]) == ' ':
             chart[i][0] = '┤'
         else:
@@ -25,7 +26,7 @@ def _y_axis_comprising_chart(chart: _Chart, config: Config, params: _Params) -> 
     return [[label.rjust(params.label_columns)] + row for label, row in zip(params.labels, chart)]
 
 
-def _add_x_axis(chart: _Chart, config: Config):
+def _add_x_axis(chart: _ChartGrid, config: Config):
     """ Adds x-axis to chart """
 
     SEGMENTS = ['┼', '┤', '┬', '─']
@@ -119,16 +120,16 @@ class _Tick:
 
 def _x_label_row(config: Config, params: _Params) -> str:
     """ Returns:
-            x-label-row indented according to offset """
+            x-label-row indented according to label_column_offset """
 
     assert config.x_labels is not None
 
     # provide label sequences containing empty strings as labels for ticks,
     # for which none were given and create tick objects
     padded_label_sequence = [config.x_labels.get(i, '') for i in range(params.definition_area_magnitude)]
-    ticks: List[_Tick] = list(map(_Tick, padded_label_sequence))
+    ticks: List[_Tick] = list(map(_Tick, padded_label_sequence))  # type: ignore
 
-    # add offset + first tick to label row
+    # add label_column_offset + first tick to label row
     label_row = f'{" " * ticks[0].negative_protrusion}{ticks[0].label}'
 
     # add consecutive ticks
@@ -138,4 +139,4 @@ def _x_label_row(config: Config, params: _Params) -> str:
 
         label_row += f'{" " * n_whitespaces}{ticks[i].label}'
 
-    return ' ' * (params.label_columns + config.offset) + label_row
+    return ' ' * (params.label_columns + config.label_column_offset) + label_row
