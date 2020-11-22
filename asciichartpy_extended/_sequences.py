@@ -1,4 +1,3 @@
-from typing import List
 import math
 from functools import partial
 
@@ -26,19 +25,17 @@ def _add_sequences(sequences: _Sequences, chart: _Chart, config: Config, params:
 
     for i, sequence in enumerate(sequences):
         color = config.sequence_colors[i % len(config.sequence_colors)]
+        j = INIT_VALUE
+
+        def set_parcel(row_subtrahend: int, segment: str):
+            chart[params.n_rows - row_subtrahend][j + 1] = colored(segment, color)
 
         # add '┼' at sequence beginning where sequences overlaps with y-axis
         if math.isfinite(sequence[0]):
-            chart[params.n_rows - scaled(sequence[0])][0] = _colored(SEGMENTS[0], color)
+            set_parcel(scaled(sequence[0]), SEGMENTS[0])
 
         # ascii-ize sequence
-        j = INIT_VALUE
-        y0, y1 = INIT_VALUE, INIT_VALUE
         while (j := j + 1) < len(sequence) - 1:
-
-            def set_parcel(row_subtrahend: int, segment: str):
-                chart[params.n_rows - row_subtrahend][j + 1] = _colored(segment, color)
-
             y0 = scaled(sequence[j])
             y1 = scaled(sequence[j + 1])
 
@@ -72,5 +69,5 @@ def _scaled(value: float,
     return int(round(clamped_value * delta_y) - actual_minimum)
 
 
-def _colored(string: str, color: str) -> str:
+def colored(string: str, color: str) -> str:
     return color + string + colors.RESET

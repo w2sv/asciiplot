@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List
 from dataclasses import dataclass
-from math import floor, ceil
+import math
 
 from asciichartpy_extended._types import _Sequences
 from asciichartpy_extended._config import Config, _NOT_TO_BE_ALTERED
@@ -22,10 +22,9 @@ class _Params:
     label_length: int
 
     def __init__(self, sequences: _Sequences, config: Config):
-        self.min = int(floor(config.min * config.delta_y))
-        self.max = int(ceil(config.max * config.delta_y))
-
-        self.n_rows = self.max - self.min
+        self.min = int(math.floor(config.actual_min))
+        self.max = int(math.ceil(config.actual_max))
+        self.n_rows = config.height
 
         self.plot_width = max(map(len, sequences))
 
@@ -36,12 +35,9 @@ class _Params:
         self.chart_width = self.offset + self.plot_width
 
     def _compute_labels(self, config: Config) -> List[str]:
-        label_divisor = [1, self.n_rows][bool(self.n_rows)]
-
         labels: List[str] = []
-        for i in range(self.min, self.max + 1):
-            # compute label
-            label = config.max - ((i - self.min) * config.y_value_spread / label_divisor)
+        for i in range(self.n_rows + 1):
+            label = config.max - (i * config.y_value_spread / self.n_rows)
             if config.decimal_places_y_labels != _NOT_TO_BE_ALTERED:
                 label = round(label, config.decimal_places_y_labels)
             labels.append(str(label))

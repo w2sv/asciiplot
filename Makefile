@@ -13,7 +13,7 @@ install:
 test: mypy pytest doctest  # run with -k flag in order to continue in case of recipe failure
 
 mypy:
-	mypy asciichartpy_extended
+	mypy asciichartpy_extended/
 
 pytest:
 	coverage run -m pytest -vv tests/

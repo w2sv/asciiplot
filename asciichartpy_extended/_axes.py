@@ -1,4 +1,4 @@
-from typing import List, Union, Tuple
+from typing import List, Union
 import re
 import dataclasses
 
@@ -8,7 +8,7 @@ from asciichartpy_extended._params import _Params
 from asciichartpy_extended import colors
 
 
-def _y_axis_comprising_chart(chart: _Chart, params: _Params) -> Tuple[List[str], int]:
+def _y_axis_comprising_chart(chart: _Chart, params: _Params) -> List[str]:
     """ Adds labeled y-axis to chart """
 
     SEGMENT_REPLACEMENTS = {

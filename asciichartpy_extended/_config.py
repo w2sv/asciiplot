@@ -22,6 +22,9 @@ class Config:
     min: float = math.inf
     max: float = -math.inf
 
+    actual_min: float = dataclasses.field(init=False)
+    actual_max: float = dataclasses.field(init=False)
+
     x_axis_description: Optional[str] = None
     y_axis_description: Optional[str] = None
 
@@ -49,18 +52,18 @@ class Config:
         self.n_data_points = max(map(len, sequences))
 
         finite_values = list(filter(math.isfinite, itertools.chain(*sequences)))
-        self.min = min(self.min, min(finite_values))
-        self.max = max(self.max, max(finite_values))
+
+        self.actual_min = min(finite_values)
+        self.actual_max = max(finite_values)
+
+        self.min = min(self.min, self.actual_min)
+        self.max = max(self.max, self.actual_max)
 
         if self.min > self.max:
             raise ValueError("Min value shan't exceed max value")
 
         self.y_value_spread = self.max - self.min
-
-        if not self.height:
-            self.height = int(self.y_value_spread)
-
-        self.delta_y = self.height / [1, self.y_value_spread][self.y_value_spread > 0]
+        self.delta_y = self.height / self.y_value_spread
 
         if self.x_labels and len(self.x_labels) > self.n_data_points:
             raise ValueError('Number of x-labels exceeds number of x-values')
