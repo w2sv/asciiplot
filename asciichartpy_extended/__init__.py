@@ -12,8 +12,6 @@ from asciichartpy_extended._sequences import colored
 
 
 if __name__ == '__main__':
-    from random import randint
-
     p = render_chart([10, 5, 9], [1, 7, 5, 9], config=Config(
         x_axis_description='YOLO',
         y_axis_description='SWAG',

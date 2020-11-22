@@ -24,6 +24,7 @@ class _Params:
     def __init__(self, sequences: _Sequences, config: Config):
         self.min = int(math.floor(config.actual_min))
         self.max = int(math.ceil(config.actual_max))
+
         self.n_rows = config.height
 
         self.plot_width = max(map(len, sequences))
