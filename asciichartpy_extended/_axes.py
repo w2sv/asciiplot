@@ -142,7 +142,9 @@ def _x_label_row(config: Config, params: _Params) -> str:
     # add consecutive ticks
     for i in range(1, len(ticks)):
         n_whitespaces = config.columns_between_points - ticks[i - 1].positive_protrusion - ticks[i].negative_protrusion
-        assert n_whitespaces >= 1
+        if n_whitespaces < 0 and i != len(ticks) - 1 and ticks[i].label != ' ':
+            raise ValueError(f'Adjacent x-axis ticks {ticks[i-1].label} and {ticks[i].label} are overlapping')
+
         label_row += f'{" " * n_whitespaces}{ticks[i].label}'
 
     return ' ' * (params.horizontal_y_axis_offset - ticks[0].negative_protrusion) + label_row

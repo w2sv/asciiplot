@@ -13,7 +13,6 @@ from asciichartpy_extended._sequences import colored
 
 if __name__ == '__main__':
     p = asciiize([21, 5, 9], [1, 7, 5, 11], config=Config(
-        x_axis_description='YOLO',
         y_axis_description='SWAG',
         y_label_decimal_places=1,
         columns_between_points=5,
@@ -22,7 +21,7 @@ if __name__ == '__main__':
         sequence_colors=[colors.RED, colors.GREEN],
         display_x_axis=True,
         title='SICKPLOT',
-        x_labels={0: 'taaa', 1: 9, 3: 9}
+        x_labels={0: 'taaaaaaaaaa', 1: 1, 2: 2, 3: 9}
     ))
 
     print(p)
