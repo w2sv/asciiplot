@@ -107,7 +107,7 @@ def _scaled(value: float,
     corresponding point within chart value range """
 
     clamped_value = min(max(value, desired_minimum), desired_maximum)
-    return int(round(clamped_value * delta_y) - actual_minimum)
+    return max(int(round(clamped_value * delta_y) - actual_minimum), 0)
 
 
 def colored(string: str, color: str) -> str:

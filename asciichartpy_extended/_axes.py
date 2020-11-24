@@ -136,15 +136,18 @@ def _x_label_row(config: Config, params: _Params) -> str:
     padded_label_sequence = [config.x_labels.get(i) for i in range(params.definition_area_magnitude)]
     ticks: List[_Tick] = list(map(_Tick, padded_label_sequence))  # type: ignore
 
+    def compute_n_whitespaces(preceding_tick: _Tick, tick: _Tick, tick_index: int) -> int:
+        n = config.columns_between_points - preceding_tick.positive_protrusion - tick.negative_protrusion
+        if n < 0 and tick_index != len(ticks) - 1 and tick.label != ' ':
+            raise ValueError(f'Adjacent x-axis ticks {preceding_tick.label} and {tick.label} are overlapping')
+        return n
+
     # add label_column_offset + first tick to label row
     label_row = ticks[0].label
 
     # add consecutive ticks
     for i in range(1, len(ticks)):
-        n_whitespaces = config.columns_between_points - ticks[i - 1].positive_protrusion - ticks[i].negative_protrusion
-        if n_whitespaces < 0 and i != len(ticks) - 1 and ticks[i].label != ' ':
-            raise ValueError(f'Adjacent x-axis ticks {ticks[i-1].label} and {ticks[i].label} are overlapping')
-
+        n_whitespaces = compute_n_whitespaces(preceding_tick=ticks[i-1], tick=ticks[i], tick_index=i)
         label_row += f'{" " * n_whitespaces}{ticks[i].label}'
 
     return ' ' * (params.horizontal_y_axis_offset - ticks[0].negative_protrusion) + label_row

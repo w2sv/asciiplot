@@ -12,16 +12,16 @@ from asciichartpy_extended._sequences import colored
 
 
 if __name__ == '__main__':
-    p = asciiize([21, 5, 9], [1, 7, 5, 11], config=Config(
+    p = asciiize([3, 7, 9], config=Config(
         y_axis_description='SWAG',
         y_label_decimal_places=1,
-        columns_between_points=5,
+        columns_between_points=3,
         label_column_offset=30,
-        plot_height=15,
+        plot_height=5,
         sequence_colors=[colors.RED, colors.GREEN],
         display_x_axis=True,
         title='SICKPLOT',
-        x_labels={0: 'taaaaaaaaaa', 1: 1, 2: 2, 3: 9}
+        x_labels={0: '9', 1: 1, 2: 2, 3: 9}
     ))
 
     print(p)
