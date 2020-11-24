@@ -17,12 +17,12 @@ if __name__ == '__main__':
         y_axis_description='SWAG',
         y_label_decimal_places=1,
         columns_between_points=5,
-        label_column_offset=70,
-        plot_height=10,
+        label_column_offset=30,
+        plot_height=15,
         sequence_colors=[colors.RED, colors.GREEN],
         display_x_axis=True,
         title='SICKPLOT',
-        x_labels={i: i for i in range(4)}
+        x_labels={0: 'taaa', 1: 9, 3: 9}
     ))
 
     print(p)

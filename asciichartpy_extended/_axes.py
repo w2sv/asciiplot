@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Optional
 import re
 import dataclasses
 
@@ -101,7 +101,7 @@ class _Tick:
     negative_protrusion: int  # n columns occupied towards the left starting from tick column
     positive_protrusion: int  # n columns occupied towards the right starting from tick column
 
-    def __init__(self, label: Union[str, int]):
+    def __init__(self, label: Optional[Union[str, int]]):
         """ Initialize such that center of sequentialized label right beneath tick
         in case of odd string length, otherwise shift by one column towards the right
 
@@ -112,11 +112,18 @@ class _Tick:
         >>> tick = _Tick(2)
         tick(label='234', negative_protrusion=0, positive_protrusion=0) """
 
-        self.label = str(label)
-        is_of_even_length: bool = len(self.label) % 2 == 0
-        self.negative_protrusion: int = len(self.label) // 2 - int(is_of_even_length)
-        self.positive_protrusion: int = self.negative_protrusion + int(is_of_even_length)
+        self.label: str
+        self.negative_protrusion: int
+        self.positive_protrusion: int
 
+        if label:
+            self.label = str(label)
+            is_of_even_length: bool = len(self.label) % 2 == 0
+            self.negative_protrusion: int = len(self.label) // 2 - int(is_of_even_length)
+            self.positive_protrusion: int = self.negative_protrusion + int(is_of_even_length)
+        else:
+            self.label = ' '
+            self.negative_protrusion = self.positive_protrusion = 0
 
 def _x_label_row(config: Config, params: _Params) -> str:
     """ Returns:
@@ -126,17 +133,20 @@ def _x_label_row(config: Config, params: _Params) -> str:
 
     # provide label sequences containing empty strings as labels for ticks,
     # for which none were given and create tick objects
-    padded_label_sequence = [config.x_labels.get(i, '') for i in range(params.definition_area_magnitude)]
+    padded_label_sequence = [config.x_labels.get(i) for i in range(params.definition_area_magnitude)]
     ticks: List[_Tick] = list(map(_Tick, padded_label_sequence))  # type: ignore
 
     # add label_column_offset + first tick to label row
-    label_row = f'{" " * ticks[0].negative_protrusion}{ticks[0].label}'
+    label_row = ticks[0].label
 
     # add consecutive ticks
     for i in range(1, len(ticks)):
         n_whitespaces = config.columns_between_points - ticks[i - 1].positive_protrusion - ticks[i].negative_protrusion
         assert n_whitespaces >= 1
-
         label_row += f'{" " * n_whitespaces}{ticks[i].label}'
 
-    return ' ' * (params.label_columns + config.label_column_offset) + label_row
+    return ' ' * (params.horizontal_y_axis_offset - ticks[0].negative_protrusion) + label_row
+
+
+if __name__ == '__main__':
+    print(_Tick('twa'))

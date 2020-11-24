@@ -9,13 +9,14 @@ from asciichartpy_extended._params import _Params
 
 
 def asciiize(*sequences: List[float], config=Config()) -> str:
+    definition_area_magnitude = max(map(len, sequences))
 
     # stretch sequences if desired
     if config.columns_between_points:
         sequences = _stretched_sequences(sequences, config.columns_between_points)  # type: ignore
 
     # calculate params, render chart grid
-    params = _Params(sequences, config)
+    params = _Params(sequences, config, definition_area_magnitude)
     chart_grid = _render_chart_grid(sequences, config, params)
 
     # add x axis description if desired
@@ -40,7 +41,7 @@ def asciiize(*sequences: List[float], config=Config()) -> str:
 def _render_chart_grid(sequences: _Sequences, config: Config, params: _Params) -> _ChartGrid:
     """ Creates chart with y-axis and x-axis if desired """
 
-    chart = [[' '] * params.definition_area_magnitude for _ in range(config.plot_height + 1)]
+    chart = [[' '] * params.plot_width for _ in range(config.plot_height + 1)]
 
     _add_sequences(sequences, chart, config, params)
 
@@ -65,4 +66,4 @@ def _title_header(config: Config, params: _Params) -> str:
             aptly indented title header with successive newline """
 
     assert config.title is not None
-    return ' ' * ((params.definition_area_magnitude // 2) + params.horizontal_y_axis_offset - len(config.title) // 2) + config.title + '\n'
+    return ' ' * ((params.plot_width // 2) + params.horizontal_y_axis_offset - len(config.title) // 2) + config.title + '\n'

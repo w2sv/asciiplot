@@ -12,13 +12,14 @@ from asciichartpy_extended._config import Config, _NOT_TO_BE_ALTERED
 @dataclasses.dataclass
 class _Params:
     sequence_values_min: int
+    definition_area_magnitude: int
 
     target_min: int
     target_max: int
 
-    definition_area_magnitude: int
+    plot_width: int
 
-    chart_width: int
+    total_width: int
     horizontal_y_axis_offset: int
 
     labels: List[str]
@@ -27,7 +28,8 @@ class _Params:
     y_value_spread: int
     delta_y: float
 
-    def __init__(self, sequences: _Sequences, config: Config):
+    def __init__(self, sequences: _Sequences, config: Config, definition_area_magnitude: int):
+        self.definition_area_magnitude = definition_area_magnitude
 
         # sequence value extrema
         finite_values = list(filter(math.isfinite, itertools.chain(*sequences)))
@@ -48,10 +50,10 @@ class _Params:
         self.label_columns = max(map(len, self.labels))
 
         # widths
-        self.definition_area_magnitude = max(map(len, sequences))
+        self.plot_width = max(map(len, sequences))
 
         self.horizontal_y_axis_offset = self.label_columns + config.label_column_offset
-        self.chart_width = self.horizontal_y_axis_offset + self.definition_area_magnitude
+        self.total_width = self.horizontal_y_axis_offset + self.plot_width
 
     def _compute_labels(self, config: Config) -> List[str]:
         labels: List[str] = []
