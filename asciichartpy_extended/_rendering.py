@@ -6,6 +6,7 @@ from asciichartpy_extended._types import _Sequences, _ChartGrid
 from asciichartpy_extended._axes import _add_x_axis, _y_axis_comprising_chart, _x_label_row
 from asciichartpy_extended._config import Config
 from asciichartpy_extended._params import _Params
+from asciichartpy_extended._utils import _colored
 
 
 def asciiize(*sequences: List[float], config=Config()) -> str:
@@ -21,14 +22,14 @@ def asciiize(*sequences: List[float], config=Config()) -> str:
 
     # add x axis description if desired
     if config.x_axis_description:
-        chart_grid[-1] += [' ' + config.x_axis_description]
+        chart_grid[-1] += [' ' + _colored(config.x_axis_description, config.axis_description_color)]
 
     # serialize chart
     serialized_chart = _serialize_chart(chart=chart_grid)
 
     # add desired chart ornaments
     if config.y_axis_description:
-        description_row = ' ' * (params.horizontal_y_axis_offset - len(config.y_axis_description) // 2) + config.y_axis_description + '\n'
+        description_row = ' ' * (params.horizontal_y_axis_offset - len(config.y_axis_description) // 2) + _colored(config.y_axis_description, config.axis_description_color) + '\n'
         serialized_chart = description_row + serialized_chart
     if config.title:
         serialized_chart = _title_header(config, params) + serialized_chart

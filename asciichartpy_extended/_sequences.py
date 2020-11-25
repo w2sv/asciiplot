@@ -3,7 +3,7 @@ import math
 from functools import partial
 import itertools
 
-from asciichartpy_extended import colors
+from asciichartpy_extended._utils import _colored
 from asciichartpy_extended._params import _Params
 from asciichartpy_extended._types import _Sequences, _ChartGrid
 from asciichartpy_extended._config import Config
@@ -69,7 +69,7 @@ def _add_sequences(sequences: _Sequences, chart: _ChartGrid, config: Config, par
         j = INIT_VALUE
 
         def set_parcel(row_subtrahend: int, segment: str):
-            chart[config.plot_height - row_subtrahend][j + 1] = colored(segment, color)
+            chart[config.plot_height - row_subtrahend][j + 1] = _colored(segment, color)
 
         # add '┼' at sequence beginning where sequences overlaps with y-axis
         if math.isfinite(sequence[0]):
@@ -108,7 +108,3 @@ def _scaled(value: float,
 
     clamped_value = min(max(value, desired_minimum), desired_maximum)
     return max(int(round(clamped_value * delta_y) - actual_minimum), 0)
-
-
-def colored(string: str, color: str) -> str:
-    return color + string + colors.RESET

@@ -2,6 +2,7 @@ from typing import List, Union, Optional
 import re
 import dataclasses
 
+from asciichartpy_extended._utils import _colored
 from asciichartpy_extended._types import _ChartGrid
 from asciichartpy_extended._config import Config
 from asciichartpy_extended._params import _Params
@@ -75,8 +76,7 @@ def extract_color(parcel: str) -> str:
     """
     >>> extract_color(parcel='\033[30m-\033[0m')
     '\033[30m'
-    >>> extract_color(parcel='┤')
-      """
+    >>> extract_color(parcel='┤') """
 
     if len((ansi_sequences := re.findall(_ANSI_ESCAPE_PATTERN, parcel))):
         return ansi_sequences[0]
@@ -93,37 +93,39 @@ def colorless_segment(parcel: str):
 
 
 @dataclasses.dataclass
-class _Tick:
+class _Label:
     """ Serving the creation of helper objects facilitating the computation
-    of whitespace sequences in between ticks """
+    of whitespace sequences in between labels """
 
     label: str
     negative_protrusion: int  # n columns occupied towards the left starting from tick column
     positive_protrusion: int  # n columns occupied towards the right starting from tick column
 
-    def __init__(self, label: Optional[Union[str, int]]):
+    def __init__(self, description: Optional[Union[str, int]], color=colors.WHITE):
         """ Initialize such that center of sequentialized label right beneath tick
         in case of odd string length, otherwise shift by one column towards the right
 
-        >>> tick = _Tick(234)
-        tick(label='234', negative_protrusion=1, positive_protrusion=1)
-        >>> tick = _Tick(23)
+        >>> label = _Label(234)
+        label(label='234', negative_protrusion=1, positive_protrusion=1)
+        >>> label = _Label(23)
         tick(label='23', negative_protrusion=0, positive_protrusion=1)
-        >>> tick = _Tick(2)
+        >>> label = _Label(2)
         tick(label='234', negative_protrusion=0, positive_protrusion=0) """
 
         self.label: str
         self.negative_protrusion: int
         self.positive_protrusion: int
 
-        if label:
-            self.label = str(label)
-            is_of_even_length: bool = len(self.label) % 2 == 0
-            self.negative_protrusion: int = len(self.label) // 2 - int(is_of_even_length)
+        if description:
+            label = str(description)
+            is_of_even_length: bool = len(label) % 2 == 0
+            self.negative_protrusion: int = len(label) // 2 - int(is_of_even_length)
             self.positive_protrusion: int = self.negative_protrusion + int(is_of_even_length)
+            self.label = _colored(label, color)
         else:
             self.label = ' '
             self.negative_protrusion = self.positive_protrusion = 0
+
 
 def _x_label_row(config: Config, params: _Params) -> str:
     """ Returns:
@@ -132,26 +134,26 @@ def _x_label_row(config: Config, params: _Params) -> str:
     assert config.x_labels is not None
 
     # provide label sequences containing empty strings as labels for ticks,
-    # for which none were given and create tick objects
+    # for which none were given and create labels objects
     padded_label_sequence = [config.x_labels.get(i) for i in range(params.definition_area_magnitude)]
-    ticks: List[_Tick] = list(map(_Tick, padded_label_sequence))  # type: ignore
+    labels: List[_Label] = list(map(lambda label: _Label(label, color=config.x_axis_label_color), padded_label_sequence))  # type: ignore
 
-    def compute_n_whitespaces(preceding_tick: _Tick, tick: _Tick, tick_index: int) -> int:
+    def compute_n_whitespaces(preceding_tick: _Label, tick: _Label, tick_index: int) -> int:
         n = config.columns_between_points - preceding_tick.positive_protrusion - tick.negative_protrusion
-        if n < 0 and tick_index != len(ticks) - 1 and tick.label != ' ':
+        if n < 0 and tick_index != len(labels) - 1 and tick.label != ' ':
             raise ValueError(f'Adjacent x-axis ticks {preceding_tick.label} and {tick.label} are overlapping')
         return n
 
     # add label_column_offset + first tick to label row
-    label_row = ticks[0].label
+    label_row = labels[0].label
 
     # add consecutive ticks
-    for i in range(1, len(ticks)):
-        n_whitespaces = compute_n_whitespaces(preceding_tick=ticks[i-1], tick=ticks[i], tick_index=i)
-        label_row += f'{" " * n_whitespaces}{ticks[i].label}'
+    for i in range(1, len(labels)):
+        n_whitespaces = compute_n_whitespaces(preceding_tick=labels[i-1], tick=labels[i], tick_index=i)
+        label_row += f'{" " * n_whitespaces}{_colored(labels[i].label, config.x_axis_label_color)}'
 
-    return ' ' * (params.horizontal_y_axis_offset - ticks[0].negative_protrusion) + label_row
+    return ' ' * (params.horizontal_y_axis_offset - labels[0].negative_protrusion) + label_row
 
 
 if __name__ == '__main__':
-    print(_Tick('twa'))
+    print(_Label('twa'))

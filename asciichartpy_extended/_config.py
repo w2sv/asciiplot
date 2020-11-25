@@ -27,14 +27,16 @@ class Config:
     label_column_offset: int = 0
     columns_between_points: int = 0
 
-    sequence_colors: Sequence[str] = (colors.WHITE,)
+    sequence_colors: Sequence[str] = colors.WHITE,
+    axis_description_color: str = colors.WHITE
+    x_axis_label_color: str = colors.WHITE
     y_label_decimal_places: Optional[int] = _NOT_TO_BE_ALTERED
 
     display_x_axis: bool = False
     x_labels: Optional[Dict[int, Union[str, float]]] = None
 
-    x_axis_description: Optional[str] = None
-    y_axis_description: Optional[str] = None
+    x_axis_description: str = ''
+    y_axis_description: str = ''
 
     title: Optional[str] = None
 
