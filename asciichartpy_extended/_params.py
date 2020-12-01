@@ -43,7 +43,7 @@ class _Params:
 
         # y value parameters
         self.y_value_spread = self.target_max - self.target_min
-        self.delta_y = config.plot_height / self.y_value_spread
+        self.delta_y = config.plot_height / [1, self.y_value_spread][bool(self.y_value_spread)]
 
         # label parameters
         self.labels = self._compute_labels(config)
