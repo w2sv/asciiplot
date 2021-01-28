@@ -14,3 +14,4 @@ logging.txt
 # Build
 /build/
 /asciichartpy_extended.egg-info/
+/dist/

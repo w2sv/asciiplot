@@ -28,4 +28,4 @@ doctest:
 wheel:
 	rm -rf aciichartpy_extended.egg-info
 	rm -rf build
-	python setup.py bdist_wheel --dist-dir ../dist
+	python setup.py bdist_wheel --dist-dir ./dist
