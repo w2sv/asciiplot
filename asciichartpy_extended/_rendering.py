@@ -1,12 +1,11 @@
 from __future__ import annotations
-from typing import *
+from typing import List
 
-from asciichartpy_extended._sequences import _add_sequences, _stretched_sequences
+from asciichartpy_extended._components._sequences import _add_sequences, _stretched_sequences
+from asciichartpy_extended._components._axes import _add_x_axis, _y_axis_comprising_chart, _x_label_row
 from asciichartpy_extended._types import _Sequences, _ChartGrid
-from asciichartpy_extended._axes import _add_x_axis, _y_axis_comprising_chart, _x_label_row
-from asciichartpy_extended._config import Config
-from asciichartpy_extended._params import _Params
-from asciichartpy_extended._utils import _colored
+from asciichartpy_extended._variable_encapsulations import Config, _Params
+from asciichartpy_extended._coloring import _colored
 
 
 def asciiize(*sequences: List[float], config=Config()) -> str:

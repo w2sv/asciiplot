@@ -2,7 +2,7 @@ from typing import Optional, Sequence, Union, Dict
 import math
 import dataclasses
 
-from asciichartpy_extended import colors
+from asciichartpy_extended._coloring import colors
 
 
 _NOT_TO_BE_ALTERED = -1

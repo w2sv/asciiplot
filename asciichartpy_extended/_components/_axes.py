@@ -2,11 +2,10 @@ from typing import List, Union, Optional
 import re
 import dataclasses
 
-from asciichartpy_extended._utils import _colored
+from asciichartpy_extended._coloring import _colored, colors
 from asciichartpy_extended._types import _ChartGrid
-from asciichartpy_extended._config import Config
-from asciichartpy_extended._params import _Params
-from asciichartpy_extended import colors
+from asciichartpy_extended._variable_encapsulations._config import Config
+from asciichartpy_extended._variable_encapsulations._params import _Params
 
 
 def _y_axis_comprising_chart(chart: _ChartGrid, config: Config, params: _Params) -> _ChartGrid:

@@ -4,9 +4,8 @@ import dataclasses
 import math
 import itertools
 
-
 from asciichartpy_extended._types import _Sequences
-from asciichartpy_extended._config import Config, _NOT_TO_BE_ALTERED
+from asciichartpy_extended._variable_encapsulations._config import Config, _NOT_TO_BE_ALTERED
 
 
 @dataclasses.dataclass

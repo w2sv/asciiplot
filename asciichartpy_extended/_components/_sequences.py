@@ -3,10 +3,10 @@ import math
 from functools import partial
 import itertools
 
-from asciichartpy_extended._utils import _colored
-from asciichartpy_extended._params import _Params
+from asciichartpy_extended._coloring import _colored
+from asciichartpy_extended._variable_encapsulations._params import _Params
 from asciichartpy_extended._types import _Sequences, _ChartGrid
-from asciichartpy_extended._config import Config
+from asciichartpy_extended._variable_encapsulations._config import Config
 
 
 # ---------------
