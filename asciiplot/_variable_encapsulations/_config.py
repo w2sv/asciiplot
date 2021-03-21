@@ -1,6 +1,6 @@
 from typing import Optional, Union, Sequence
 
-from asciichartpy_extended._coloring import colors
+from asciiplot._coloring import colors
 
 
 class Config:

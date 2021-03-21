@@ -2,11 +2,11 @@ from typing import List
 
 import shutil
 
-from asciichartpy_extended._components._sequences import _add_sequences, _stretched_sequences
-from asciichartpy_extended._components._axes import _add_x_axis, _y_axis_comprising_chart, _x_label_row
-from asciichartpy_extended._types import _Sequences, _ChartGrid
-from asciichartpy_extended._variable_encapsulations import Config, _Params
-from asciichartpy_extended._coloring import _colored
+from asciiplot._components._sequences import _add_sequences, _stretched_sequences
+from asciiplot._components._axes import _add_x_axis, _y_axis_comprising_chart, _x_label_row
+from asciiplot._types import _Sequences, _ChartGrid
+from asciiplot._variable_encapsulations import Config, _Params
+from asciiplot._coloring import _colored
 
 
 def asciiize(*sequences: List[float], config=Config()) -> str:

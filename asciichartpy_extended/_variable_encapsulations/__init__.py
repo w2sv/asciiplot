@@ -1,2 +1,0 @@
-from asciichartpy_extended._variable_encapsulations._config import Config
-from asciichartpy_extended._variable_encapsulations._params import _Params

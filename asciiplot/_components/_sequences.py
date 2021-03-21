@@ -2,10 +2,10 @@ from typing import List
 import math
 import itertools
 
-from asciichartpy_extended._coloring import _colored
-from asciichartpy_extended._variable_encapsulations._params import _Params
-from asciichartpy_extended._variable_encapsulations._config import Config
-from asciichartpy_extended._types import _Sequences, _ChartGrid, _Sequence
+from asciiplot._coloring import _colored
+from asciiplot._variable_encapsulations._params import _Params
+from asciiplot._variable_encapsulations._config import Config
+from asciiplot._types import _Sequences, _ChartGrid, _Sequence
 
 
 # ---------------

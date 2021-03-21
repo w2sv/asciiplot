@@ -1,10 +1,10 @@
 from typing import List, Union, Optional
 import re
 
-from asciichartpy_extended._coloring import _colored, colors
-from asciichartpy_extended._types import _ChartGrid
-from asciichartpy_extended._variable_encapsulations._config import Config
-from asciichartpy_extended._variable_encapsulations._params import _Params
+from asciiplot._coloring import _colored, colors
+from asciiplot._types import _ChartGrid
+from asciiplot._variable_encapsulations._config import Config
+from asciiplot._variable_encapsulations._params import _Params
 
 
 # -----------------

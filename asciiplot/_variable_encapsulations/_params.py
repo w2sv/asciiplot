@@ -2,8 +2,8 @@ from typing import List
 import math
 import itertools
 
-from asciichartpy_extended._types import _Sequences
-from asciichartpy_extended._variable_encapsulations._config import Config
+from asciiplot._types import _Sequences
+from asciiplot._variable_encapsulations._config import Config
 
 
 class _Params:

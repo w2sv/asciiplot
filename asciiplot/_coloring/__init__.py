@@ -1,4 +1,4 @@
-from asciichartpy_extended._coloring import colors
+from asciiplot._coloring import colors
 
 
 def _colored(string: str, color: str) -> str:
