@@ -9,17 +9,17 @@ from asciichartpy_extended._coloring import colors
 
 
 if __name__ == '__main__':
-    p = asciiize([16, 13, 2, 19], config=Config(
+    p = asciiize([-1, 5, -30, 9], config=Config(
         y_axis_description='SWAG',
+        x_axis_description='FLOWYO',
         y_label_decimal_places=1,
-        columns_between_points=3,
-        n_plot_rows=3,
+        columns_between_points=100,
+        n_plot_rows=7,
         sequence_colors=[colors.RED, colors.GREEN],
-        display_x_axis=True,
         title='SICKPLOT',
-        x_labels={0: 0, 1: 1, 2: 2, 3: 9},
+        x_labels=[None, None, 4, 8],
         axis_description_color=colors.GREEN,
-        x_axis_label_color=colors.MAGENTA
+        label_color=colors.MAGENTA
     ))
 
     print(p)

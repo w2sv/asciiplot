@@ -7,8 +7,8 @@ from asciichartpy_extended._variable_encapsulations._config import Config
 
 
 class _Params:
-    def __init__(self, sequences: _Sequences, config: Config, definition_area_magnitude: int):
-        self.definition_area_magnitude: int = definition_area_magnitude
+    def __init__(self, sequences: _Sequences, config: Config, domain_of_definition_length: int):
+        self.domain_of_definition_length: int = domain_of_definition_length
 
         # sequence value extrema
         finite_values = list(filter(math.isfinite, itertools.chain(*sequences)))
@@ -22,8 +22,8 @@ class _Params:
         self.delta_row_index_per_y: float = config.n_plot_rows / [1, self.y_value_spread][bool(self.y_value_spread)]
 
         # label parameters
-        self.labels: List[str] = self._compute_labels(config)
-        self.label_columns: int = max(map(len, self.labels))
+        self.y_labels: List[str] = self._compute_labels(config)
+        self.label_columns: int = max(map(len, self.y_labels))
 
         # widths
         self.plot_width: int = max(map(len, sequences))

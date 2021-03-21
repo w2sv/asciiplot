@@ -1,5 +1,7 @@
 from typing import List
 
+import shutil
+
 from asciichartpy_extended._components._sequences import _add_sequences, _stretched_sequences
 from asciichartpy_extended._components._axes import _add_x_axis, _y_axis_comprising_chart, _x_label_row
 from asciichartpy_extended._types import _Sequences, _ChartGrid
@@ -8,14 +10,21 @@ from asciichartpy_extended._coloring import _colored
 
 
 def asciiize(*sequences: List[float], config=Config()) -> str:
-    definition_area_magnitude = max(map(len, sequences))
+    domain_of_definition_length: int = max(map(len, sequences))
+
+    # raise Value Error if received more x-labels than there are x-values
+    if len(config.x_labels) > domain_of_definition_length:
+        raise ValueError(f"X-labels aren't matching determined domain of definition. Passed sequences comprise "
+                         f"{domain_of_definition_length} distinct x-values, passed {len(config.x_labels)} labels")
 
     # stretch sequences if desired
     if config.columns_between_points:
         sequences = _stretched_sequences(sequences, config.columns_between_points)  # type: ignore
 
     # calculate params, render chart grid
-    params = _Params(sequences, config, definition_area_magnitude)
+    params = _Params(sequences, config, domain_of_definition_length)
+    raise_if_occupied_columns_exceeding_terminal_columns(params.total_width)
+
     chart_grid = _create_chart_grid(sequences, config, params)
 
     # add x axis description if desired
@@ -37,6 +46,14 @@ def asciiize(*sequences: List[float], config=Config()) -> str:
     return serialized_chart
 
 
+def raise_if_occupied_columns_exceeding_terminal_columns(occupied_columns: int):
+    n_terminal_columns = shutil.get_terminal_size().columns
+    if occupied_columns > n_terminal_columns:
+        raise ValueError(
+            f'Number of columns occupied by entire plot ({occupied_columns}) '
+            f'exceeding number of terminal columns ({n_terminal_columns})')
+
+
 def _create_chart_grid(sequences: _Sequences, config: Config, params: _Params) -> _ChartGrid:
     """ Creates chart with y-axis and x-axis if desired """
 
@@ -44,8 +61,7 @@ def _create_chart_grid(sequences: _Sequences, config: Config, params: _Params) -
 
     _add_sequences(sequences, chart, config, params)
 
-    if config.display_x_axis:
-        _add_x_axis(chart, config)
+    _add_x_axis(chart, config)
 
     chart = _y_axis_comprising_chart(chart, config, params)
 

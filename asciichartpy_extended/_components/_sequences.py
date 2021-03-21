@@ -4,30 +4,35 @@ import itertools
 
 from asciichartpy_extended._coloring import _colored
 from asciichartpy_extended._variable_encapsulations._params import _Params
-from asciichartpy_extended._types import _Sequences, _ChartGrid
 from asciichartpy_extended._variable_encapsulations._config import Config
+from asciichartpy_extended._types import _Sequences, _ChartGrid, _Sequence
 
 
 # ---------------
 # Padding
 # ---------------
-def _stretched_sequences(sequences: _Sequences, columns_between_points: int) -> _Sequences:
-    """
-    >>> _stretched_sequences([list(range(4))])
-    [[0, 0.3333333333333333, 0.6666666666666666, 1, 1.3333333333333333, 1.6666666666666665, 2, 2.3333333333333335, 2.666666666666667, 3]] """
-
+def _stretched_sequences(sequences: _Sequences, n_fill_points: int) -> _Sequences:
     padded_sequences = []
     for sequence in sequences:
-        padded_sequence = []
-        for i in range(len(sequence[:-1])):
-            padded_sequence.append(sequence[i])
-            padded_sequence.extend(_fill_points(
-                start=sequence[i],
-                end=sequence[i + 1],
-                n=columns_between_points
-            ))
-        padded_sequences.append(padded_sequence + [sequence[-1]])
+        padded_sequences.append(_interpolated_sequence(sequence, n_fill_points))
+
     return tuple(padded_sequences)
+
+
+def _interpolated_sequence(sequence: _Sequence, n_fill_points: int) -> _Sequence:
+    """
+        >>> _interpolated_sequence(list(range(4)), n_fill_points=3)
+        ([0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3],)"""
+
+    padded_sequence = []
+    for i in range(len(sequence[:-1])):
+        padded_sequence.append(sequence[i])
+        padded_sequence.extend(_fill_points(
+            start=sequence[i],
+            end=sequence[i + 1],
+            n=n_fill_points
+        ))
+    return padded_sequence + [sequence[-1]]
 
 
 def _fill_points(start: float, end: float, n: int) -> List[float]:
@@ -38,7 +43,7 @@ def _fill_points(start: float, end: float, n: int) -> List[float]:
         >>> _fill_points(3, 7, n=4)
         [3.8, 4.6, 5.3999999999999995, 6.199999999999999]
         >>> _fill_points(0, 1, 2)
-        [0.3333333333333333, 0.6666666666666666] """
+        [0.3333333333333333, 0.6666666666666666]"""
 
     step_size = (end - start) / (n + 1)
     return list(itertools.accumulate([start] + [step_size] * n))[1:]
@@ -56,8 +61,6 @@ def _add_sequences(sequences: _Sequences, chart: _ChartGrid, config: Config, par
 
     SEGMENTS = ['┼', '─', '╰', '╭', '╮', '╯', '│']
     INIT_VALUE = -1
-
-    print(params.delta_row_index_per_y, params.y_min)
 
     def _row_index(value: float) -> int:
         """ Scales sequence point clamped to desired extrema to
@@ -82,8 +85,9 @@ def _add_sequences(sequences: _Sequences, chart: _ChartGrid, config: Config, par
             set_parcel(_row_index(sequence[0]), SEGMENTS[0])
 
         # asciiize sequence
-        j += 1
-        while j < len(sequence) - 1:
+        while j < len(sequence) - 2:
+            j += 1
+
             y0 = _row_index(sequence[j])
             y1 = _row_index(sequence[j + 1])
 
@@ -103,5 +107,3 @@ def _add_sequences(sequences: _Sequences, chart: _ChartGrid, config: Config, par
                 # value steepness
                 for y in range(min(y0, y1) + 1, max(y0, y1)):
                     set_parcel(y, SEGMENTS[6])
-
-            j += 1

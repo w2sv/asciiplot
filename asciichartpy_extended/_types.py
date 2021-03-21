@@ -1,4 +1,5 @@
 from typing import Sequence, List
 
-_Sequences = Sequence[Sequence[float]]
+_Sequence = List[float]
+_Sequences = Sequence[_Sequence]
 _ChartGrid = List[List[str]]
