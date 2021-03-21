@@ -1,6 +1,5 @@
 from typing import List
 import math
-from functools import partial
 import itertools
 
 from asciichartpy_extended._coloring import _colored
@@ -58,27 +57,34 @@ def _add_sequences(sequences: _Sequences, chart: _ChartGrid, config: Config, par
     SEGMENTS = ['┼', '─', '╰', '╭', '╮', '╯', '│']
     INIT_VALUE = -1
 
-    scaled = partial(_scaled,
-                     desired_minimum=params.target_min,
-                     desired_maximum=params.target_max,
-                     actual_minimum=params.sequence_values_min,
-                     delta_y=params.delta_y)
+    print(params.delta_row_index_per_y, params.y_min)
+
+    def _row_index(value: float) -> int:
+        """ Scales sequence point clamped to desired extrema to
+        corresponding point within chart value range """
+
+        def clamp_to_row_index_bounds(row_index: int) -> int:
+            return max(min(row_index, config.n_plot_rows - 1), 0)
+
+        res = clamp_to_row_index_bounds(row_index=int(round((value - params.y_min) * params.delta_row_index_per_y)))
+        print(value, res)
+        return res
 
     for i, sequence in enumerate(sequences):
         color = config.sequence_colors[i % len(config.sequence_colors)]
         j = INIT_VALUE
 
         def set_parcel(row_subtrahend: int, segment: str):
-            chart[config.plot_height - row_subtrahend][j + 1] = _colored(segment, color)
+            chart[config.n_plot_rows - 1 - row_subtrahend][j + 1] = _colored(segment, color)
 
         # add '┼' at sequence beginning where sequences overlaps with y-axis
         if math.isfinite(sequence[0]):
-            set_parcel(scaled(sequence[0]), SEGMENTS[0])
+            set_parcel(_row_index(sequence[0]), SEGMENTS[0])
 
-        # ascii-ize sequence
+        # asciiize sequence
         while (j := j + 1) < len(sequence) - 1:
-            y0 = scaled(sequence[j])
-            y1 = scaled(sequence[j + 1])
+            y0 = _row_index(sequence[j])
+            y1 = _row_index(sequence[j + 1])
 
             if y0 == y1:
                 set_parcel(y0, SEGMENTS[1])
@@ -96,15 +102,3 @@ def _add_sequences(sequences: _Sequences, chart: _ChartGrid, config: Config, par
                 # value steepness
                 for y in range(min(y0, y1) + 1, max(y0, y1)):
                     set_parcel(y, SEGMENTS[6])
-
-
-def _scaled(value: float,
-            desired_minimum: float,
-            desired_maximum: float,
-            actual_minimum: float,
-            delta_y: float) -> int:
-    """ Scales sequence point clamped to desired extrema to
-    corresponding point within chart value range """
-
-    clamped_value = min(max(value, desired_minimum), desired_maximum)
-    return max(int(round(clamped_value * delta_y) - actual_minimum), 0)

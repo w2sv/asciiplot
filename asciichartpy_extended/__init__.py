@@ -9,11 +9,11 @@ from asciichartpy_extended._coloring import colors
 
 
 if __name__ == '__main__':
-    p = asciiize([3, 2, 9, 5, 7, 3], config=Config(
+    p = asciiize([16, 13, 2, 19], config=Config(
         y_axis_description='SWAG',
-        y_label_decimal_places=2,
-        columns_between_points=1,
-        plot_height=5,
+        y_label_decimal_places=1,
+        columns_between_points=3,
+        n_plot_rows=3,
         sequence_colors=[colors.RED, colors.GREEN],
         display_x_axis=True,
         title='SICKPLOT',

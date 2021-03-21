@@ -17,7 +17,7 @@ def _y_axis_comprising_chart(chart: _ChartGrid, config: Config, params: _Params)
         '|': '┼'
     }
 
-    for i in range(config.plot_height + 1):
+    for i in range(config.n_plot_rows):
         if (parcel := chart[i][0]) == ' ':
             chart[i][0] = '┤'
         else:

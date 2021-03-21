@@ -17,7 +17,7 @@ def asciiize(*sequences: List[float], config=Config()) -> str:
 
     # calculate params, render chart grid
     params = _Params(sequences, config, definition_area_magnitude)
-    chart_grid = _render_chart_grid(sequences, config, params)
+    chart_grid = _create_chart_grid(sequences, config, params)
 
     # add x axis description if desired
     if config.x_axis_description:
@@ -38,10 +38,10 @@ def asciiize(*sequences: List[float], config=Config()) -> str:
     return serialized_chart
 
 
-def _render_chart_grid(sequences: _Sequences, config: Config, params: _Params) -> _ChartGrid:
+def _create_chart_grid(sequences: _Sequences, config: Config, params: _Params) -> _ChartGrid:
     """ Creates chart with y-axis and x-axis if desired """
 
-    chart = [[' '] * params.plot_width for _ in range(config.plot_height + 1)]
+    chart = [[' '] * params.plot_width for _ in range(config.n_plot_rows)]
 
     _add_sequences(sequences, chart, config, params)
 
