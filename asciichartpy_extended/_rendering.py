@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import List
 
 from asciichartpy_extended._components._sequences import _add_sequences, _stretched_sequences

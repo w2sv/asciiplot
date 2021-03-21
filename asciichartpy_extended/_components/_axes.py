@@ -1,6 +1,5 @@
 from typing import List, Union, Optional
 import re
-import dataclasses
 
 from asciichartpy_extended._coloring import _colored, colors
 from asciichartpy_extended._types import _ChartGrid
@@ -18,7 +17,8 @@ def _y_axis_comprising_chart(chart: _ChartGrid, config: Config, params: _Params)
     }
 
     for i in range(config.n_plot_rows):
-        if (parcel := chart[i][0]) == ' ':
+        parcel = chart[i][0]
+        if parcel == ' ':
             chart[i][0] = '┤'
         else:
             chart[i][0] = extract_color(parcel) + SEGMENT_REPLACEMENTS.get(colorless_segment(parcel), parcel) + colors.RESET
@@ -63,7 +63,8 @@ def _add_x_axis(chart: _ChartGrid, config: Config):
             else:
                 last_row[i] = SEGMENTS[3]
         elif _is_data_point:
-            if color := extract_color(parcel):
+            color = extract_color(parcel)
+            if color:
                 parcel = colorless_segment(parcel)
 
             last_row[i] = color + SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE.get(parcel, parcel) + colors.RESET
@@ -77,7 +78,8 @@ def extract_color(parcel: str) -> str:
     '\033[30m'
     >>> extract_color(parcel='┤') """
 
-    if len((ansi_sequences := re.findall(_ANSI_ESCAPE_PATTERN, parcel))):
+    ansi_sequences = re.findall(_ANSI_ESCAPE_PATTERN, parcel)
+    if len(ansi_sequences):
         return ansi_sequences[0]
     return ''
 
@@ -91,14 +93,9 @@ def colorless_segment(parcel: str):
     return re.split(_ANSI_ESCAPE_PATTERN, parcel)[1]
 
 
-@dataclasses.dataclass
 class _Label:
     """ Serving the creation of helper objects facilitating the computation
     of whitespace sequences in between labels """
-
-    label: str
-    negative_protrusion: int  # n columns occupied towards the left starting from tick column
-    positive_protrusion: int  # n columns occupied towards the right starting from tick column
 
     def __init__(self, description: Optional[Union[str, int]], color=colors.WHITE):
         """ Initialize such that center of sequentialized label right beneath tick
@@ -112,8 +109,8 @@ class _Label:
         tick(label='234', negative_protrusion=0, positive_protrusion=0) """
 
         self.label: str
-        self.negative_protrusion: int
-        self.positive_protrusion: int
+        self.negative_protrusion: int  # n columns occupied towards the left starting from tick column
+        self.positive_protrusion: int  # n columns occupied towards the right starting from tick column
 
         if description:
             label = str(description)

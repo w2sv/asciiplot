@@ -82,7 +82,8 @@ def _add_sequences(sequences: _Sequences, chart: _ChartGrid, config: Config, par
             set_parcel(_row_index(sequence[0]), SEGMENTS[0])
 
         # asciiize sequence
-        while (j := j + 1) < len(sequence) - 1:
+        j += 1
+        while j < len(sequence) - 1:
             y0 = _row_index(sequence[j])
             y1 = _row_index(sequence[j + 1])
 
@@ -102,3 +103,5 @@ def _add_sequences(sequences: _Sequences, chart: _ChartGrid, config: Config, par
                 # value steepness
                 for y in range(min(y0, y1) + 1, max(y0, y1)):
                     set_parcel(y, SEGMENTS[6])
+
+            j += 1
