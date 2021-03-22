@@ -10,6 +10,7 @@ from asciiplot._coloring import colors
 
 if __name__ == '__main__':
     p = asciiize([-1, 5, -30, 9], config=Config(
+        # label_column_offset=20,
         y_axis_description='SWAG',
         x_axis_description='FLOWYO',
         y_label_decimal_places=1,

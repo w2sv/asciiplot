@@ -26,7 +26,7 @@ def _y_axis_comprising_chart(chart: _ChartGrid, config: Config, params: _Params)
         else:
             chart[i][0] = extract_color(parcel) + SEGMENT_REPLACEMENTS.get(colorless_segment(parcel), parcel) + colors.RESET
 
-    return [[_colored(label.rjust(params.label_columns), config.label_color)] + row for label, row in zip(params.y_labels, chart)]
+    return [[_colored(label.rjust(params.n_label_column_columns), config.label_color)] + row for label, row in zip(params.y_labels, chart)]
 
 
 # -----------------

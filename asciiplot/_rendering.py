@@ -2,11 +2,15 @@ from typing import List
 
 import shutil
 
+from asciiplot import _utils
+from asciiplot._types import _Sequences, _ChartGrid
+from asciiplot._coloring import _colored
 from asciiplot._components._sequences import _add_sequences, _stretched_sequences
 from asciiplot._components._axes import _add_x_axis, _y_axis_comprising_chart, _x_label_row
-from asciiplot._types import _Sequences, _ChartGrid
 from asciiplot._variable_encapsulations import Config, _Params
-from asciiplot._coloring import _colored
+
+
+_n_terminal_columns = shutil.get_terminal_size().columns
 
 
 def asciiize(*sequences: List[float], config=Config()) -> str:
@@ -21,7 +25,7 @@ def asciiize(*sequences: List[float], config=Config()) -> str:
     if config.columns_between_points:
         sequences = _stretched_sequences(sequences, config.columns_between_points)  # type: ignore
 
-    # calculate params, render chart grid
+    # calculate params, create chart grid
     params = _Params(sequences, config, domain_of_definition_length)
     raise_if_occupied_columns_exceeding_terminal_columns(params.total_width)
 
@@ -31,14 +35,13 @@ def asciiize(*sequences: List[float], config=Config()) -> str:
     if config.x_axis_description:
         chart_grid[-1] += [' ' + _colored(config.x_axis_description, config.axis_description_color)]
 
+    # center chart if desired
     if config.center_plot:
-        n_whitespaces = shutil.get_terminal_size().columns // 2 - params.total_width // 2
-        margin = ' ' * n_whitespaces
+        n_whitespaces = _utils.centering_indentation_len(_n_terminal_columns, params.total_width)
+        centering_margin = ' ' * n_whitespaces
 
-        [row.insert(0, margin) for row in chart_grid]
-
+        [row.insert(0, centering_margin) for row in chart_grid]
         params.horizontal_y_axis_offset += n_whitespaces
-        params.total_width += n_whitespaces
 
     # serialize chart
     serialized_chart = _serialize_chart(chart=chart_grid)
@@ -56,11 +59,11 @@ def asciiize(*sequences: List[float], config=Config()) -> str:
 
 
 def raise_if_occupied_columns_exceeding_terminal_columns(occupied_columns: int):
-    n_terminal_columns = shutil.get_terminal_size().columns
-    if occupied_columns > n_terminal_columns:
+    if occupied_columns > _n_terminal_columns:
         raise ValueError(
             f'Number of columns occupied by entire plot ({occupied_columns}) '
-            f'exceeding number of terminal columns ({n_terminal_columns})')
+            f'exceeding number of terminal columns ({_n_terminal_columns})'
+        )
 
 
 def _create_chart_grid(sequences: _Sequences, config: Config, params: _Params) -> _ChartGrid:
@@ -90,4 +93,4 @@ def _title_header(config: Config, params: _Params) -> str:
             aptly indented title header with successive newline """
 
     assert config.title is not None
-    return ' ' * ((params.plot_width // 2) + params.horizontal_y_axis_offset - len(config.title) // 2) + config.title + '\n'
+    return ' ' * (_utils.centering_indentation_len(params.plot_width, len(config.title)) + params.horizontal_y_axis_offset) + config.title + '\n'

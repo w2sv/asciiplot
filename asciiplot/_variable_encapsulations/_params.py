@@ -23,13 +23,15 @@ class _Params:
 
         # label parameters
         self.y_labels: List[str] = self._compute_labels(config)
-        self.label_columns: int = max(map(len, self.y_labels))
+        self.n_label_column_columns: int = max(map(len, self.y_labels))
 
         # widths
         self.plot_width: int = max(map(len, sequences))
+        self.horizontal_y_axis_offset: int = self.n_label_column_columns + config.label_column_offset
 
-        self.horizontal_y_axis_offset: int = self.label_columns + config.label_column_offset
-        self.total_width: int = self.horizontal_y_axis_offset + self.plot_width
+    @property
+    def total_width(self) -> int:
+        return self.horizontal_y_axis_offset + self.plot_width
 
     def _compute_labels(self, config: Config) -> List[str]:
         label_strings: List[str] = []
