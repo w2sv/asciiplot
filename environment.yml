@@ -4,5 +4,6 @@ channels:
   - defaults
 dependencies:
   - python=3.6
+  - colored=1.4.2
   - mypy
   - pytest

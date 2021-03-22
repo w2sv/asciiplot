@@ -1,16 +1,16 @@
 from typing import List, Union, Optional
 import re
 
+from asciiplot import _types
 from asciiplot._utils import colored, RESET_COLOR
-from asciiplot._types import _ChartGrid
 from asciiplot._variable_encapsulations._config import Config
-from asciiplot._variable_encapsulations._params import _Params
+from asciiplot._variable_encapsulations._params import Params
 
 
 # -----------------
 # Y-Axis with Labels
 # -----------------
-def _y_axis_comprising_chart(chart: _ChartGrid, config: Config, params: _Params) -> _ChartGrid:
+def y_axis_comprising_chart(chart: _types.ChartGrid, config: Config, params: Params) -> _types.ChartGrid:
     """ Returns:
             y-axis comprising chart grid """
 
@@ -24,7 +24,7 @@ def _y_axis_comprising_chart(chart: _ChartGrid, config: Config, params: _Params)
         if parcel == ' ':
             chart[i][0] = '┤'
         else:
-            chart[i][0] = extract_color(parcel) + SEGMENT_REPLACEMENTS.get(colorless_segment(parcel), parcel) + RESET_COLOR
+            chart[i][0] = _extract_color(parcel) + SEGMENT_REPLACEMENTS.get(_colorless_segment(parcel), parcel) + RESET_COLOR
 
     return [[colored(label.rjust(params.n_label_column_columns), config.label_color)] + row for label, row in zip(params.y_labels, chart)]
 
@@ -32,7 +32,7 @@ def _y_axis_comprising_chart(chart: _ChartGrid, config: Config, params: _Params)
 # -----------------
 # X-Axis
 # -----------------
-def _add_x_axis(chart: _ChartGrid, config: Config):
+def add_x_axis(chart: _types.ChartGrid, config: Config):
     """ Adds x-axis to chart """
 
     SEGMENTS = ['┼', '┤', '┬', '─']
@@ -53,7 +53,7 @@ def _add_x_axis(chart: _ChartGrid, config: Config):
 
     last_row = chart[-1]
 
-    if not extract_color(last_row[0]):
+    if not _extract_color(last_row[0]):
         last_row[0] = SEGMENTS[0]
 
     for i, parcel in enumerate(last_row):
@@ -69,20 +69,20 @@ def _add_x_axis(chart: _ChartGrid, config: Config):
             else:
                 last_row[i] = SEGMENTS[3]
         elif _is_data_point:
-            color = extract_color(parcel)
+            color = _extract_color(parcel)
             if color:
-                parcel = colorless_segment(parcel)
+                parcel = _colorless_segment(parcel)
 
             last_row[i] = color + SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE.get(parcel, parcel) + RESET_COLOR
 
 
 _ANSI_ESCAPE_PATTERN = re.compile(r'\x1b[^m]*m')
 
-def extract_color(parcel: str) -> str:
+def _extract_color(parcel: str) -> str:
     """
-    >>> extract_color(parcel=f'{colors.CYAN}-{colors.RESET}')
+    >>> _extract_color(parcel=f'{colors.CYAN}-{colors.RESET}')
     '\x1b[36m'
-    >>> extract_color(parcel='┤')
+    >>> _extract_color(parcel='┤')
     '' """
 
     ansi_sequences = re.findall(_ANSI_ESCAPE_PATTERN, parcel)
@@ -91,10 +91,10 @@ def extract_color(parcel: str) -> str:
     return ''
 
 
-def colorless_segment(parcel: str):
+def _colorless_segment(parcel: str):
     """ Assumes color presence
 
-    >>> colorless_segment(parcel='\033[30m-\033[0m')
+    >>> _colorless_segment(parcel='\033[30m-\033[0m')
     '-' """
 
     return re.split(_ANSI_ESCAPE_PATTERN, parcel)[1]
@@ -133,7 +133,7 @@ class _Label:
             self.negative_protrusion = self.positive_protrusion = 0
 
 
-def _x_label_row(config: Config, params: _Params) -> str:
+def x_label_row(config: Config, params: Params) -> str:
     """ Returns:
             x-label-row indented according to label_column_offset """
 

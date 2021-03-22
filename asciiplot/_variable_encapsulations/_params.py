@@ -2,13 +2,13 @@ from typing import List
 import math
 import itertools
 
-from asciiplot._types import _Sequences
+from asciiplot import _types
 from asciiplot._variable_encapsulations._config import Config
 
 
-class _Params:
-    def __init__(self, sequences: _Sequences, config: Config, domain_of_definition_length: int):
-        self.domain_of_definition_length: int = domain_of_definition_length
+class Params:
+    def __init__(self, sequences: _types.Sequences, config: Config):
+        self.domain_of_definition_length: int = max(map(len, sequences))
 
         # sequence value extrema
         finite_values = list(filter(math.isfinite, itertools.chain(*sequences)))

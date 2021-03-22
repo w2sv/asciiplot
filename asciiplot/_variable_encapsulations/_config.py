@@ -2,22 +2,23 @@ from typing import Optional, Union, Sequence
 
 
 class Config:
-    def __init__(self,
-                 n_plot_rows: int = 5,
-                 label_column_offset: int = 0,
-                 columns_between_points: int = 0,
+    def __init__(
+            self,
+            n_plot_rows: int,
+            label_column_offset: int,
+            columns_between_points: int,
 
-                 sequence_colors: Sequence[str] = 'WHITE',
-                 axis_description_color: str = 'WHITE',
-                 label_color: str = 'WHITE',
+            sequence_colors: Sequence[str],
+            axis_description_color: str,
+            label_color: str,
 
-                 x_labels: Optional[Sequence[Optional[Union[str, float]]]] = None,
-                 x_axis_description: str = '',
-                 y_label_decimal_places: int = 1,
-                 y_axis_description: str = '',
+            x_labels: Optional[Sequence[Optional[Union[str, float]]]],
+            x_axis_description: str,
+            y_label_decimal_places: int,
+            y_axis_description: str,
 
-                 title: Optional[str] = None,
-                 center_plot: bool = False):
+            title: Optional[str],
+            center_plot: bool):
 
         self.n_plot_rows = n_plot_rows
         self.label_column_offset = label_column_offset

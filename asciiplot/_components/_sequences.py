@@ -2,16 +2,15 @@ from typing import List
 import math
 import itertools
 
+from asciiplot import _types
 from asciiplot._utils import colored
-from asciiplot._variable_encapsulations._params import _Params
-from asciiplot._variable_encapsulations._config import Config
-from asciiplot._types import _Sequences, _ChartGrid, _Sequence
+from asciiplot._variable_encapsulations import Params, Config
 
 
 # ---------------
 # Padding
 # ---------------
-def _stretched_sequences(sequences: _Sequences, n_fill_points: int) -> _Sequences:
+def stretched_sequences(sequences: _types.Sequences, n_fill_points: int) -> _types.Sequences:
     padded_sequences = []
     for sequence in sequences:
         padded_sequences.append(_interpolated_sequence(sequence, n_fill_points))
@@ -19,7 +18,7 @@ def _stretched_sequences(sequences: _Sequences, n_fill_points: int) -> _Sequence
     return tuple(padded_sequences)
 
 
-def _interpolated_sequence(sequence: _Sequence, n_fill_points: int) -> _Sequence:
+def _interpolated_sequence(sequence: _types.Sequence, n_fill_points: int) -> _types.Sequence:
     """
         >>> _interpolated_sequence(list(range(4)), n_fill_points=3)
         ([0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3],)"""
@@ -52,7 +51,7 @@ def _fill_points(start: float, end: float, n: int) -> List[float]:
 # ---------------
 # Rendering
 # ---------------
-def _add_sequences(sequences: _Sequences, chart: _ChartGrid, config: Config, params: _Params):
+def add_sequences(sequences: _types.Sequences, chart: _types.ChartGrid, config: Config, params: Params):
     """ Adds ascii-ized sequences to chart
 
         Returns:
