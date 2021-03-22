@@ -18,7 +18,8 @@ class Config:
                  y_label_decimal_places: int = 1,
                  y_axis_description: str = '',
 
-                 title: Optional[str] = None):
+                 title: Optional[str] = None,
+                 center_plot: bool = False):
 
         self.n_plot_rows = n_plot_rows
         self.label_column_offset = label_column_offset
@@ -34,3 +35,4 @@ class Config:
         self.y_label_decimal_places = y_label_decimal_places
 
         self.title = title
+        self.center_plot = center_plot

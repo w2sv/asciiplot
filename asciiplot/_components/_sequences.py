@@ -69,9 +69,7 @@ def _add_sequences(sequences: _Sequences, chart: _ChartGrid, config: Config, par
         def clamp_to_row_index_bounds(row_index: int) -> int:
             return max(min(row_index, config.n_plot_rows - 1), 0)
 
-        res = clamp_to_row_index_bounds(row_index=int(round((value - params.y_min) * params.delta_row_index_per_y)))
-        print(value, res)
-        return res
+        return clamp_to_row_index_bounds(row_index=int(round((value - params.y_min) * params.delta_row_index_per_y)))
 
     for i, sequence in enumerate(sequences):
         color = config.sequence_colors[i % len(config.sequence_colors)]

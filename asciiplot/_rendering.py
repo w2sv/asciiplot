@@ -31,6 +31,15 @@ def asciiize(*sequences: List[float], config=Config()) -> str:
     if config.x_axis_description:
         chart_grid[-1] += [' ' + _colored(config.x_axis_description, config.axis_description_color)]
 
+    if config.center_plot:
+        n_whitespaces = shutil.get_terminal_size().columns // 2 - params.total_width // 2
+        margin = ' ' * n_whitespaces
+
+        chart_grid = [row.insert(0, margin) for row in chart_grid]
+
+        params.horizontal_y_axis_offset += n_whitespaces
+        params.total_width += n_whitespaces
+
     # serialize chart
     serialized_chart = _serialize_chart(chart=chart_grid)
 
