@@ -35,7 +35,7 @@ def asciiize(*sequences: List[float], config=Config()) -> str:
         n_whitespaces = shutil.get_terminal_size().columns // 2 - params.total_width // 2
         margin = ' ' * n_whitespaces
 
-        chart_grid = [row.insert(0, margin) for row in chart_grid]
+        [row.insert(0, margin) for row in chart_grid]
 
         params.horizontal_y_axis_offset += n_whitespaces
         params.total_width += n_whitespaces

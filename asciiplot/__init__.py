@@ -13,13 +13,14 @@ if __name__ == '__main__':
         y_axis_description='SWAG',
         x_axis_description='FLOWYO',
         y_label_decimal_places=1,
-        columns_between_points=5,
+        columns_between_points=20,
         n_plot_rows=7,
         sequence_colors=[colors.RED, colors.GREEN],
         title='SICKPLOT',
         x_labels=[None, None, 4, 8],
         axis_description_color=colors.GREEN,
-        label_color=colors.MAGENTA
+        label_color=colors.MAGENTA,
+        center_plot=True
     ))
 
     print(p)
