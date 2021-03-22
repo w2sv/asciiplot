@@ -1,7 +1,7 @@
 from typing import List, Union, Optional
 import re
 
-from asciiplot._coloring import _colored, colors
+from asciiplot._utils import colored, RESET_COLOR
 from asciiplot._types import _ChartGrid
 from asciiplot._variable_encapsulations._config import Config
 from asciiplot._variable_encapsulations._params import _Params
@@ -24,9 +24,9 @@ def _y_axis_comprising_chart(chart: _ChartGrid, config: Config, params: _Params)
         if parcel == ' ':
             chart[i][0] = '┤'
         else:
-            chart[i][0] = extract_color(parcel) + SEGMENT_REPLACEMENTS.get(colorless_segment(parcel), parcel) + colors.RESET
+            chart[i][0] = extract_color(parcel) + SEGMENT_REPLACEMENTS.get(colorless_segment(parcel), parcel) + RESET_COLOR
 
-    return [[_colored(label.rjust(params.n_label_column_columns), config.label_color)] + row for label, row in zip(params.y_labels, chart)]
+    return [[colored(label.rjust(params.n_label_column_columns), config.label_color)] + row for label, row in zip(params.y_labels, chart)]
 
 
 # -----------------
@@ -73,7 +73,7 @@ def _add_x_axis(chart: _ChartGrid, config: Config):
             if color:
                 parcel = colorless_segment(parcel)
 
-            last_row[i] = color + SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE.get(parcel, parcel) + colors.RESET
+            last_row[i] = color + SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE.get(parcel, parcel) + RESET_COLOR
 
 
 _ANSI_ESCAPE_PATTERN = re.compile(r'\x1b[^m]*m')
@@ -127,7 +127,7 @@ class _Label:
             is_of_even_length: bool = len(label) % 2 == 0
             self.negative_protrusion = len(label) // 2 - int(is_of_even_length)
             self.positive_protrusion = self.negative_protrusion + int(is_of_even_length)
-            self.label = _colored(label, color) if color else label
+            self.label = colored(label, color) if color else label
         else:
             self.label = ' '
             self.negative_protrusion = self.positive_protrusion = 0
@@ -155,7 +155,7 @@ def _x_label_row(config: Config, params: _Params) -> str:
     # add consecutive ticks
     for i in range(1, len(labels)):
         n_whitespaces = compute_n_whitespaces(preceding_tick=labels[i-1], tick=labels[i], tick_index=i)
-        label_row += f'{" " * n_whitespaces}{_colored(labels[i].label, config.label_color)}'
+        label_row += f'{" " * n_whitespaces}{colored(labels[i].label, config.label_color)}'
 
     return ' ' * (params.horizontal_y_axis_offset - labels[0].negative_protrusion) + label_row
 

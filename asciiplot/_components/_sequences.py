@@ -2,7 +2,7 @@ from typing import List
 import math
 import itertools
 
-from asciiplot._coloring import _colored
+from asciiplot._utils import colored
 from asciiplot._variable_encapsulations._params import _Params
 from asciiplot._variable_encapsulations._config import Config
 from asciiplot._types import _Sequences, _ChartGrid, _Sequence
@@ -76,7 +76,7 @@ def _add_sequences(sequences: _Sequences, chart: _ChartGrid, config: Config, par
         j = INIT_VALUE
 
         def set_parcel(row_subtrahend: int, segment: str):
-            chart[config.n_plot_rows - 1 - row_subtrahend][j + 1] = _colored(segment, color)
+            chart[config.n_plot_rows - 1 - row_subtrahend][j + 1] = colored(segment, color)
 
         # add '┼' at sequence beginning where sequences overlaps with y-axis
         if math.isfinite(sequence[0]):

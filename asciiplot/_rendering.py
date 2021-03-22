@@ -2,9 +2,8 @@ from typing import List
 
 import shutil
 
-from asciiplot import _utils
+from asciiplot._utils import colored, centering_indentation_len
 from asciiplot._types import _Sequences, _ChartGrid
-from asciiplot._coloring import _colored
 from asciiplot._components._sequences import _add_sequences, _stretched_sequences
 from asciiplot._components._axes import _add_x_axis, _y_axis_comprising_chart, _x_label_row
 from asciiplot._variable_encapsulations import Config, _Params
@@ -33,11 +32,11 @@ def asciiize(*sequences: List[float], config=Config()) -> str:
 
     # add x axis description if desired
     if config.x_axis_description:
-        chart_grid[-1] += [' ' + _colored(config.x_axis_description, config.axis_description_color)]
+        chart_grid[-1] += [' ' + colored(config.x_axis_description, config.axis_description_color)]
 
     # center chart if desired
     if config.center_plot:
-        n_whitespaces = _utils.centering_indentation_len(_n_terminal_columns, params.total_width)
+        n_whitespaces = centering_indentation_len(_n_terminal_columns, params.total_width)
         centering_margin = ' ' * n_whitespaces
 
         [row.insert(0, centering_margin) for row in chart_grid]
@@ -48,7 +47,7 @@ def asciiize(*sequences: List[float], config=Config()) -> str:
 
     # add desired chart ornaments
     if config.y_axis_description:
-        description_row = ' ' * (params.horizontal_y_axis_offset - len(config.y_axis_description) // 2) + _colored(config.y_axis_description, config.axis_description_color) + '\n'
+        description_row = ' ' * (params.horizontal_y_axis_offset - len(config.y_axis_description) // 2) + colored(config.y_axis_description, config.axis_description_color) + '\n'
         serialized_chart = description_row + serialized_chart
     if config.title:
         serialized_chart = _title_header(config, params) + serialized_chart
@@ -69,7 +68,7 @@ def raise_if_occupied_columns_exceeding_terminal_columns(occupied_columns: int):
 def _create_chart_grid(sequences: _Sequences, config: Config, params: _Params) -> _ChartGrid:
     """ Creates chart with y-axis and x-axis if desired """
 
-    chart = [[' '] * params.plot_width for _ in range(config.n_plot_rows)]
+    chart = [[' '] * params.chart_width for _ in range(config.n_plot_rows)]
 
     _add_sequences(sequences, chart, config, params)
 
@@ -93,4 +92,4 @@ def _title_header(config: Config, params: _Params) -> str:
             aptly indented title header with successive newline """
 
     assert config.title is not None
-    return ' ' * (_utils.centering_indentation_len(params.plot_width, len(config.title)) + params.horizontal_y_axis_offset) + config.title + '\n'
+    return ' ' * (centering_indentation_len(params.chart_width, len(config.title)) + params.horizontal_y_axis_offset) + config.title + '\n'

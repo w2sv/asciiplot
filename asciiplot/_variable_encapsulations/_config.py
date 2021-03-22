@@ -1,7 +1,5 @@
 from typing import Optional, Union, Sequence
 
-from asciiplot._coloring import colors
-
 
 class Config:
     def __init__(self,
@@ -9,9 +7,9 @@ class Config:
                  label_column_offset: int = 0,
                  columns_between_points: int = 0,
 
-                 sequence_colors: Sequence[str] = colors.WHITE,
-                 axis_description_color: str = colors.WHITE,
-                 label_color: str = colors.WHITE,
+                 sequence_colors: Sequence[str] = 'WHITE',
+                 axis_description_color: str = 'WHITE',
+                 label_color: str = 'WHITE',
 
                  x_labels: Optional[Sequence[Optional[Union[str, float]]]] = None,
                  x_axis_description: str = '',
