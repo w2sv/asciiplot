@@ -13,5 +13,5 @@ logging.txt
 
 # Build
 /build/
-/asciichartpy_extended.egg-info/
+/asciiplot.egg-info/
 /dist/

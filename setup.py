@@ -10,6 +10,7 @@ setup(
     packages=find_packages(exclude=(["*.tests", "*.tests.*", "tests.*", "tests"])),
     version=version['__version__'],
     python_requires='>=3.6',
+    install_requires=['colored==1.4.2'],
     author='W2SV',
     author_email='zangenbergjanek@googlemail.com',
     platforms=['Linux', 'Windows', 'MacOS']

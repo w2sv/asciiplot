@@ -18,7 +18,7 @@ def asciiize(
         n_plot_rows: int = 5,
         columns_between_points: int = 0,
 
-        sequence_colors: Sequence[str] = (_DEFAULT_COLOR),
+        sequence_colors: Sequence[str] = tuple([_DEFAULT_COLOR]),
         label_color: str = _DEFAULT_COLOR,
 
         x_labels: Optional[Sequence[Optional[Union[str, float]]]] = None,
@@ -29,7 +29,7 @@ def asciiize(
         axis_description_color: str = _DEFAULT_COLOR,
 
         title: Optional[str] = None,
-        title_color: _DEFAULT_COLOR,
+        title_color: str = _DEFAULT_COLOR,
 
         label_column_offset: int = 0,
         center_plot: bool = False) -> str:
