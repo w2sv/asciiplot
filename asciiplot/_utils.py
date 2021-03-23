@@ -14,4 +14,4 @@ RESET_COLOR: str = _colored.style.RESET
 
 
 def colored(string: str, color: str) -> str:
-    return getattr(_colored.fore, color) + string + RESET_COLOR
+    return _colored.fg(_colored.colors.names.index(color)) + string + RESET_COLOR
