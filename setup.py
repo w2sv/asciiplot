@@ -10,7 +10,7 @@ setup(
     packages=find_packages(exclude=(["*.tests", "*.tests.*", "tests.*", "tests"])),
     version=version['__version__'],
     license='MIT',
-    description='Package enabling asciiized sequence plotting in terminal cross-platform',
+    description='Package enabling asciiized sequence plotting in terminal across platforms',
     keywords=['plotting', 'terminal', 'console', 'ascii', 'gui', 'data', 'visualization'],
     url='https://github.com/w2sv/asciiplot',
     download_url='',
