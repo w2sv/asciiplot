@@ -18,6 +18,7 @@ class Config:
             y_axis_description: str,
 
             title: Optional[str],
+            title_color: str,
             center_plot: bool):
 
         self.n_plot_rows = n_plot_rows
@@ -34,4 +35,5 @@ class Config:
         self.y_label_decimal_places = y_label_decimal_places
 
         self.title = title
+        self.title_color = title_color
         self.center_plot = center_plot

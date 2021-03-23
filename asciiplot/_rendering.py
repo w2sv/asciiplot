@@ -30,6 +30,7 @@ def asciiize(
         y_axis_description: str = '',
 
         title: Optional[str] = None,
+        title_color: _DEFAULT_COLOR,
         center_plot: bool = False) -> str:
 
     # raise Value Error if passed more sequence colors than sequences
@@ -122,4 +123,4 @@ def _title_header(config: Config, params: Params) -> str:
             aptly indented title header with successive newline """
 
     assert config.title is not None
-    return ' ' * (centering_indentation_len(params.chart_width, len(config.title)) + params.horizontal_y_axis_offset) + config.title + '\n'
+    return ' ' * (centering_indentation_len(params.chart_width, len(config.title)) + params.horizontal_y_axis_offset) + colored(config.title, config.title_color) + '\n'

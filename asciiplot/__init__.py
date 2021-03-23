@@ -18,6 +18,7 @@ if __name__ == '__main__':
         n_plot_rows=7,
         sequence_colors=['DARK_MAGENTA_1', 'CYAN'],
         title='SICKPLOT',
+        title_color='LIGHT_RED',
         x_labels=[None, None, 4, 8],
         axis_description_color='MEDIUM_PURPLE',
         label_color='VIOLET',
