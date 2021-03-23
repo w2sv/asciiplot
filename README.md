@@ -2,12 +2,31 @@
 
 [![Python](https://img.shields.io/pypi/pyversions/tensorflow.svg?style=plastic)](https://badge.fury.io/py/tensorflow)
 
-#### Lightweight, cross-platform terminal sequence plotting package comprising one singular function enabling the asciiization of sequence(s), whilst allowing to configure the thus created chart via a variety of options
+#### Lightweight, cross-platform asciiized sequence plotting in console, prompted by invocation of one singular function
 
 ### Install
 ```shell
 pip install asciiplot
 ```
+
+### References
+Core sequence asciiization algorithm adopted from
+kroitor @ https://github.com/kroitor/asciichart/blob/master/asciichartpy/__init__.py
+
+### Plot configuration options
+
+- possibility to set a consistent margin between data points through ```in_between_points_margin``` parameter
+- determination of chart height
+- possibility of title and axes descriptions display
+- setting of x-axis labels, possibly being of both numeric and string type
+- determination of number of y-axis label decimal points
+- centering the resulting plot within the target terminal or indenting it by a passed number of columns respectively
+- color determination of all chart components, picking from wide array of colors thanks to the incorporation of [colored](https://pypi.org/project/colored/)
+
+### Usage
+
+- Obtain chart with asciiized sequences as by calling ```asciiize(*sequences, **kwargs)```
+- Valid color names may be retrieved through ```print(asciiplot.color_names)``` 
 
 ### Examples
 
