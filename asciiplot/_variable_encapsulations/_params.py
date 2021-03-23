@@ -2,12 +2,12 @@ from typing import List
 import math
 import itertools
 
-from asciiplot import _types
+from asciiplot._utils import types
 from asciiplot._variable_encapsulations._config import Config
 
 
 class Params:
-    def __init__(self, sequences: _types.Sequences, config: Config):
+    def __init__(self, sequences: types.Sequences, config: Config):
         self.domain_of_definition_length: int = max(map(len, sequences))
 
         # sequence value extrema

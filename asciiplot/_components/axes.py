@@ -1,7 +1,7 @@
 from typing import List, Union, Optional, Dict, Tuple
 import re
 
-from asciiplot import _types
+from asciiplot._utils import types
 from asciiplot._utils.coloring import colored, RESET_COLOR
 from asciiplot._variable_encapsulations._config import Config
 from asciiplot._variable_encapsulations._params import Params
@@ -10,7 +10,7 @@ from asciiplot._variable_encapsulations._params import Params
 # -----------------
 # Y-Axis with Labels
 # -----------------
-def y_axis_comprising_chart(chart: _types.ChartGrid, config: Config, params: Params) -> _types.ChartGrid:
+def y_axis_comprising_chart(chart: types.ChartGrid, config: Config, params: Params) -> types.ChartGrid:
     """ Returns:
             y-axis comprising chart grid """
 
@@ -32,7 +32,7 @@ def y_axis_comprising_chart(chart: _types.ChartGrid, config: Config, params: Par
 # -----------------
 # X-Axis
 # -----------------
-def add_x_axis(chart: _types.ChartGrid, config: Config):
+def x_axis_comprising_chart(chart: types.ChartGrid, config: Config) -> types.ChartGrid:
     """ Adds x-axis to chart """
 
     SEGMENTS = ['┼', '┤', '┬', '─']
@@ -67,6 +67,8 @@ def add_x_axis(chart: _types.ChartGrid, config: Config):
             last_row[i] = SEGMENTS[[3, 2][_is_data_point]]
         elif _is_data_point:
             last_row[i] = _segment_replaced_parcel(parcel, SEGMENT_REPLACEMENTS)
+
+    return chart
 
 
 def _segment_replaced_parcel(parcel: str, segment_replacements: Dict[str, str]) -> str:

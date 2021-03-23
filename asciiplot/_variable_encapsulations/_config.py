@@ -5,20 +5,22 @@ class Config:
     def __init__(
             self,
             n_plot_rows: int,
-            label_column_offset: int,
             columns_between_points: int,
 
             sequence_colors: Sequence[str],
-            axis_description_color: str,
             label_color: str,
 
             x_labels: Optional[Sequence[Optional[Union[str, float]]]],
-            x_axis_description: str,
             y_label_decimal_places: int,
+
+            x_axis_description: str,
             y_axis_description: str,
+            axis_description_color: str,
 
             title: Optional[str],
             title_color: str,
+
+            label_column_offset: int,
             center_plot: bool):
 
         self.n_plot_rows = n_plot_rows
