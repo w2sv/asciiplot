@@ -1,9 +1,9 @@
 # ASCIIPLOT
 
-### Lightweight, cross-platform terminal sequence plotting package comprising one singular function enabling the asciiization of sequence(s), whilst allowing to configure the thus created chart via a suite of options
+#### Lightweight, cross-platform terminal sequence plotting package comprising one singular function enabling the asciiization of sequence(s), whilst allowing to configure the thus created chart via a suite of options
+#### Requires python >= 3.6
 
-
-## Examples
+### Examples
 
 ```python
 
