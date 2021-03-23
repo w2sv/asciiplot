@@ -1,6 +1,7 @@
 from typing import List, Sequence, Optional, Union
 
 import shutil
+import itertools
 
 from asciiplot._utils.coloring import colored
 from asciiplot._utils import centering_indentation_len, types
@@ -38,11 +39,8 @@ def asciiize(
     if len(sequence_colors) > len(sequences):
         raise ValueError('Number of passed sequence colors exceeding number of sequences')
 
-    # create config and compute params
-    kwargs = locals().copy()
-    del kwargs['sequences']
-
-    config = Config(**kwargs)
+    # forward kwargs to config
+    config = Config(**dict(itertools.islice(locals().items(), 0, asciiize.__code__.co_kwonlyargcount)))
 
     # stretch sequences if desired
     if config.columns_between_points:
