@@ -2,7 +2,7 @@ from typing import List, Union, Optional
 import re
 
 from asciiplot import _types
-from asciiplot._utils import colored, RESET_COLOR
+from asciiplot._utils.coloring import colored, RESET_COLOR
 from asciiplot._variable_encapsulations._config import Config
 from asciiplot._variable_encapsulations._params import Params
 
@@ -24,7 +24,7 @@ def y_axis_comprising_chart(chart: _types.ChartGrid, config: Config, params: Par
         if parcel == ' ':
             chart[i][0] = '┤'
         else:
-            chart[i][0] = _extract_color(parcel) + SEGMENT_REPLACEMENTS.get(_colorless_segment(parcel), parcel) + RESET_COLOR
+            chart[i][0] = _reassemble_colored_parcel(ansi_color=_extract_color(parcel), content=SEGMENT_REPLACEMENTS.get(_colorless_segment(parcel), parcel))
 
     return [[colored(label.rjust(params.n_label_column_columns), config.label_color)] + row for label, row in zip(params.y_labels, chart)]
 
@@ -73,10 +73,15 @@ def add_x_axis(chart: _types.ChartGrid, config: Config):
             if color:
                 parcel = _colorless_segment(parcel)
 
-            last_row[i] = color + SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE.get(parcel, parcel) + RESET_COLOR
+            last_row[i] = _reassemble_colored_parcel(color, SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE.get(parcel, parcel))
+
+
+def _reassemble_colored_parcel(ansi_color: str, content: str) -> str:
+    return ansi_color + content + RESET_COLOR
 
 
 _ANSI_ESCAPE_PATTERN = re.compile(r'\x1b[^m]*m')
+
 
 def _extract_color(parcel: str) -> str:
     """

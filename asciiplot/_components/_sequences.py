@@ -3,7 +3,7 @@ import math
 import itertools
 
 from asciiplot import _types
-from asciiplot._utils import colored
+from asciiplot._utils.coloring import colored
 from asciiplot._variable_encapsulations import Params, Config
 
 

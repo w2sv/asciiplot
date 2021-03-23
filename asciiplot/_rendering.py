@@ -3,7 +3,8 @@ from typing import List, Sequence, Optional, Union
 import shutil
 
 from asciiplot import _types
-from asciiplot._utils import colored, centering_indentation_len
+from asciiplot._utils.coloring import colored
+from asciiplot._utils import centering_indentation_len
 from asciiplot._components._sequences import add_sequences, stretched_sequences
 from asciiplot._components._axes import add_x_axis, y_axis_comprising_chart, x_label_row
 from asciiplot._variable_encapsulations import Config, Params
