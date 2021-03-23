@@ -1,7 +1,7 @@
 # __asciiplot__
 
 [![Python](https://img.shields.io/pypi/pyversions/tensorflow.svg?style=plastic)](https://badge.fury.io/py/tensorflow)
-
+[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
 #### Lightweight, cross-platform asciiized sequence plotting in console, prompted by invocation of one singular function
 
 ### Install
