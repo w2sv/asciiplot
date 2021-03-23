@@ -29,9 +29,11 @@ class Params:
         self.chart_width: int = max(map(len, sequences))
         self.horizontal_y_axis_offset: int = self.n_label_column_columns + config.label_column_offset
 
+        self._x_axis_description_len: int = len(config.x_axis_description)
+
     @property
     def total_width(self) -> int:
-        return self.horizontal_y_axis_offset + self.chart_width
+        return self.horizontal_y_axis_offset + self.chart_width + self._x_axis_description_len + 1
 
     def _compute_labels(self, config: Config) -> List[str]:
         label_strings: List[str] = []

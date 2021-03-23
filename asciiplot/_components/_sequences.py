@@ -21,7 +21,7 @@ def stretched_sequences(sequences: _types.Sequences, n_fill_points: int) -> _typ
 def _interpolated_sequence(sequence: _types.Sequence, n_fill_points: int) -> _types.Sequence:
     """
         >>> _interpolated_sequence(list(range(4)), n_fill_points=3)
-        ([0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3],)"""
+        [0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3] """
 
     padded_sequence = []
     for i in range(len(sequence[:-1])):

@@ -1,4 +1,4 @@
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Dict, Tuple
 import re
 
 from asciiplot import _types
@@ -24,7 +24,7 @@ def y_axis_comprising_chart(chart: _types.ChartGrid, config: Config, params: Par
         if parcel == ' ':
             chart[i][0] = '┤'
         else:
-            chart[i][0] = _reassemble_colored_parcel(ansi_color=_extract_color(parcel), content=SEGMENT_REPLACEMENTS.get(_colorless_segment(parcel), parcel))
+            chart[i][0] = _segment_replaced_parcel(parcel, segment_replacements=SEGMENT_REPLACEMENTS)
 
     return [[colored(label.rjust(params.n_label_column_columns), config.label_color)] + row for label, row in zip(params.y_labels, chart)]
 
@@ -36,7 +36,7 @@ def add_x_axis(chart: _types.ChartGrid, config: Config):
     """ Adds x-axis to chart """
 
     SEGMENTS = ['┼', '┤', '┬', '─']
-    SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE = {
+    SEGMENT_REPLACEMENTS = {
         '┤': '┼',
         '─': '┬',
         '╰': '├',
@@ -53,7 +53,7 @@ def add_x_axis(chart: _types.ChartGrid, config: Config):
 
     last_row = chart[-1]
 
-    if not _extract_color(last_row[0]):
+    if not _extract_parcel_elements(last_row[0])[0]:
         last_row[0] = SEGMENTS[0]
 
     for i, parcel in enumerate(last_row):
@@ -64,45 +64,39 @@ def add_x_axis(chart: _types.ChartGrid, config: Config):
 
         _is_data_point = is_data_point(i)
         if parcel == ' ':
-            if _is_data_point:
-                last_row[i] = SEGMENTS[2]
-            else:
-                last_row[i] = SEGMENTS[3]
+            last_row[i] = SEGMENTS[[3, 2][_is_data_point]]
         elif _is_data_point:
-            color = _extract_color(parcel)
-            if color:
-                parcel = _colorless_segment(parcel)
-
-            last_row[i] = _reassemble_colored_parcel(color, SEGMENT_2_X_AXIS_TOUCHING_SUBSTITUTE.get(parcel, parcel))
+            last_row[i] = _segment_replaced_parcel(parcel, SEGMENT_REPLACEMENTS)
 
 
-def _reassemble_colored_parcel(ansi_color: str, content: str) -> str:
-    return ansi_color + content + RESET_COLOR
+def _segment_replaced_parcel(parcel: str, segment_replacements: Dict[str, str]) -> str:
+    color, element = _extract_parcel_elements(parcel)
+    new_element = segment_replacements.get(element, element)
+
+    if color:
+        return color + new_element + RESET_COLOR
+    return new_element
 
 
 _ANSI_ESCAPE_PATTERN = re.compile(r'\x1b[^m]*m')
 
 
-def _extract_color(parcel: str) -> str:
-    """
-    >>> _extract_color(parcel=f'{colors.CYAN}-{colors.RESET}')
-    '\x1b[36m'
-    >>> _extract_color(parcel='┤')
-    '' """
+def _extract_parcel_elements(parcel: str) -> Tuple[Optional[str], str]:
+    """ Returns:
+            Tuple[
+                ansicolor if present else None,
+                sequence segment
+            ]
+
+    >>> _extract_parcel_elements(parcel=f'\x1b[36m-{RESET_COLOR}')
+    ('\x1b[36m', '-')
+    >>> _extract_parcel_elements(parcel='┤')
+    (None, '┤') """
 
     ansi_sequences = re.findall(_ANSI_ESCAPE_PATTERN, parcel)
     if len(ansi_sequences):
-        return ansi_sequences[0]
-    return ''
-
-
-def _colorless_segment(parcel: str):
-    """ Assumes color presence
-
-    >>> _colorless_segment(parcel='\033[30m-\033[0m')
-    '-' """
-
-    return re.split(_ANSI_ESCAPE_PATTERN, parcel)[1]
+        return ansi_sequences[0], parcel[len(ansi_sequences[0]):-len(RESET_COLOR)]
+    return None, parcel
 
 
 # -----------------
