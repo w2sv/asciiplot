@@ -1,4 +1,4 @@
-# __ASCIIPLOT__
+# __asciiplot__
 
 [![Python](https://img.shields.io/pypi/pyversions/tensorflow.svg?style=plastic)](https://badge.fury.io/py/tensorflow)
 
@@ -24,7 +24,9 @@ print(asciiize(
 
         x_labels=list(range(12)),
         y_label_decimal_places=1,
-
+        
+        x_axis_description='x',
+        y_axis_description='y',
         axis_description_color='MEDIUM_PURPLE',
 
         title='Radical Plot',
@@ -33,7 +35,7 @@ print(asciiize(
         label_column_offset=6
     ))
 
->>>                                 Radical Plot
+>>>        y                        Radical Plot
       100.0┤              ╭╮   ╭╮   ╭─────
        88.6┤              ││   │╰─╮ │
        77.1┤             ╭╯╰╮ ╭╯  ╰╭╯    ╭╮                  ╭╮
@@ -43,7 +45,7 @@ print(asciiize(
        31.3┤ ╰─╮    ╭─│     │╰╮  ╭╯         ╰╮            │     ╰╮
        19.9┤   ╰╮╭╭───╯─╮  ╭╯ ╰╮╭╯           ╰╮          ╭╯      ╰╮
         8.4┼──────╯     ╰─╮│   ││             ╰──────────╯        │
-       -3.0┼────┬────┬────├╯───├╯───┬────┬────┬────┬────┬────┬────├
+       -3.0┼────┬────┬────├╯───├╯───┬────┬────┬────┬────┬────┬────├ x
            0    1    2    3    4    5    6    7    8    9    10   11
 ```
 ```python
