@@ -1,7 +1,6 @@
 from typing import List, Sequence, Optional, Union
 
 import shutil
-import itertools
 
 from asciiplot._utils.coloring import colored
 from asciiplot._utils import centering_indentation_len, types
@@ -16,8 +15,8 @@ _DEFAULT_COLOR = 'WHITE'
 
 def asciiize(
         *sequences: List[float],
-        n_plot_rows: int = 5,
-        columns_between_points: int = 0,
+        chart_height: int = 5,
+        in_between_points_margin: int = 0,
 
         sequence_colors: Sequence[str] = tuple([_DEFAULT_COLOR]),
         label_color: str = _DEFAULT_COLOR,
@@ -32,19 +31,21 @@ def asciiize(
         title: Optional[str] = None,
         title_color: str = _DEFAULT_COLOR,
 
-        label_column_offset: int = 0,
-        center_plot: bool = False) -> str:
+        chart_indentation: int = 0,
+        center_chart: bool = False) -> str:
 
     # raise Value Error if passed more sequence colors than sequences
     if len(sequence_colors) > len(sequences):
         raise ValueError('Number of passed sequence colors exceeding number of sequences')
 
     # forward kwargs to config
-    config = Config(**dict(itertools.islice(locals().items(), 0, asciiize.__code__.co_kwonlyargcount)))
+    kwargs = locals().copy()
+    del kwargs['sequences']
+    config = Config(**kwargs)
 
     # stretch sequences if desired
-    if config.columns_between_points:
-        sequences = stretched_sequences(sequences, config.columns_between_points)  # type: ignore
+    if config.in_between_points_margin:
+        sequences = stretched_sequences(sequences, config.in_between_points_margin)  # type: ignore
 
     params = Params(sequences, config)
 
@@ -63,7 +64,7 @@ def asciiize(
         chart_grid[-1] += [' ' + colored(config.x_axis_description, config.axis_description_color)]
 
     # center chart if desired
-    if config.center_plot:
+    if config.center_chart:
         n_whitespaces = centering_indentation_len(_n_terminal_columns, params.total_width)
         centering_margin = ' ' * n_whitespaces
 
@@ -98,15 +99,15 @@ def _raise_if_occupied_columns_exceeding_terminal_columns(occupied_columns: int)
 def _create_chart_grid(sequences: types.Sequences, config: Config, params: Params) -> types.ChartGrid:
     """ Creates chart with y-axis and x-axis if desired """
 
-    chart = [[' '] * params.chart_width for _ in range(config.n_plot_rows)]
+    chart = [[' '] * params.chart_width for _ in range(config.chart_height)]
 
     add_sequences(sequences, chart, config, params)
 
     chart = x_axis_comprising_chart(chart, config)
     chart = y_axis_comprising_chart(chart, config, params)
 
-    if config.label_column_offset:
-        indentation = ' ' * config.label_column_offset
+    if config.chart_indentation:
+        indentation = ' ' * config.chart_indentation
         chart = [[indentation] + row for row in chart]
 
     return chart

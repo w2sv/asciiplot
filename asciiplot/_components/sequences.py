@@ -66,7 +66,7 @@ def add_sequences(sequences: types.Sequences, chart: types.ChartGrid, config: Co
         corresponding point within chart value range """
 
         def clamp_to_row_index_bounds(row_index: int) -> int:
-            return max(min(row_index, config.n_plot_rows - 1), 0)
+            return max(min(row_index, config.chart_height - 1), 0)
 
         return clamp_to_row_index_bounds(row_index=int(round((value - params.y_min) * params.delta_row_index_per_y)))
 
@@ -75,7 +75,7 @@ def add_sequences(sequences: types.Sequences, chart: types.ChartGrid, config: Co
         j = INIT_VALUE
 
         def set_parcel(row_subtrahend: int, segment: str):
-            chart[config.n_plot_rows - 1 - row_subtrahend][j + 1] = colored(segment, color)
+            chart[config.chart_height - 1 - row_subtrahend][j + 1] = colored(segment, color)
 
         # add '┼' at sequence beginning where sequences overlaps with y-axis
         if math.isfinite(sequence[0]):

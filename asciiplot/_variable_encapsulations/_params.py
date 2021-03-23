@@ -19,7 +19,7 @@ class Params:
 
         # y value parameters
         self.y_value_spread: int = abs(self.y_max - self.y_min)
-        self.delta_row_index_per_y: float = config.n_plot_rows / [1, self.y_value_spread][bool(self.y_value_spread)]
+        self.delta_row_index_per_y: float = config.chart_height / [1, self.y_value_spread][bool(self.y_value_spread)]
 
         # label parameters
         self.y_labels: List[str] = self._compute_labels(config)
@@ -27,7 +27,7 @@ class Params:
 
         # widths
         self.chart_width: int = max(map(len, sequences))
-        self.horizontal_y_axis_offset: int = self.n_label_column_columns + config.label_column_offset
+        self.horizontal_y_axis_offset: int = self.n_label_column_columns + config.chart_indentation
 
         self._x_axis_description_len: int = len(config.x_axis_description)
 
@@ -38,8 +38,8 @@ class Params:
     def _compute_labels(self, config: Config) -> List[str]:
         label_strings: List[str] = []
 
-        delta_y_per_row = self.y_value_spread / (config.n_plot_rows - 1)
-        for i in range(config.n_plot_rows):
+        delta_y_per_row = self.y_value_spread / (config.chart_height - 1)
+        for i in range(config.chart_height):
             label: float = self.y_max - i * delta_y_per_row
 
             # format label according to intended decimal places

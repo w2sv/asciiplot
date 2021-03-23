@@ -12,78 +12,89 @@ pip install asciiplot
 ### Examples
 
 ```python
+print(
+    asciiize(
+        [1, 1, 2, 3, 5, 8, 13, 21],
+        chart_height=15,
+        in_between_points_margin=7,
 
-print(asciiize(
-        [45, 9, 28, 0, 87, 57, 64, 3, 3, 6, 74, 1],
-        [6, 9, 22, 86, -3, 86, 100],
-        n_plot_rows=10,
-        columns_between_points=4,
-
-        sequence_colors=['DARK_MAGENTA_1', 'CYAN'],
+        sequence_colors=['DARK_MAGENTA_1'],
         label_color='VIOLET',
 
-        x_labels=list(range(12)),
-        y_label_decimal_places=1,
-        
-        x_axis_description='x',
-        y_axis_description='y',
+        x_labels=list(range(1, 9)),
+        y_label_decimal_places=0,
+
+        x_axis_description='iteration',
+        y_axis_description='number',
         axis_description_color='MEDIUM_PURPLE',
 
-        title='Radical Plot',
+        title='Fibonacci Sequence',
         title_color='LIGHT_RED',
 
-        label_column_offset=6
-    ))
+        chart_indentation=6
+    )
+)
 
->>>        y                        Radical Plot
-      100.0┤              ╭╮   ╭╮   ╭─────
-       88.6┤              ││   │╰─╮ │
-       77.1┤             ╭╯╰╮ ╭╯  ╰╭╯    ╭╮                  ╭╮
-       65.7┤            ╭╯  │ │    │─────╯│                 ╭╯╰╮
-       54.2┼╮          ╭╯   ╰╮╯   ╭╯      ╰╮               ╭╯  ╰╮
-       42.8┤╰╮        ╭╯    ╭│    │        ╰╮             ╭╯    │
-       31.3┤ ╰─╮    ╭─│     │╰╮  ╭╯         ╰╮            │     ╰╮
-       19.9┤   ╰╮╭╭───╯─╮  ╭╯ ╰╮╭╯           ╰╮          ╭╯      ╰╮
-        8.4┼──────╯     ╰─╮│   ││             ╰──────────╯        │
-       -3.0┼────┬────┬────├╯───├╯───┬────┬────┬────┬────┬────┬────├ x
-           0    1    2    3    4    5    6    7    8    9    10   11
+
+>>>                        Fibonacci Sequence
+     number
+      21┤                                                     ╭──
+      19┤                                                    ╭╯
+      18┤                                                   ╭╯
+      16┤                                                  ╭╯
+      15┤                                                ╭─╯
+      13┤                                              ╭─╯
+      12┤                                            ╭─╯
+      11┤                                          ╭─╯
+       9┤                                        ╭─╯
+       8┤                                     ╭──╯
+       6┤                                 ╭───╯
+       5┤                             ╭───╯
+       3┤                       ╭─────╯
+       2┤             ╭─────────╯
+       1┼───────┬─────╯─┬───────┬───────┬───────┬───────┬───────┬ iteration
+        1       2       3       4       5       6       7       8
 ```
 ```python
 import numpy as np
 
-print(asciiize(
+print(
+    asciiize(
         np.random.randint(-100, 100, 30),
         np.random.randint(-100, 100, 30),
-        n_plot_rows=10,
-        columns_between_points=2,
+        chart_height=10,
+        in_between_points_margin=2,
     
         sequence_colors=['DARK_MAGENTA_1', 'CYAN'],
         label_color='VIOLET',
     
-        x_labels=list(range(30)),
+        x_labels=list(range(1, 31)),
         y_label_decimal_places=1,
     
+        x_axis_description='attempt',
+        y_axis_description='drawn value',
         axis_description_color='MEDIUM_PURPLE',
     
-        title='Arbitrary Plot',
+        title='np.randint values',
         title_color='LIGHT_RED',
     
-        label_column_offset=6
+        chart_indentation=6
     )
 )
 
->>>                                         Arbitrary Plot
-       98.0┤        ╭─╮   ╭──────╮                 ╭──╮       ╭╮             ╭──╮     ╭╮
-       76.1┤  ╭╮    │ ╰╮ ╭╯      │    ╭╮          ╭╯  ╰╮      │╰╮           ╭╭╮ ╰╮   ╭╯│       ╭───
-       54.2┤  ││   ╭╯  │╭╯       ╰╮   │╰╮╭╮ ╭╮    │  ╭╮│   ╭╮╭╯ ╰╮         ╭╯││  ╰╮  │─╰╮     ╭╯
-       32.3┤ ╭│╰╮  │   ╰╯         │  ╭╯ ╭╯│╭╯│   ╭╯╭─╯╰│  ╭╯││   │╮       ╭╯╭╯╰╮  ╰╮╭╯ ││    ╭╯
-       10.4┤ ╭╯ │  │             ╭───╮ ╭╯╰╰╮ ╰╮  │╭╯   ╰╮╭╯ ╰│  ╭╰╮╮   ╭╮╭╯ │  │   ╰│  ╰╰╮  ╭╯ ╭╮
-      -11.4┤╭│  ╰╮╭╯           ╭─╯ ││╰╮│   │  ╰╮ │╯     │╯  ╭╯╮╭╯ ╰╮╮ ╭╯╰╮ ╭╯  ╰╮  ╭╯   ││ ╭╯  │╰─╮
-      -33.3┼╭╯  ╰││           ╭╯   ╰╯ ╰╯   ╰╮  │╭╯      ╰╮  │ ││   ╰╮╭│─╯╰╮│    │ ╭╯    ╰│╭╯  ╭╯  ╰
-      -55.2┤│    ╰──────╮   ╭─╯             │  ╰│        ╰─╮│ ╰╯    │╭╯   ╰╯    │╭╯      ╰╯  ╭╯
-      -77.1┤│    ╰╯     ╰─╮╭╯               ╰─╮ │          ╰╯       ╰╯          ╰╯       │   │
-      -99.0┼╯─┬──┬──┬──┬──├╯─┬──┬──┬──┬──┬──┬─╰┬╯─┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──├──┬╯─┬──┬
-           0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29
+>>>                                             np.randint values
+       drawn value
+        96.0┤        ╭╮    ╭──╭╮──╮               ╭──╮   ╭╮       ╭╮    ╭╮          ╭───────╮  ╭─╮
+        74.2┤  ╭╮    ││    │  ││  │               │  ╰╮ ╭╯│      ╭╯│   ╭╯╰╮        ╭╯──╯│   ╰╮╭╯ │
+        52.4┤ ╭╭╮╮  ╭╯╰╮  ╭╯ ╭╯│  ╰╮   ╭╮    ╭──╮╭╯   │╭╯ ╰╮   ╭─╯ ╰╮╭╮│  │       ╭╯│   │    ╰╯  ╰╮
+        30.7┤╭╯│╰╮╮╭╯  │  │  │ ╰╮  │   ││   ╭╯  ╰╯    ╰╯   │   │    ││││  ╰╮     ╭╯╭╯   ╰╮        │
+         8.9┼╯╭╯ │╰╯   │ ╭╯  │  │  │   ╭╮╮  │╭╮            ╰╮ ╭╯    ╭╯╰╮   │     │╭╯     │        │
+       -12.9┤╭╯  ╰╮    ╰╮│  ╭╯  │  │ ╭─╯╰╮╮╭╭╯│             │╭╯    ╭╯│││   ╭╮╮  ╭╯╯      │        ╰╮
+       -34.7┤│    │     ╭╮  │   ╰╮ ╰╭╯│  ╰╮╭╯ ╰╮     ╭───╮  ││    ╭╯ ╰╯╰╮ ╭╯│╰──│        ╰╮  ╭──╮ ╭│
+       -56.4┼╯    ╰─╮  ╭╯╰──╯    │ ╭╯╭╯   ││   ╰╮   ╭╯   ╰─╮╰╯  ╭─╯     ╰─╯ ╰╮ ╭╯         │ ╭╯  ╰─╯╰
+       -78.2┤       ╰──╯         │╭╯││    ╰╯    │ ╭─╯      ╰╮ ╭─╯            ╰╮│          │╭╯
+      -100.0┼──┬──┬──┬──┬──┬──┬──├╯─├╯─┬──┬──┬──├─╯┬──┬──┬──├─╯┬──┬──┬──┬──┬──├╯─┬──┬──┬──├╯─┬──┬──┬ attempt
+            1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
 ```
 
 ### License

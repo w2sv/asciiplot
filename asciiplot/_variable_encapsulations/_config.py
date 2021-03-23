@@ -4,8 +4,8 @@ from typing import Optional, Union, Sequence
 class Config:
     def __init__(
             self,
-            n_plot_rows: int,
-            columns_between_points: int,
+            chart_height: int,
+            in_between_points_margin: int,
 
             sequence_colors: Sequence[str],
             label_color: str,
@@ -20,12 +20,12 @@ class Config:
             title: Optional[str],
             title_color: str,
 
-            label_column_offset: int,
-            center_plot: bool):
+            chart_indentation: int,
+            center_chart: bool):
 
-        self.n_plot_rows = n_plot_rows
-        self.label_column_offset = label_column_offset
-        self.columns_between_points = columns_between_points
+        self.chart_height = chart_height
+        self.chart_indentation = chart_indentation
+        self.in_between_points_margin = in_between_points_margin
 
         self.sequence_colors = sequence_colors
         self.axis_description_color = axis_description_color
@@ -38,4 +38,4 @@ class Config:
 
         self.title = title
         self.title_color = title_color
-        self.center_plot = center_plot
+        self.center_chart = center_chart
