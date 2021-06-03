@@ -65,11 +65,11 @@ def asciiize(
 
     # center chart if desired
     if config.center_chart:
-        n_whitespaces = centering_indentation_len(_n_terminal_columns, params.total_width)
+        n_whitespaces = centering_indentation_len(params.total_width, reference_length=_n_terminal_columns)
         centering_margin = ' ' * n_whitespaces
 
-        for row_i in range(len(chart_grid)):
-            chart_grid[row_i].insert(0, centering_margin)
+        for row_index in range(len(chart_grid)):
+            chart_grid[row_index].insert(0, centering_margin)
 
         params.horizontal_y_axis_offset += n_whitespaces
 
@@ -122,4 +122,4 @@ def _title_header(config: Config, params: Params) -> str:
             aptly indented title header with successive newline """
 
     assert config.title is not None
-    return ' ' * (centering_indentation_len(params.chart_width, len(config.title)) + params.horizontal_y_axis_offset) + colored(config.title, config.title_color) + '\n'
+    return ' ' * (centering_indentation_len(len(config.title), reference_length=params.chart_width) + params.horizontal_y_axis_offset) + colored(config.title, config.title_color) + '\n'

@@ -90,9 +90,9 @@ def _extract_parcel_elements(parcel: str) -> Tuple[Optional[str], str]:
                 sequence segment
             ]
 
-    >>> _extract_parcel_elements(parcel=f'\x1b[36m-{RESET_COLOR}')
+    >>> print(_extract_parcel_elements(parcel=f'\x1b[36m-{RESET_COLOR}'))
     ('\x1b[36m', '-')
-    >>> _extract_parcel_elements(parcel='┤')
+    >>> print(_extract_parcel_elements(parcel='┤'))
     (None, '┤') """
 
     ansi_sequences = re.findall(_ANSI_ESCAPE_PATTERN, parcel)
