@@ -1,7 +1,7 @@
 import pytest
 
 from asciiplot import asciiize
-from asciiplot._utils import terminal_columns, coloring
+from asciiplot._utils import terminal_columns, colored
 
 
 SEQUENCES = [
@@ -31,9 +31,9 @@ def test_terminal_columns_exceeded_exception():
 
 def test_color_unavailability_raising():
     with pytest.raises(ValueError):
-        coloring.colored('haycaramba', 'PINKISH_BLUE_MUSTARD')
+        colored('haycaramba', 'PINKISH_BLUE_MUSTARD')
 
-    coloring.colored('haycaramba', 'BLUE')
+    colored('haycaramba', 'BLUE')
 
 
 def test_xlabels_exceeding_domain_of_definition_length_raising():

@@ -1,2 +1,0 @@
-from asciiplot._variable_encapsulations._config import Config
-from asciiplot._variable_encapsulations._params import Params

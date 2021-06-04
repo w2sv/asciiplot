@@ -13,7 +13,7 @@ Package functionality comprising:
 
 
 from asciiplot.version import __version__
-from asciiplot._rendering import asciiize
+from asciiplot._asciiization import asciiize
 from colored.colors import names as color_names
 
 
