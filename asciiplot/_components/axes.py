@@ -35,7 +35,7 @@ def y_axis_comprising_chart(chart: types.ChartGrid, config: Config, params: Para
 def x_axis_comprising_chart(chart: types.ChartGrid, config: Config) -> types.ChartGrid:
     """ Adds x-axis to chart """
 
-    SEGMENTS = ['┼', '┤', '┬', '─']
+    SEGMENTS = ('┼', '┤', '┬', '─')
     SEGMENT_REPLACEMENTS = {
         '┤': '┼',
         '─': '┬',
@@ -49,7 +49,7 @@ def x_axis_comprising_chart(chart: types.ChartGrid, config: Config) -> types.Cha
                 data point denoted in original sequences instead of interpolated
                 one """
 
-        return point_index % (config.in_between_points_margin + 1) == 0
+        return not point_index % (config.in_between_points_margin + 1)
 
     last_row = chart[-1]
 
@@ -72,6 +72,16 @@ def x_axis_comprising_chart(chart: types.ChartGrid, config: Config) -> types.Cha
 
 
 def _segment_replaced_parcel(parcel: str, segment_replacements: Dict[str, str]) -> str:
+    """ Returns:
+            segment replaced parcel containing eventually present, original ansi color
+
+        >>> SEGMENT_REPLACEMENTS = {'┤': '┼'}
+
+        >>> _segment_replaced_parcel('┤', SEGMENT_REPLACEMENTS)
+        '┼'
+        >>> print(_segment_replaced_parcel(f'\x1b[36m┤\x1b[0m', SEGMENT_REPLACEMENTS))
+        \x1b[36m┼\x1b[0m """
+
     color, element = _extract_parcel_elements(parcel)
     new_element = segment_replacements.get(element, element)
 
@@ -90,9 +100,13 @@ def _extract_parcel_elements(parcel: str) -> Tuple[Optional[str], str]:
                 sequence segment
             ]
 
-    >>> print(_extract_parcel_elements(parcel=f'\x1b[36m-{RESET_COLOR}'))
-    ('\x1b[36m', '-')
-    >>> print(_extract_parcel_elements(parcel='┤'))
+    >>> ansi_color, segment = _extract_parcel_elements(parcel='\x1b[36m-\x1b[0m')
+    >>> print(ansi_color)
+    \x1b[36m
+    >>> segment
+    '-'
+
+    >>> _extract_parcel_elements(parcel='┤')
     (None, '┤') """
 
     ansi_sequences = re.findall(_ANSI_ESCAPE_PATTERN, parcel)
@@ -104,6 +118,33 @@ def _extract_parcel_elements(parcel: str) -> Tuple[Optional[str], str]:
 # -----------------
 # X-Axis Labels
 # -----------------
+def x_label_row(config: Config, params: Params) -> str:
+    """ Returns:
+            x-label-row indented according to chart_indentation """
+
+    assert config.x_labels is not None
+
+    # provide label sequences containing empty strings as labels for ticks,
+    # for which none were given and create labels objects
+    labels: List[_Label] = list(map(lambda label: _Label(label, color=config.label_color), config.x_labels))  # type: ignore
+
+    def compute_n_whitespaces(preceding_tick: _Label, tick: _Label, tick_index: int) -> int:
+        n = config.in_between_points_margin - preceding_tick.positive_protrusion - tick.negative_protrusion
+        if n < 0 and tick_index != len(labels) - 1 and tick.label != ' ':
+            raise ValueError(f'Adjacent x-axis ticks {preceding_tick.label} and {tick.label} are overlapping')
+        return n
+
+    # add chart_indentation + first tick to label row
+    label_row = labels[0].label
+
+    # add consecutive ticks
+    for i in range(1, len(labels)):
+        n_whitespaces = compute_n_whitespaces(preceding_tick=labels[i-1], tick=labels[i], tick_index=i)
+        label_row += f'{" " * n_whitespaces}{colored(labels[i].label, config.label_color)}'
+
+    return ' ' * (params.horizontal_y_axis_offset - labels[0].negative_protrusion) + label_row
+
+
 class _Label:
     """ Serving the creation of helper objects facilitating the computation
     of whitespace sequences in between labels """
@@ -132,34 +173,3 @@ class _Label:
         else:
             self.label = ' '
             self.negative_protrusion = self.positive_protrusion = 0
-
-
-def x_label_row(config: Config, params: Params) -> str:
-    """ Returns:
-            x-label-row indented according to chart_indentation """
-
-    assert config.x_labels is not None
-
-    # provide label sequences containing empty strings as labels for ticks,
-    # for which none were given and create labels objects
-    labels: List[_Label] = list(map(lambda label: _Label(label, color=config.label_color), config.x_labels))  # type: ignore
-
-    def compute_n_whitespaces(preceding_tick: _Label, tick: _Label, tick_index: int) -> int:
-        n = config.in_between_points_margin - preceding_tick.positive_protrusion - tick.negative_protrusion
-        if n < 0 and tick_index != len(labels) - 1 and tick.label != ' ':
-            raise ValueError(f'Adjacent x-axis ticks {preceding_tick.label} and {tick.label} are overlapping')
-        return n
-
-    # add chart_indentation + first tick to label row
-    label_row = labels[0].label
-
-    # add consecutive ticks
-    for i in range(1, len(labels)):
-        n_whitespaces = compute_n_whitespaces(preceding_tick=labels[i-1], tick=labels[i], tick_index=i)
-        label_row += f'{" " * n_whitespaces}{colored(labels[i].label, config.label_color)}'
-
-    return ' ' * (params.horizontal_y_axis_offset - labels[0].negative_protrusion) + label_row
-
-
-if __name__ == '__main__':
-    print(_Label('twa'))

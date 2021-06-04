@@ -1,4 +1,4 @@
-import functools
+import shutil
 
 
 def centering_indentation_len(string_length: int, reference_length: int) -> int:
@@ -12,3 +12,7 @@ def centering_indentation_len(string_length: int, reference_length: int) -> int:
     8 """
 
     return reference_length // 2 - string_length // 2
+
+
+def terminal_columns() -> int:
+    return shutil.get_terminal_size().columns

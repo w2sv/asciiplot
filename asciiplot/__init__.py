@@ -18,8 +18,6 @@ from colored.colors import names as color_names
 
 
 if __name__ == '__main__':
-    import numpy as np
-
     print(asciiize(
         [1, 1, 2, 3, 5, 8, 13, 21],
         chart_height=15,
@@ -36,7 +34,6 @@ if __name__ == '__main__':
         axis_description_color='MEDIUM_PURPLE',
 
         title='Fibonacci Sequence',
-        title_color='LIGHT_RED',
+        title_color='LIGHT_RED'
 
-        chart_indentation=6
     ))
