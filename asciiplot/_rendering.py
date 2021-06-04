@@ -3,7 +3,7 @@ from typing import List, Sequence, Optional, Union
 from asciiplot._utils.coloring import colored
 from asciiplot._utils import centering_indentation_len, terminal_columns, types
 from asciiplot._components.sequences import add_sequences, stretched_sequences
-from asciiplot._components.axes import x_axis_comprising_chart, y_axis_comprising_chart, x_label_row
+from asciiplot._components.axes import x_axis_comprising_chart, y_axis_comprising_chart, x_axis_ticks_row
 from asciiplot._variable_encapsulations import Config, Params
 
 
@@ -41,16 +41,20 @@ def asciiize(
     del kwargs['sequences']
     config = Config(**kwargs)
 
+    domain_of_definition_length = max(map(len, sequences))
+
+    # raise Value Error if received more x-labels than there are x-values
+    if config.x_labels and len(config.x_labels) > domain_of_definition_length:
+        raise ValueError(
+            f"X-labels aren't matching determined domain of definition. Passed sequences comprise "
+            f"{domain_of_definition_length} distinct x-values, passed {len(config.x_labels)} labels"
+        )
+
     # stretch sequences if desired
     if config.in_between_points_margin:
         sequences = stretched_sequences(sequences, config.in_between_points_margin)  # type: ignore
 
     params = Params(sequences, config)
-
-    # raise Value Error if received more x-labels than there are x-values
-    if config.x_labels and len(config.x_labels) > params.domain_of_definition_length:
-        raise ValueError(f"X-labels aren't matching determined domain of definition. Passed sequences comprise "
-                         f"{params.domain_of_definition_length} distinct x-values, passed {len(config.x_labels)} labels")
 
     # calculate params, create chart grid
     _raise_if_occupied_columns_exceeding_terminal_columns(params.total_width)
@@ -81,7 +85,7 @@ def asciiize(
     if config.title:
         serialized_chart = _title_header(config, params) + serialized_chart
     if config.x_labels:
-        serialized_chart = serialized_chart + x_label_row(config, params)
+        serialized_chart = serialized_chart + x_axis_ticks_row(config, params)
 
     return serialized_chart
 

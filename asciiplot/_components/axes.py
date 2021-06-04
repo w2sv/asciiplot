@@ -1,8 +1,10 @@
 from typing import List, Union, Optional, Dict, Tuple
 import re
+import more_itertools
+import itertools as itt
 
 from asciiplot._utils import types
-from asciiplot._utils.coloring import colored, RESET_COLOR
+from asciiplot._utils.coloring import colored, RESET
 from asciiplot._variable_encapsulations._config import Config
 from asciiplot._variable_encapsulations._params import Params
 
@@ -86,7 +88,7 @@ def _segment_replaced_parcel(parcel: str, segment_replacements: Dict[str, str]) 
     new_element = segment_replacements.get(element, element)
 
     if color:
-        return color + new_element + RESET_COLOR
+        return color + new_element + RESET
     return new_element
 
 
@@ -111,14 +113,14 @@ def _extract_parcel_elements(parcel: str) -> Tuple[Optional[str], str]:
 
     ansi_sequences = re.findall(_ANSI_ESCAPE_PATTERN, parcel)
     if len(ansi_sequences):
-        return ansi_sequences[0], parcel[len(ansi_sequences[0]):-len(RESET_COLOR)]
+        return ansi_sequences[0], parcel[len(ansi_sequences[0]):-len(RESET)]
     return None, parcel
 
 
 # -----------------
 # X-Axis Labels
 # -----------------
-def x_label_row(config: Config, params: Params) -> str:
+def x_axis_ticks_row(config: Config, params: Params) -> str:
     """ Returns:
             x-label-row indented according to chart_indentation """
 
@@ -126,50 +128,70 @@ def x_label_row(config: Config, params: Params) -> str:
 
     # provide label sequences containing empty strings as labels for ticks,
     # for which none were given and create labels objects
-    labels: List[_Label] = list(map(lambda label: _Label(label, color=config.label_color), config.x_labels))  # type: ignore
+    ticks: List[_XAxisTickLabel] = list(
+        map(
+            lambda label: _XAxisTickLabel(label, color=config.label_color),
+            config.x_labels
+        )
+    )
 
-    def compute_n_whitespaces(preceding_tick: _Label, tick: _Label, tick_index: int) -> int:
-        n = config.in_between_points_margin - preceding_tick.positive_protrusion - tick.negative_protrusion
-        if n < 0 and tick_index != len(labels) - 1 and tick.label != ' ':
-            raise ValueError(f'Adjacent x-axis ticks {preceding_tick.label} and {tick.label} are overlapping')
-        return n
-
-    # add chart_indentation + first tick to label row
-    label_row = labels[0].label
-
-    # add consecutive ticks
-    for i in range(1, len(labels)):
-        n_whitespaces = compute_n_whitespaces(preceding_tick=labels[i-1], tick=labels[i], tick_index=i)
-        label_row += f'{" " * n_whitespaces}{colored(labels[i].label, config.label_color)}'
-
-    return ' ' * (params.horizontal_y_axis_offset - labels[0].negative_protrusion) + label_row
+    return f'{" " * (params.horizontal_y_axis_offset - ticks[0].left_margin_length)}' \
+           f'{_tick_row(ticks, inter_points_margin=config.in_between_points_margin)}'
 
 
-class _Label:
+class _XAxisTickLabel(str):
     """ Serving the creation of helper objects facilitating the computation
     of whitespace sequences in between labels """
 
-    def __init__(self, description: Optional[Union[str, int]], color: Optional[str] = None):
+    def __new__(cls, content: Optional[Union[str, float]], color: Optional[str] = None):
+        if not content:
+            content = ' '
+        elif color:
+            content = colored(content, color)
+
+        return super().__new__(cls, content)
+
+    def __init__(self, content: Optional[Union[str, float]], color: Optional[str] = None):
         """ Initialize such that center of sequentialized label right beneath tick
         in case of odd string length, otherwise shift by one column towards the right
 
-        >>> _Label(234).__dict__
-        {'negative_protrusion': 1, 'positive_protrusion': 1, 'label': '234'}
-        >>> _Label(23).__dict__
-        {'negative_protrusion': 0, 'positive_protrusion': 1, 'label': '23'}
-        >>> _Label(2).__dict__
-        {'negative_protrusion': 0, 'positive_protrusion': 0, 'label': '2'} """
+        >>> _XAxisTickLabel(234).margin_lengths
+        [1, 1]
+        >>> _XAxisTickLabel(23).margin_lengths
+        [0, 1]
+        >>> _XAxisTickLabel(2).margin_lengths
+        [0, 0]
+        >>> _XAxisTickLabel('second').margin_lengths
+        [2, 3] """
 
-        self.label: str
-        self.negative_protrusion: int  # n columns occupied towards the left starting from tick column
-        self.positive_protrusion: int  # n columns occupied towards the right starting from tick column
-
-        if description is not None:
-            label = str(description)
-            is_of_even_length: bool = len(label) % 2 == 0
-            self.negative_protrusion = len(label) // 2 - int(is_of_even_length)
-            self.positive_protrusion = self.negative_protrusion + int(is_of_even_length)
-            self.label = colored(label, color) if color else label
+        if content is not None:
+            content_str = str(content)
+            is_of_even_length: bool = len(content_str) % 2 == 0
+            self.left_margin_length = len(content_str) // 2 - int(is_of_even_length)
+            self.right_margin_length = self.left_margin_length + int(is_of_even_length)
         else:
-            self.label = ' '
-            self.negative_protrusion = self.positive_protrusion = 0
+            self.left_margin_length = self.right_margin_length = 0
+
+    @property
+    def margin_lengths(self) -> List[int]:
+        return [self.left_margin_length, self.right_margin_length]
+
+    def whitespace_succeeded(self, succeeding_tick, inter_points_margin: int) -> str:
+        n_whitespaces = inter_points_margin - self.right_margin_length - succeeding_tick.left_margin_length
+        if n_whitespaces < 0 and str(self) != ' ':
+            raise ValueError(f'Adjacent x-axis ticks {self} and {succeeding_tick} are overlapping')
+
+        return f'{self}{" " * n_whitespaces}'
+
+
+def _tick_row(ticks: List[_XAxisTickLabel], inter_points_margin: int) -> str:
+    """
+    >>> _tick_row(list(map(_XAxisTickLabel, ['great', 'cool', 'splendid', 'sick'])), inter_points_margin=6)
+    'great   cool splendid sick' """
+
+    return ''.join(
+        itt.starmap(
+            lambda a, b: a.whitespace_succeeded(b, inter_points_margin=inter_points_margin),
+            more_itertools.pairwise(ticks)
+        )
+    ) + ticks[-1]

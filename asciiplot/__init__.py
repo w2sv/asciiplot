@@ -26,7 +26,7 @@ if __name__ == '__main__':
         sequence_colors=['DARK_MAGENTA_1'],
         label_color='VIOLET',
 
-        x_labels=list(range(1, 9)),
+        x_labels=list(range(10, 18)),
         y_label_decimal_places=0,
 
         x_axis_description='iteration',
@@ -34,6 +34,7 @@ if __name__ == '__main__':
         axis_description_color='MEDIUM_PURPLE',
 
         title='Fibonacci Sequence',
-        title_color='LIGHT_RED'
+        title_color='LIGHT_RED',
 
+        chart_indentation=8
     ))

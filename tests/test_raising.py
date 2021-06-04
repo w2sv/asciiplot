@@ -38,6 +38,6 @@ def test_color_unavailability_raising():
 
 def test_xlabels_exceeding_domain_of_definition_length_raising():
     with pytest.raises(ValueError):
-        asciiize(*SEQUENCES, x_labels=list(range(4)))
+        asciiize(*SEQUENCES, x_labels=list(range(4)), in_between_points_margin=5)
 
-    asciiize(*SEQUENCES, x_labels=list(range(3)))
+    asciiize(*SEQUENCES, x_labels=list(range(3)), in_between_points_margin=5)

@@ -8,8 +8,6 @@ from asciiplot._variable_encapsulations._config import Config
 
 class Params:
     def __init__(self, sequences: types.Sequences, config: Config):
-        self.domain_of_definition_length: int = max(map(len, sequences))
-
         # sequence value extrema
         finite_values = list(filter(math.isfinite, itertools.chain(*sequences)))
 

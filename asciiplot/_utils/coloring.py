@@ -1,10 +1,12 @@
+from typing import Any
+
 import colored as _colored
 
 
-RESET_COLOR: str = _colored.style.RESET
+RESET: str = _colored.style.RESET
 
 
-def colored(string: str, color: str) -> str:
+def colored(obj: Any, color: str) -> str:
     """
     >>> print(colored('yessir', _colored.colors.names[0]))
     \x1b[38;5;0myessir\x1b[0m
@@ -12,6 +14,6 @@ def colored(string: str, color: str) -> str:
     \x1b[38;5;255mwasssup\x1b[0m """
 
     try:
-        return _colored.fg(_colored.colors.names.index(color)) + string + RESET_COLOR
+        return f'{_colored.fg(_colored.colors.names.index(color))}{obj}{RESET}'
     except ValueError:
         raise ValueError(f"'{color}' not amongst eligible colors")
