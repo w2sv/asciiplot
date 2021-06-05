@@ -31,6 +31,8 @@ def asciiize(
 
     _raise_if_colors_exceeding_sequences(len(sequences), n_sequence_colors=len(sequence_colors))
     _raise_if_x_labels_exceeding_domain_of_definition(x_labels, domain_of_definition_length=max(map(len, sequences)))
+    if chart_indentation and center_chart:
+        raise ValueError('Pass either chart_indentation > 0 or set center_chart to True')
 
     if in_between_points_margin:
         sequences = stretched_sequences(sequences, in_between_points_margin)  # type: ignore

@@ -1,3 +1,10 @@
+__all__ = [
+    'centering_indentation_len',
+    'indented',
+    'newlined',
+    'newline_succeeded'
+]
+
 from typing import Any
 
 
@@ -20,3 +27,9 @@ def indented(serializable_obj: Any, columns: int) -> str:
 
 def newlined(serializable_obj: Any) -> str:
     return f'{serializable_obj}\n'
+
+
+def newline_succeeded(func):
+    def wrapper(*args, **kwargs):
+        return newlined(func(*args, **kwargs))
+    return wrapper

@@ -2,7 +2,8 @@ from asciiplot._utils import (
     colored,
     newlined,
     indented,
-    centering_indentation_len
+    centering_indentation_len,
+    newline_succeeded
 )
 from asciiplot._config import Config
 from asciiplot._chart import ChartGrid
@@ -35,8 +36,9 @@ def layout_element_containing(serialized_chart: str, config: Config, chart_param
     return serialized_chart
 
 
+@newline_succeeded
 def _title_header(title: str, title_color: str, chart_width: int, horizontal_y_axis_offset: int) -> str:
     """ Returns:
             aptly indented title header with successive newline """
 
-    return f'{indented(colored(title, title_color), columns=(centering_indentation_len(len(title), reference_length=chart_width) + horizontal_y_axis_offset))}\n'
+    return f'{indented(colored(title, title_color), columns=(centering_indentation_len(len(title), reference_length=chart_width) + horizontal_y_axis_offset))}'

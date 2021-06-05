@@ -92,26 +92,7 @@ class ChartGrid(list):
         self._add_y_axis()
         self._add_x_axis()
 
-        # if self._config.indentation:
-        #     for i in range(len(self)):
-        #         self[i][0] = indented(self[i][0], columns=self._config.indentation)
-        #
-        # # calculate params, create chart grid
-        # if self.params.total_width > _n_terminal_columns:
-        #     raise ValueError(
-        #         f'Number of columns occupied by entire plot ({self.params.total_width}) '
-        #         f'exceeding number of terminal columns ({_n_terminal_columns})'
-        #     )
-        #
-        # # center chart if desired
-        # if self._config.center:
-        #     n_whitespaces = centering_indentation_len(self.params.total_width, reference_length=_n_terminal_columns)
-        #     centering_margin = ' ' * n_whitespaces
-        #
-        #     for row_index in range(len(self)):
-        #         self[row_index].insert(0, centering_margin)
-        #
-        #     self.params.columns_to_y_axis_ticks += n_whitespaces
+        self._indent_if_applicable()
 
     def _add_sequences(self, sequences: Sequences):
         """ Adds ascii-ized sequences to chart
@@ -224,3 +205,24 @@ class ChartGrid(list):
                 last_row[i] = SEGMENTS[[3, 2][_is_data_point]]
             elif _is_data_point:
                 last_row[i] = _parcel.segment_replaced(parcel, SEGMENT_REPLACEMENTS)
+
+    def _indent_if_applicable(self):
+        if self._config.indentation:
+            # calculate params, create chart grid
+            if self.params.total_width > _n_terminal_columns:
+                raise ValueError(
+                    f'Number of columns occupied by entire plot ({self.params.total_width}) '
+                    f'exceeding number of terminal columns ({_n_terminal_columns})'
+                )
+
+            for i in range(len(self)):
+                self[i][0] = indented(self[i][0], columns=self._config.indentation)
+
+        elif self._config.center:
+            n_whitespaces = centering_indentation_len(self.params.total_width, reference_length=_n_terminal_columns)
+            centering_margin = ' '.rjust(n_whitespaces)
+
+            for row_index in range(len(self)):
+                self[row_index].insert(0, centering_margin)
+
+            self.params.columns_to_y_axis_ticks += n_whitespaces
