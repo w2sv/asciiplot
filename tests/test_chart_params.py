@@ -11,11 +11,11 @@ def test_chart_params():
             axis_description_color='WHITE',
             x_axis_description='x_axis',
             y_axis_description='y_axis',
-            y_label_decimal_places=3,
+            y_axis_ticks_decimal_places=3,
             label_color='WHITE',
             title_color='WHITE',
             title='title',
-            x_labels=list(range(3)),
+            x_axis_ticks=list(range(3)),
             center=False,
             indentation=4,
             sequence_colors=['WHITE']

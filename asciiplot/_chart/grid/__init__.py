@@ -7,8 +7,8 @@ import dataclasses
 from asciiplot._config import Config
 from asciiplot._utils import (
     colored,
-    indented,
     terminal_columns,
+    indented,
     centering_indentation_len
 )
 from asciiplot._chart.grid import parcel
@@ -44,7 +44,7 @@ class ChartGrid(list):
             self.delta_row_index_per_y: float = max(1., config.height / self.y_value_spread)
 
             # label parameters
-            self.y_axis_ticks = self._compute_labels(config.height, config.y_label_decimal_places)
+            self.y_axis_ticks = self._compute_labels(config.height, config.y_axis_ticks_decimal_places)
 
             self.label_columns = max(map(len, self.y_axis_ticks))
             self.columns_to_y_axis_ticks: int = self.label_columns + config.indentation

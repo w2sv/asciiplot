@@ -2,7 +2,7 @@ from typing import List, Sequence, Optional, Union
 
 from asciiplot._config import Config
 from asciiplot._sequences import stretched_sequences
-from asciiplot._chart import ChartGrid, enriched
+from asciiplot._chart import ChartGrid, serialized
 
 
 _DEFAULT_COLOR = 'WHITE'
@@ -52,7 +52,7 @@ def asciiize(
     )
 
     chart_grid = ChartGrid(config, sequences=sequences)
-    return enriched(chart_grid.serialized(), config=config, chart_params=chart_grid.params)
+    return serialized.layout_element_containing(chart_grid.serialized(), config=config, chart_params=chart_grid.params)
 
 
 def _raise_if_colors_exceeding_sequences(n_sequences: int, n_sequence_colors: int):

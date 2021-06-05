@@ -4,6 +4,9 @@ from typing import Sequence, Optional, Union
 from asciiplot._utils import colored
 
 
+Ticks = Sequence[Optional[Union[str, float]]]
+
+
 @dataclasses.dataclass(frozen=True)
 class Config:
     height: int
@@ -12,8 +15,8 @@ class Config:
     sequence_colors: Sequence[str]
     label_color: str
 
-    x_labels: Optional[Sequence[Optional[Union[str, float]]]]
-    y_label_decimal_places: int
+    x_axis_ticks: Optional[Ticks]
+    y_axis_ticks_decimal_places: int
 
     x_axis_description: str
     y_axis_description: str
