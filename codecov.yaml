@@ -1,2 +1,6 @@
 ignore:
   - "/tests/*"
+
+codecov:
+  token:
+    "4fa3b1fe-d130-48b9-b429-5bdf9ddd92b7"

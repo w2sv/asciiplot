@@ -6,6 +6,7 @@ logging.txt
 
 # Coverage
 /.coverage
+coverage.xml
 /htmlcov/
 
 # Envs
