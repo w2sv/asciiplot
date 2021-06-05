@@ -10,12 +10,16 @@ setup(
     packages=find_packages(exclude=(["*.tests", "*.tests.*", "tests.*", "tests"])),
     version=version['__version__'],
     license='MIT',
-    description='Package enabling asciiized sequence plotting in terminal across platforms',
-    keywords=['plotting', 'terminal', 'console', 'ascii', 'gui', 'data', 'visualization'],
+    description='Package enabling platform-agnostic sequence plotting in terminal',
+    keywords=['plotting', 'terminal', 'console', 'ascii', 'gui', 'data', 'visualization', 'statistics', 'chart'],
     url='https://github.com/w2sv/asciiplot',
-    download_url='https://github.com/w2sv/asciiplot/releases/download/v0.0.3/asciiplot-0.0.3-py3-none-any.whl',
+    download_url='https://github.com/w2sv/asciiplot/releases/download/v0.1.0/asciiplot-0.1.0-py3-none-any.whl',
     python_requires='>=3.6',
-    install_requires=['colored==1.4.2'],
+    install_requires=[
+        'colored==1.4.2',
+        'more-itertools',
+        'dataclasses'
+    ],
     author='W2SV',
     author_email='zangenbergjanek@googlemail.com',
     platforms=['Linux', 'Windows', 'MacOS']
