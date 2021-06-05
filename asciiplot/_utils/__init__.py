@@ -24,3 +24,7 @@ def colored(serializable_obj: Any, color: str) -> str:
 
 def terminal_columns() -> int:
     return shutil.get_terminal_size().columns
+
+
+if __name__ == '__main__':
+    print(_colored.colors.names)

@@ -11,7 +11,7 @@ from asciiplot._utils import (
     indented,
     centering_indentation_len
 )
-from asciiplot._chart.grid import parcel
+from asciiplot._chart.grid import parcel as _parcel
 from asciiplot._sequences import Sequences
 
 
@@ -44,7 +44,7 @@ class ChartGrid(list):
             self.delta_row_index_per_y: float = max(1., config.height / self.y_value_spread)
 
             # label parameters
-            self.y_axis_ticks = self._compute_labels(config.height, config.y_axis_ticks_decimal_places)
+            self.y_axis_ticks = self._y_axis_ticks(config.height, config.y_axis_ticks_decimal_places)
 
             self.label_columns = max(map(len, self.y_axis_ticks))
             self.columns_to_y_axis_ticks: int = self.label_columns + config.indentation
@@ -65,7 +65,7 @@ class ChartGrid(list):
         def total_width(self) -> int:
             return sum([self.columns_to_y_axis_ticks, self.width, self.x_axis_description_len, 1])
 
-        def _compute_labels(self, chart_height: int, decimal_places: int) -> List[str]:
+        def _y_axis_ticks(self, chart_height: int, decimal_places: int) -> List[str]:
             label_strings: List[str] = []
 
             delta_y_per_row = self.y_value_spread / (chart_height - 1)
@@ -92,26 +92,26 @@ class ChartGrid(list):
         self._add_y_axis()
         self._add_x_axis()
 
-        if self._config.indentation:
-            for i in range(len(self)):
-                self[i][0] = indented(self[i][0], columns=self._config.indentation)
-
-        # calculate params, create chart grid
-        if self.params.total_width > _n_terminal_columns:
-            raise ValueError(
-                f'Number of columns occupied by entire plot ({self.params.total_width}) '
-                f'exceeding number of terminal columns ({_n_terminal_columns})'
-            )
-
-        # center chart if desired
-        if self._config.center:
-            n_whitespaces = centering_indentation_len(self.params.total_width, reference_length=_n_terminal_columns)
-            centering_margin = ' ' * n_whitespaces
-
-            for row_index in range(len(self)):
-                self[row_index].insert(0, centering_margin)
-
-            self.params.columns_to_y_axis_ticks += n_whitespaces
+        # if self._config.indentation:
+        #     for i in range(len(self)):
+        #         self[i][0] = indented(self[i][0], columns=self._config.indentation)
+        #
+        # # calculate params, create chart grid
+        # if self.params.total_width > _n_terminal_columns:
+        #     raise ValueError(
+        #         f'Number of columns occupied by entire plot ({self.params.total_width}) '
+        #         f'exceeding number of terminal columns ({_n_terminal_columns})'
+        #     )
+        #
+        # # center chart if desired
+        # if self._config.center:
+        #     n_whitespaces = centering_indentation_len(self.params.total_width, reference_length=_n_terminal_columns)
+        #     centering_margin = ' ' * n_whitespaces
+        #
+        #     for row_index in range(len(self)):
+        #         self[row_index].insert(0, centering_margin)
+        #
+        #     self.params.columns_to_y_axis_ticks += n_whitespaces
 
     def _add_sequences(self, sequences: Sequences):
         """ Adds ascii-ized sequences to chart
@@ -180,13 +180,14 @@ class ChartGrid(list):
         }
 
         for i in range(len(self)):
-            _parcel = self[i][0]
-            if _parcel == parcel.DEFAULT:
-                _parcel = '┤'
+            parcel = self[i][0]
+            if parcel == _parcel.DEFAULT:
+                parcel = '┤'
             else:
-                _parcel = parcel.segment_replaced(_parcel, segment_replacements=SEGMENT_REPLACEMENTS)
+                parcel = _parcel.segment_replaced(parcel, segment_replacements=SEGMENT_REPLACEMENTS)
 
-            self[i][0] = colored(_parcel.rjust(self.params.label_columns), self._config.label_color)
+            self[i][0] = f'{colored(self.params.y_axis_ticks[i].rjust(self.params.label_columns), color=self._config.label_color)}' \
+                         f'{parcel}'
 
     def _add_x_axis(self):
         """ Adds x-axis to chart """
@@ -209,17 +210,17 @@ class ChartGrid(list):
 
         last_row = self[-1]
 
-        if not parcel.contained_elements(last_row[0])[0]:
+        if not _parcel.contained_elements(last_row[0])[0]:
             last_row[0] = SEGMENTS[0]
 
-        for i, _parcel in enumerate(last_row):
+        for i, parcel in enumerate(last_row):
             # add straight horizontal axis segment if parcel doesn't contain
             # a sequence segment, otherwise convert present sequence segment
             # to one comprising both the sequence and axis segment in color
             # of respective sequence
 
             _is_data_point = is_data_point(i)
-            if _parcel == parcel.DEFAULT:
+            if parcel == _parcel.DEFAULT:
                 last_row[i] = SEGMENTS[[3, 2][_is_data_point]]
             elif _is_data_point:
-                last_row[i] = parcel.segment_replaced(_parcel, SEGMENT_REPLACEMENTS)
+                last_row[i] = _parcel.segment_replaced(parcel, SEGMENT_REPLACEMENTS)
