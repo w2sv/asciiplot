@@ -10,7 +10,7 @@ setup(
     packages=find_packages(exclude=(["*.tests", "*.tests.*", "tests.*", "tests"])),
     version=version['__version__'],
     license='MIT',
-    description='Package enabling platform-agnostic sequence plotting in terminal',
+    description='Platform-agnostic sequence plotting for console GUIs',
     keywords=['plotting', 'terminal', 'console', 'ascii', 'gui', 'data', 'visualization', 'statistics'],
     url='https://github.com/w2sv/asciiplot',
     download_url='https://github.com/w2sv/asciiplot/releases/download/v0.1.0/asciiplot-0.1.0-py3-none-any.whl',

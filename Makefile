@@ -28,4 +28,7 @@ doctest:
 wheel:
 	rm -rf asciiplot.egg-info
 	rm -rf build
-	python setup.py bdist_wheel --dist-dir ./dist
+	python setup.py sdist bdist_wheel --dist-dir ./dist
+
+upload:	test wheel
+	python setup.py sdist upload
