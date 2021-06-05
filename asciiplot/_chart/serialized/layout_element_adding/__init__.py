@@ -1,10 +1,10 @@
 from asciiplot._utils import (
-    colored,
     newlined,
     indented,
     centering_indentation_len,
     newline_succeeded
 )
+from asciiplot._coloring import colored, Color
 from asciiplot._config import Config
 from asciiplot._chart import ChartGrid
 from . import x_axis_tick_row
@@ -19,7 +19,7 @@ def layout_element_containing(serialized_chart: str, config: Config, chart_param
         serialized_chart = f'{newlined(indented(config.axis_description(x_axis=False), columns=centering_indentation_len(len(config.y_axis_description), chart_params.columns_to_y_axis_ticks * 2)))}' \
                            f'{serialized_chart}'
     if config.title:
-        serialized_chart = _title_header(
+        serialized_chart = _title_header_row(
             config.title,
             config.title_color,
             chart_params.width,
@@ -28,7 +28,7 @@ def layout_element_containing(serialized_chart: str, config: Config, chart_param
     if config.x_axis_ticks:
         serialized_chart = serialized_chart + x_axis_tick_row.render(
             config.x_axis_ticks,
-            config.label_color,
+            config.tick_color,
             chart_params.columns_to_y_axis_ticks,
             config.inter_points_margin
         )
@@ -37,7 +37,7 @@ def layout_element_containing(serialized_chart: str, config: Config, chart_param
 
 
 @newline_succeeded
-def _title_header(title: str, title_color: str, chart_width: int, horizontal_y_axis_offset: int) -> str:
+def _title_header_row(title: str, title_color: Color, chart_width: int, horizontal_y_axis_offset: int) -> str:
     """ Returns:
             aptly indented title header with successive newline """
 

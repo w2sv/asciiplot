@@ -6,11 +6,11 @@ import dataclasses
 
 from asciiplot._config import Config
 from asciiplot._utils import (
-    colored,
     terminal_columns,
     indented,
     centering_indentation_len
 )
+from asciiplot._coloring import colored
 from asciiplot._chart.grid import parcel as _parcel
 from asciiplot._sequences import Sequences
 
@@ -33,7 +33,7 @@ class ChartGrid(list):
         y_axis_ticks: List[str] = dataclasses.field(init=False)
         columns_to_y_axis_ticks: int = dataclasses.field(init=False)
 
-        label_columns: int = dataclasses.field(init=False)
+        y_tick_columns: int = dataclasses.field(init=False)
 
         config: dataclasses.InitVar[Config]
 
@@ -46,8 +46,8 @@ class ChartGrid(list):
             # label parameters
             self.y_axis_ticks = self._y_axis_ticks(config.height, config.y_axis_ticks_decimal_places)
 
-            self.label_columns = max(map(len, self.y_axis_ticks))
-            self.columns_to_y_axis_ticks: int = self.label_columns + config.indentation
+            self.y_tick_columns = max(map(len, self.y_axis_ticks))
+            self.columns_to_y_axis_ticks: int = self.y_tick_columns + config.indentation
 
         @classmethod
         def extract(cls, sequences: Sequences, config: Config):
@@ -95,12 +95,6 @@ class ChartGrid(list):
         self._indent_if_applicable()
 
     def _add_sequences(self, sequences: Sequences):
-        """ Adds ascii-ized sequences to chart
-
-            Returns:
-                last_column_occupying_segment_row_indices: List[int], row indices of sequence ends occupying
-                    the last chart column """
-
         SEGMENTS = ['┼', '─', '╰', '╭', '╮', '╯', '│']
         INIT_VALUE = -1
 
@@ -152,9 +146,6 @@ class ChartGrid(list):
         return '\n'.join((''.join(row).rstrip() for row in self))
 
     def _add_y_axis(self):
-        """ Returns:
-                y-axis comprising chart grid """
-
         SEGMENT_REPLACEMENTS = {
             '─': '┤',
             '|': '┼'
@@ -167,12 +158,10 @@ class ChartGrid(list):
             else:
                 parcel = _parcel.segment_replaced(parcel, segment_replacements=SEGMENT_REPLACEMENTS)
 
-            self[i][0] = f'{colored(self.params.y_axis_ticks[i].rjust(self.params.label_columns), color=self._config.label_color)}' \
+            self[i][0] = f'{colored(self.params.y_axis_ticks[i].rjust(self.params.y_tick_columns), color=self._config.tick_color)}' \
                          f'{parcel}'
 
     def _add_x_axis(self):
-        """ Adds x-axis to chart """
-
         SEGMENTS = ('┼', '┤', '┬', '─')
         SEGMENT_REPLACEMENTS = {
             '┤': '┼',
@@ -190,9 +179,6 @@ class ChartGrid(list):
             return not point_index % (self._config.inter_points_margin + 1)
 
         last_row = self[-1]
-
-        if not _parcel.contained_elements(last_row[0])[0]:
-            last_row[0] = SEGMENTS[0]
 
         for i, parcel in enumerate(last_row):
             # add straight horizontal axis segment if parcel doesn't contain

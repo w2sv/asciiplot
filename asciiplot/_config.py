@@ -1,8 +1,7 @@
 import dataclasses
 from typing import Sequence, Optional, Union
 
-from asciiplot._utils import colored
-
+from asciiplot._coloring import colored, Color
 
 Ticks = Sequence[Optional[Union[str, float]]]
 
@@ -12,18 +11,18 @@ class Config:
     height: int
     inter_points_margin: int
 
-    sequence_colors: Sequence[str]
-    label_color: str
+    sequence_colors: Sequence[Color]
+    tick_color: Color
 
     x_axis_ticks: Optional[Ticks]
     y_axis_ticks_decimal_places: int
 
     x_axis_description: str
     y_axis_description: str
-    axis_description_color: str
+    axis_description_color: Color
 
     title: Optional[str]
-    title_color: str
+    title_color: Color
 
     indentation: int
     center: bool

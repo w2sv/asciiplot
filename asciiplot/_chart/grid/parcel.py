@@ -1,8 +1,7 @@
 from typing import Dict, Tuple, Optional
 import re
 
-from asciiplot._utils import RESET_COLOR_ANSI
-
+from asciiplot._coloring import RESET_COLOR_ANSI
 
 DEFAULT = ' '
 

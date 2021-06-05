@@ -4,12 +4,13 @@ from typing import List, Optional, Union
 import more_itertools
 
 from asciiplot._config import Ticks
-from asciiplot._utils import indented, colored
+from asciiplot._utils import indented
+from asciiplot._coloring import colored, Color
 
 
 def render(
         x_axis_ticks: Ticks,
-        tick_color: str,
+        tick_color: Color,
         horizontal_y_axis_offset: int,
         inter_points_margin: int) -> str:
 
@@ -35,7 +36,7 @@ class _XAxisTickLabel(str):
     """ Serving the creation of helper objects facilitating the computation
     of whitespace sequences in between labels """
 
-    def __new__(cls, content: Optional[Union[str, float]], color: Optional[str] = None):
+    def __new__(cls, content: Optional[Union[str, float]], color: Optional[Color] = None):
         if not content:
             content = ' '
         elif color:
@@ -43,7 +44,7 @@ class _XAxisTickLabel(str):
 
         return super().__new__(cls, content)
 
-    def __init__(self, content: Optional[Union[str, float]], color: Optional[str] = None):
+    def __init__(self, content: Optional[Union[str, float]], color: Optional[Color] = None):
         """ Initialize such that center of serialized label right beneath tick
         in case of odd string length, otherwise shift by one column towards the right
 
@@ -79,7 +80,11 @@ class _XAxisTickLabel(str):
 def _tick_row(ticks: List[_XAxisTickLabel], inter_points_margin: int) -> str:
     """
     >>> _tick_row(list(map(_XAxisTickLabel, ['great', 'cool', 'splendid', 'sick'])), inter_points_margin=6)
-    'great   cool splendid sick' """
+    'great   cool splendid sick'
+    >>> _tick_row(list(map(_XAxisTickLabel, ['first', 'second', 'third', 'fourth'])), inter_points_margin=8)
+    'first    second   third    fourth'
+    >>> _tick_row(list(map(_XAxisTickLabel, range(9, 14))), inter_points_margin=3)
+    '9   10  11  12  13' """
 
     return ''.join(
         itt.starmap(

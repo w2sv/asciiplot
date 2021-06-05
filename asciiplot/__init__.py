@@ -14,27 +14,42 @@ Package functionality comprising:
 
 from asciiplot.version import __version__
 from asciiplot._asciiization import asciiize
-from colored.colors import names as color_names
+from asciiplot._coloring import Color
 
 
 if __name__ == '__main__':
     print(asciiize(
         [1, 1, 2, 3, 5, 8, 13, 21],
-        chart_height=15,
-        in_between_points_margin=7,
+        height=15,
+        inter_points_margin=7,
 
-        sequence_colors=['DARK_MAGENTA_1'],
-        label_color='VIOLET',
+        sequence_colors=[Color.CYAN],
+        label_color=Color.DARK_VIOLET_1A,
 
-        x_labels=list(range(10, 18)),
-        y_label_decimal_places=0,
+        x_ticks=list(range(10, 18)),
+        y_ticks_decimal_places=0,
 
         x_axis_description='iteration',
         y_axis_description='number',
-        axis_description_color='MEDIUM_PURPLE',
+        axis_description_color=Color.MEDIUM_TURQUOISE,
 
         title='Fibonacci Sequence',
-        title_color='LIGHT_RED',
+        title_color=Color.AQUAMARINE_1A,
 
-        chart_indentation=8
+        indentation=8
+    ))
+
+    print(asciiize(
+        [1, 1, 2, 3, 5, 8, 13, 21],
+        height=15,
+        inter_points_margin=7,
+
+        x_ticks=list(range(10, 18)),
+        y_ticks_decimal_places=0,
+
+        x_axis_description='iteration',
+        y_axis_description='number',
+
+        title='Fibonacci Sequence',
+        indentation=8
     ))

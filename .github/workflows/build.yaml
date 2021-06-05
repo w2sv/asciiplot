@@ -32,9 +32,11 @@ jobs:
           # Run tests
           make test
 
+          # Build wheel
+          make wheel
+
       - name: Upload to codecov
         uses: codecov/codecov-action@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
           fail_ci_if_error: true
