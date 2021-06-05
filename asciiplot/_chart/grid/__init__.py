@@ -146,6 +146,9 @@ class ChartGrid(list):
         return '\n'.join((''.join(row).rstrip() for row in self))
 
     def _add_y_axis(self):
+        """ Besets first parcel of each row with respective y-axis segment
+            preceded by colored, adjusted tick value """
+
         SEGMENT_REPLACEMENTS = {
             '─': '┤',
             '|': '┼'
@@ -154,12 +157,13 @@ class ChartGrid(list):
         for i in range(len(self)):
             parcel = self[i][0]
             if parcel == _parcel.DEFAULT:
-                parcel = '┤'
+                axis_segment = '┤'
             else:
-                parcel = _parcel.segment_replaced(parcel, segment_replacements=SEGMENT_REPLACEMENTS)
+                # replace parcel segment
+                axis_segment = _parcel.segment_replaced(parcel, segment_replacements=SEGMENT_REPLACEMENTS)
 
             self[i][0] = f'{colored(self.params.y_axis_ticks[i].rjust(self.params.y_tick_columns), color=self._config.tick_color)}' \
-                         f'{parcel}'
+                         f'{axis_segment}'
 
     def _add_x_axis(self):
         SEGMENTS = ('┼', '┤', '┬', '─')
@@ -194,7 +198,8 @@ class ChartGrid(list):
 
     def _indent_if_applicable(self):
         if self._config.indentation:
-            # calculate params, create chart grid
+
+            # raise if total width exceeding terminal columns
             if self.params.total_width > _n_terminal_columns:
                 raise ValueError(
                     f'Number of columns occupied by entire plot ({self.params.total_width}) '

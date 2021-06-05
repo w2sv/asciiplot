@@ -6,6 +6,7 @@ __all__ = [
 ]
 
 from typing import Any
+import functools
 
 
 def centering_indentation_len(string_length: int, reference_length: int) -> int:
@@ -30,6 +31,7 @@ def newlined(serializable_obj: Any) -> str:
 
 
 def newline_succeeded(func):
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         return newlined(func(*args, **kwargs))
     return wrapper
