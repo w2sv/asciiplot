@@ -30,9 +30,6 @@ jobs:
           # Run tests
           make test
 
-          # Build wheel
-          make wheel
-
       - name: Upload to codecov
         uses: codecov/codecov-action@v1
         with:
