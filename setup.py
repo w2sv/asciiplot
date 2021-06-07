@@ -1,26 +1,32 @@
 from setuptools import setup, find_packages
-from pathlib import Path
+import os
 
-version = {}
-exec(open(Path(__file__).parent /'asciiplot/version.py').read(), version)
+from asciiplot import __version__
 
+
+with open(os.path.join(os.getcwd(), 'README.md'), 'r', encoding='utf-8') as f:
+    readme_content = f.read()
 
 setup(
     name='asciiplot',
     packages=find_packages(exclude=(["*.tests", "*.tests.*", "tests.*", "tests"])),
-    version=version['__version__'],
+    version=__version__,
+    # long_description=readme_content,
+    # long_description_content_type='text/markdown',
     license='MIT',
-    description='Platform-agnostic sequence plotting for console GUIs',
     keywords=['plotting', 'terminal', 'console', 'ascii', 'gui', 'data', 'visualization', 'statistics'],
     url='https://github.com/w2sv/asciiplot',
-    download_url='https://github.com/w2sv/asciiplot/releases/download/v0.1.0/asciiplot-0.1.0-py3-none-any.whl',
     python_requires='>=3.6',
     install_requires=[
         'colored==1.4.2',
         'more-itertools',
         'dataclasses'
     ],
-    author='W2SV',
+    author='w2sv',
     author_email='zangenbergjanek@googlemail.com',
-    platforms=['Linux', 'Windows', 'MacOS']
+    platforms=['Linux', 'Windows', 'MacOS'],
+    description='Platform-agnostic, highly customizable sequence plotting in terminal for GUIs'
 )
+
+
+

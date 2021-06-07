@@ -7,7 +7,7 @@
 
 ### Install
 ```shell
-pip install asciiplot
+$ pip install asciiplot
 ```
 
 ### Plot configuration options
@@ -45,7 +45,7 @@ print(
 )
 
 
->>>                        Fibonacci Sequence
+                        Fibonacci Sequence
      Value
       21┤                                                     ╭──
       19┤                                                    ╭╯
@@ -62,7 +62,7 @@ print(
        3┤                       ╭─────╯
        2┤             ╭─────────╯
        1┼───────┬─────╯─┬───────┬───────┬───────┬───────┬───────┬ Iteration
-        1       2       3       4       5       6       7       8
+        1       2       3       4       5       6       7       8"""
 ```
 ```python
 import numpy as np
@@ -84,7 +84,7 @@ print(
     )
 )
 
->>>                                             Random Values
+                                             Random Values
         96.0┤        ╭╮    ╭──╭╮──╮               ╭──╮   ╭╮       ╭╮    ╭╮          ╭───────╮  ╭─╮
         74.2┤  ╭╮    ││    │  ││  │               │  ╰╮ ╭╯│      ╭╯│   ╭╯╰╮        ╭╯──╯│   ╰╮╭╯ │
         52.4┤ ╭╭╮╮  ╭╯╰╮  ╭╯ ╭╯│  ╰╮   ╭╮    ╭──╮╭╯   │╭╯ ╰╮   ╭─╯ ╰╮╭╮│  │       ╭╯│   │    ╰╯  ╰╮

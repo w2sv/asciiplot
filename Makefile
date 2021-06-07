@@ -25,10 +25,13 @@ doctest:
 # --------------
 # Building
 # --------------
-wheel:
+build: test
 	rm -rf asciiplot.egg-info
 	rm -rf build
+	rm -rf dist
+
 	python setup.py sdist bdist_wheel --dist-dir ./dist
 
-upload:	test wheel
-	python setup.py sdist upload
+upload: build
+	python -m twine check dist/*
+	python setup.py sdist bdist_wheel upload
