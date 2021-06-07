@@ -35,3 +35,6 @@ build: test
 upload: build
 	python -m twine check dist/*
 	python setup.py sdist bdist_wheel upload
+
+	# Adding release tag to push:
+	# git tag -a v0.1.1 -m "Alter short pypi description"
