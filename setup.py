@@ -1,3 +1,5 @@
+""" Reference: https://gist.github.com/gboeing/dcfaf5e13fad16fc500717a3a324ec17 """
+
 from setuptools import setup, find_packages
 import os
 
