@@ -5,7 +5,7 @@ SHELL=/bin/bash
 # --------------
 install:
 	rm -rf env
-	conda env create -f environment.yml --prefix ./env
+	mamba env create -f environment.yml --prefix ./env
 
 # --------------
 # Testing
@@ -17,6 +17,7 @@ mypy:
 
 pytest:
 	coverage run -m pytest -vv tests/
+	coverage xml
 
 doctest:
 	python -m pytest -vv --doctest-modules --doctest-continue-on-failure ./asciiplot/
@@ -25,16 +26,13 @@ doctest:
 # --------------
 # Building
 # --------------
-build: test
+wheel:
 	rm -rf asciiplot.egg-info
 	rm -rf build
 	rm -rf dist
 
 	python setup.py sdist bdist_wheel --dist-dir ./dist
 
-upload: build
+upload: wheel
 	python -m twine check dist/*
 	python setup.py sdist bdist_wheel upload
-
-	# Adding release tag to push:
-	# git tag -a v0.1.1 -m "Alter short pypi description"

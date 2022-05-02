@@ -8,23 +8,26 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.9]
 
     steps:
       - uses: actions/checkout@master
       - name: Build
         run: |
+          # Install conda
           wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
           bash miniconda.sh -b -p $HOME/miniconda
           source "$HOME/miniconda/etc/profile.d/conda.sh"
           hash -r
           conda config --set always_yes yes --set changeps1 no
           conda update -q conda
-
-          # Useful for debugging any issues with conda
           conda info -a
 
-          conda env create -f environment.yml --prefix ./env
+          # Install mamba
+          conda install -n base -c conda-forge mamba
+
+          # Create and activate env
+          make install
           conda activate ./env
 
           # Run tests
@@ -34,5 +37,6 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          env_vars: OS,PYTHON
+          fail_ci_if_error: true
           verbose: true
-          fail_ci_if_error: false

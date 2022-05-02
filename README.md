@@ -104,4 +104,4 @@ Core sequence asciiization algorithm adopted from https://github.com/kroitor/asc
 
 
 ### License
-[MIT License](https://github.com/w2sv/asciiplot/blob/master/LICENSE.txt)
+[MIT License](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
