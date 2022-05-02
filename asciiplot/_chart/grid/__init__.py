@@ -51,11 +51,11 @@ class ChartGrid(list):
 
         @classmethod
         def extract(cls, sequences: Sequences, config: Config):
-            finite_values = list(filter(math.isfinite, itt.chain(*sequences)))
+            finite_values: List[float] = list(filter(math.isfinite, itt.chain(*sequences)))
 
             return cls(
-                int(math.floor(min(finite_values))),
-                int(math.ceil(max(finite_values))),
+                y_min=int(math.floor(min(finite_values))),
+                y_max=int(math.ceil(max(finite_values))),
                 width=max(map(len, sequences)),
                 x_axis_description_len=len(config.x_axis_description),
                 config=config

@@ -4,8 +4,9 @@ channels:
 dependencies:
   - python=3.6
   - colored=1.4.2
-  - mypy
-  - pytest
-  - coverage
   - dataclasses
   - more-itertools
+  - mypy  # dev
+  - types-dataclasses  # dev
+  - pytest  # dev
+  - coverage  # dev

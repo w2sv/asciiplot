@@ -16,6 +16,11 @@ setup(
     long_description_content_type='text/markdown',
     license='MIT',
     keywords=['plotting', 'terminal', 'console', 'ascii', 'gui', 'data', 'visualization', 'statistics', 'sequences'],
+    classifiers=[
+            "Programming Language :: Python :: 3",
+            "License :: OSI Approved :: MIT License",
+            "Operating System :: OS Independent",
+        ],
     url='https://github.com/w2sv/asciiplot',
     python_requires='>=3.6',
     install_requires=[
@@ -26,8 +31,7 @@ setup(
     author='w2sv',
     author_email='zangenbergjanek@googlemail.com',
     platforms=['Linux', 'Windows', 'MacOS'],
-    description='Platform-agnostic, highly customizable sequence plotting in console, offering high suitability for '
-                'GUIs'
+    description='Platform-agnostic, highly customizable sequence plotting in console, offering high suitability for GUIs'
 )
 
 
