@@ -1,9 +1,10 @@
 # __asciiplot__
 
-[![Python](https://img.shields.io/pypi/pyversions/tensorflow.svg?style=plastic)](https://badge.fury.io/py/tensorflow)
+[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
+![PyPI](https://img.shields.io/pypi/v/asciiplot)
 [![Build](https://github.com/w2sv/asciiplot/actions/workflows/build.yaml/badge.svg)](https://github.com/w2sv/asciiplot/actions/workflows/build.yaml)
 [![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
-#### Lightweight, cross-platform sequence plotting in console, offering various chart appearance configuration options and thus giving rise to an increased degree of GUI suitability
+#### Platform-agnostic sequence plotting in console, offering various chart appearance configuration options and thus giving rise to an increased degree of GUI suitability
 
 ### Install
 ```shell
@@ -62,7 +63,7 @@ print(
        3┤                       ╭─────╯
        2┤             ╭─────────╯
        1┼───────┬─────╯─┬───────┬───────┬───────┬───────┬───────┬ Iteration
-        1       2       3       4       5       6       7       8"""
+        1       2       3       4       5       6       7       8
 ```
 ```python
 import numpy as np
