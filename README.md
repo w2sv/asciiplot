@@ -45,7 +45,7 @@ print(
         indentation=6
     )
 )
-
+```
 
                         Fibonacci Sequence
      Value
@@ -65,7 +65,7 @@ print(
        2┤             ╭─────────╯
        1┼───────┬─────╯─┬───────┬───────┬───────┬───────┬───────┬ Iteration
         1       2       3       4       5       6       7       8
-```
+
 ```python
 import numpy as np
 from asciiplot import asciiize
@@ -85,6 +85,7 @@ print(
         indentation=6
     )
 )
+```
 
                                              Random Values
         96.0┤        ╭╮    ╭──╭╮──╮               ╭──╮   ╭╮       ╭╮    ╭╮          ╭───────╮  ╭─╮
@@ -98,7 +99,6 @@ print(
        -78.2┤       ╰──╯         │╭╯││    ╰╯    │ ╭─╯      ╰╮ ╭─╯            ╰╮│          │╭╯
       -100.0┼──┬──┬──┬──┬──┬──┬──├╯─├╯─┬──┬──┬──├─╯┬──┬──┬──├─╯┬──┬──┬──┬──┬──├╯─┬──┬──┬──├╯─┬──┬──┬ 
             1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
-```
 
 ### References
 Core sequence asciiization algorithm adopted from https://github.com/kroitor/asciichart/blob/master/asciichartpy/

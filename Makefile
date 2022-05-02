@@ -34,5 +34,6 @@ wheel:
 	python setup.py sdist bdist_wheel --dist-dir ./dist
 
 upload: wheel
+	pip install certifi
 	python -m twine check dist/*
 	python setup.py sdist bdist_wheel upload
