@@ -3,6 +3,7 @@ channels:
   - defaults
 dependencies:
   - python=3.6
+  - twine
   - colored=1.4.2
   - dataclasses
   - more-itertools

@@ -18,7 +18,7 @@ setup(
                 'GUIs',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    keywords=['plotting', 'terminal', 'console', 'ascii', 'gui', 'data', 'visualization', 'statistics', 'sequences'],
+    keywords='plotting, terminal, console, ascii, gui, data, visualization, statistics, sequences',
     classifiers=[
             "Programming Language :: Python :: 3",
             "License :: OSI Approved :: MIT License",
