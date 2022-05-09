@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "asciiplot"
+version = "0.0.8"
+description = "Platform-agnostic, customizable sequence plotting in console, offering high suitability for GUIs"
+authors = ["w2sv <zangenbergjanek@googlemail.com>"]
+license = "MIT"
+repository = "https://github.com/w2sv/monostate"
+keywords=['plotting', 'terminal', 'console', 'ascii', 'gui', 'data', 'visualization', 'statistics', 'sequences']
+classifiers = [
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+colored= "1.4.2"
+dataclasses = "*"
+more-itertools = "*"
+
+[tool.poetry.dev-dependencies]
+mypy = "*"
+pytest = "*"
+coverage = "*"
+types-dataclasses = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

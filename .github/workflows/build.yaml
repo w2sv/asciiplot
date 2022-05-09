@@ -1,40 +1,71 @@
+# https://github.com/snok/install-poetry
+
 name: Build
 
 on: [push]
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        python-version: [3.6, 3.9]
+        python-version: [ 3.6, 3.9 ]
 
     steps:
-      - uses: actions/checkout@master
-      - name: Build
+      #----------------------------------------------
+      #       check-out repo and set-up python
+      #----------------------------------------------
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Set up python
+        id: setup-python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      #----------------------------------------------
+      #  -----  install & configure poetry  -----
+      #----------------------------------------------
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      #----------------------------------------------
+      #       load cached venv if cache exists
+      #----------------------------------------------
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      #----------------------------------------------
+      # install dependencies if cache does not exist
+      #----------------------------------------------
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+
+      #----------------------------------------------
+      #              run test suite
+      #----------------------------------------------
+      - name: Run tests
         run: |
-          # Install conda
-          wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-          bash miniconda.sh -b -p $HOME/miniconda
-          source "$HOME/miniconda/etc/profile.d/conda.sh"
-          hash -r
-          conda config --set always_yes yes --set changeps1 no
-          conda update -q conda
-          conda info -a
-
-          # Install mamba
-          conda install -n base -c conda-forge mamba
-
-          # Create and activate env
-          make install
-          conda activate ./env
-
-          # Run tests
+          source .venv/bin/activate
           make test
 
+      #----------------------------------------------
+      #              Upload to codecov
+      # https://github.com/codecov/codecov-action
+      #----------------------------------------------
       - name: Upload to codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           env_vars: OS,PYTHON
