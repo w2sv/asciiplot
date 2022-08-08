@@ -1,29 +1,30 @@
 # __asciiplot__
 
-[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/asciiplot)
 [![Build](https://github.com/w2sv/asciiplot/actions/workflows/build.yaml/badge.svg)](https://github.com/w2sv/asciiplot/actions/workflows/build.yaml)
 [![codecov](https://codecov.io/gh/w2sv/asciiplot/branch/master/graph/badge.svg?token=69Q1VL8IHI)](https://codecov.io/gh/w2sv/asciiplot)
-![PyPI](https://img.shields.io/pypi/v/asciiplot)
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
-#### Platform-agnostic sequence plotting in console, offering various chart appearance configuration options and thus giving rise to an increased degree of GUI suitability
+[![PyPI](https://img.shields.io/pypi/v/asciiplot)](https://pypi.org/project/asciiplot)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/w2sv/asciiplot)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/asciiplot)
+[![GitHub](https://img.shields.io/github/license/w2sv/asciiplot?style=plastic)](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
 
-### Install
+#### Platform-agnostic sequence plotting in console, offering various chart appearance configuration options giving rise to an increased GUI suitability
+
+## Installation
 ```shell
-$ pip install asciiplot
+$pip install asciiplot
 ```
 
-### Plot configuration options
+## Plot Appearance Configuration Options
 
-- Setting of consistent margin between data points
-- Determination of chart height
-- Setting of chart title
-- Axes descriptions display
-- Setting of x-axis tick labels, possibly being of both numeric and string type
-- Determination of y-axis tick label decimal points
-- Centering the chart within the target terminal or indenting it by a passed number of columns respectively
-- Setting color of all chart components due to integration of [colored](https://pypi.org/project/colored/)
+Set:
+- chart height & title
+- axes descriptions & tick labels, including the possibility to determine the number of decimal points for float labels
+- the color of virtually all chart components, picked from a wide array of shades due to the integration of [colored](https://pypi.org/project/colored/)
+- consistent margin between consecutive data points to widen your charts
+- the chart indentation within its hosting terminal, or whether it ought to be centered in it, respectively
 
-### Examples
+## Usage Examples
 
 ```python
 from asciiplot import asciiize
@@ -100,9 +101,10 @@ print(
       -100.0┼──┬──┬──┬──┬──┬──┬──├╯─├╯─┬──┬──┬──├─╯┬──┬──┬──├─╯┬──┬──┬──┬──┬──├╯─┬──┬──┬──├╯─┬──┬──┬ 
             1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
 
-### References
+
+## Acknowledgements
 Core sequence asciiization algorithm adopted from https://github.com/kroitor/asciichart/blob/master/asciichartpy/
 
 
-### License
+## License
 [MIT License](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
