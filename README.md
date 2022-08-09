@@ -8,7 +8,7 @@
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/asciiplot)
 [![GitHub](https://img.shields.io/github/license/w2sv/asciiplot?style=plastic)](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
 
-#### Platform-agnostic sequence plotting in console, offering various chart appearance configuration options giving rise to an increased GUI suitability
+#### Platform-agnostic, customizable sequence plotting in console
 
 ## Installation
 ```shell

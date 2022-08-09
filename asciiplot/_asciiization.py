@@ -5,7 +5,7 @@ from asciiplot._coloring import Color, ColoredString
 from asciiplot._config import Config
 from asciiplot._utils.type_aliases import TickValues
 from asciiplot._sequence_interpolation import interpolated_sequences
-from asciiplot._utils.sequences import max_sequence_length
+from asciiplot._utils.iterables import max_element_length
 
 
 def asciiize(
@@ -14,6 +14,7 @@ def asciiize(
         inter_points_margin: int = 0,
 
         sequence_colors: Sequence[Color] = tuple([Color.DEFAULT]),
+        background_color: Color = Color.DEFAULT,
         label_color: Color = Color.DEFAULT,
 
         x_axis_tick_labels: Optional[TickValues] = None,
@@ -77,7 +78,7 @@ def asciiize(
     if len(sequence_colors) > len(sequences):
         raise ValueError('Number of received sequence colors exceeds number of sequences')
 
-    _max_sequence_length = max_sequence_length(sequences)
+    _max_sequence_length = max_element_length(sequences)
     if x_axis_tick_labels is not None and len(x_axis_tick_labels) > _max_sequence_length:
         raise ValueError(f"number of x-ticks = {len(x_axis_tick_labels)} does not match max sequence length = {_max_sequence_length}")
 
@@ -95,6 +96,7 @@ def asciiize(
         height=height,
         inter_points_margin=inter_points_margin,
         sequence_colors=sequence_colors,
+        background_color=background_color,
         label_color=label_color,
         x_axis_tick_labels=x_axis_tick_labels,
         y_axis_tick_label_decimal_places=y_axis_tick_label_decimal_places,

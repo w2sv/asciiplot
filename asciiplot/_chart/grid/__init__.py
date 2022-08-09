@@ -3,12 +3,12 @@ import math
 from typing import Iterator, List
 
 from asciiplot._chart.grid import cell as _parcel
-from asciiplot._chart.grid.cell import Cell
+from asciiplot._chart.grid.cell import Cell, DEFAULT_CONTENT
 from asciiplot._coloring import colored
 from asciiplot._config import Config
 from asciiplot._utils import terminal_width
 from asciiplot._utils.formatting import centering_indentation_len, indented
-from asciiplot._utils.sequences import max_sequence_length
+from asciiplot._utils.iterables import max_element_length
 from asciiplot._utils.type_aliases import PlotSequences
 
 
@@ -30,7 +30,7 @@ class ChartGrid(List[List[Cell]]):
             self.delta_row_index_per_y: float = max(1., config.height / self.y_value_range)
             self.y_axis_ticks: List[str] = list(self._y_axis_ticks(config.height, config.y_axis_tick_label_decimal_places))
 
-            self.y_tick_columns: int = max(map(len, self.y_axis_ticks))
+            self.y_tick_columns: int = max_element_length(self.y_axis_ticks)
             self.columns_to_y_axis_ticks: int = self.y_tick_columns + config.horizontal_indentation
 
         @classmethod
@@ -40,7 +40,7 @@ class ChartGrid(List[List[Cell]]):
             return cls(
                 y_min=int(math.floor(min(values))),
                 y_max=int(math.ceil(max(values))),
-                width=max_sequence_length(sequences),
+                width=max_element_length(sequences),
                 x_axis_description_len=len(config.x_axis_description) if config.x_axis_description else 0,
                 config=config
             )
@@ -64,7 +64,7 @@ class ChartGrid(List[List[Cell]]):
         self._config = config
         self.params = self.Params.extract(sequences, config)
 
-        super().__init__([[Cell() for _ in range(self.params.width)] for _ in range(self._config.height)])
+        super().__init__([[Cell(DEFAULT_CONTENT, bg_color=config.background_color) for _ in range(self.params.width)] for _ in range(self._config.height)])
 
         self._add_sequences(sequences)
 
@@ -74,7 +74,7 @@ class ChartGrid(List[List[Cell]]):
         self._indent_if_applicable()
 
     def _add_sequences(self, sequences: PlotSequences):
-        SEGMENTS = ['┼', '─', '╰', '╭', '╮', '╯', '│']
+        SEGMENTS = ('┼', '─', '╰', '╭', '╮', '╯', '│')
         INIT_VALUE = -1
 
         def _row_index(value: float) -> int:
@@ -91,11 +91,10 @@ class ChartGrid(List[List[Cell]]):
             j = INIT_VALUE
 
             def set_parcel(row_subtrahend: int, segment: str):
-                self[self._config.height - 1 - row_subtrahend][j + 1] = Cell(segment, color)
+                self[self._config.height - 1 - row_subtrahend][j + 1] = Cell(segment, fg_color=color, bg_color=self._config.background_color)
 
             # add '┼' at sequence beginning where sequences overlaps with y-axis
-            if math.isfinite(sequence[0]):
-                set_parcel(_row_index(sequence[0]), SEGMENTS[0])
+            set_parcel(_row_index(sequence[0]), SEGMENTS[0])
 
             # asciiize sequence
             while j < len(sequence) - 2:
@@ -140,7 +139,7 @@ class ChartGrid(List[List[Cell]]):
             else:
                 axis_segment = cell.replace_string(SEGMENT_REPLACEMENTS).string
 
-            self[i][0] = Cell(f'{colored(self.params.y_axis_ticks[i].rjust(self.params.y_tick_columns), color=self._config.label_color)}{axis_segment}')
+            self[i][0] = Cell(f'{colored(self.params.y_axis_ticks[i].rjust(self.params.y_tick_columns), fg_color=self._config.label_color)}{axis_segment}')
 
     def _add_x_axis(self):
         SEGMENTS = ('┼', '┤', '┬', '─')

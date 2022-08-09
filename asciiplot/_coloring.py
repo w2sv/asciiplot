@@ -270,7 +270,7 @@ class Color(enum.Enum):
         return self.name.lower()
 
 
-def colored(serializable: Serializable, color=Color.DEFAULT) -> str:
+def colored(serializable: Serializable, fg_color=Color.DEFAULT, bg_color=Color.DEFAULT) -> str:
     r"""
     >>> colored(69)
     '69'
@@ -279,24 +279,28 @@ def colored(serializable: Serializable, color=Color.DEFAULT) -> str:
     >>> repr(colored('wasssup', Color.GREY_93))
     "'\\x1b[38;5;255mwasssup\\x1b[0m'" """
 
-    if color is Color.DEFAULT:
+    fg_prefix = _colored.fg(fg_color.value) if fg_color is not Color.DEFAULT else ''
+    bg_prefix = _colored.bg(bg_color.value) if bg_color is not Color.DEFAULT else ''
+
+    if not fg_prefix and not bg_prefix:
         return str(serializable)
-    return f'{_colored.fg(color.value)}{serializable}{_colored.style.RESET}'
+    return f'{fg_prefix}{bg_prefix}{serializable}{_colored.style.RESET}'
 
 
 class ColoredString(str):
     @classmethod
-    def get(cls, string: Optional[str], color=Color.DEFAULT):
+    def get(cls, string: Optional[str], fg_color=Color.DEFAULT, bg_color=Color.DEFAULT):
         if string is None:
             return None
-        return cls(string, color)
+        return cls(string, fg_color, bg_color)
 
-    def __new__(cls, string: str, color=Color.DEFAULT):
-        return super().__new__(cls, colored(string, color))
+    def __new__(cls, string: str, fg_color=Color.DEFAULT, bg_color=Color.DEFAULT):
+        return super().__new__(cls, colored(string, fg_color, bg_color))
 
-    def __init__(self, string: str, color: Color = Color.DEFAULT):
+    def __init__(self, string: str, fg_color=Color.DEFAULT, bg_color=Color.DEFAULT):
         self.string = string
-        self.color = color
+        self.fg_color = fg_color
+        self.bg_color = bg_color
 
     @property
     def display_length(self) -> int:
@@ -311,7 +315,11 @@ class ColoredString(str):
         >>> SEGMENT_REPLACEMENTS = {'┤': '┼'}
         >>> ColoredString('┤').replace_string(SEGMENT_REPLACEMENTS)
         '┼'
-        >>> repr(ColoredString('┤', color=Color.RED).replace_string(SEGMENT_REPLACEMENTS))
+        >>> repr(ColoredString('┤', fg_color=Color.RED).replace_string(SEGMENT_REPLACEMENTS))
         "'\\x1b[38;5;1m┼\\x1b[0m'" """
 
-        return self.__class__(replacements.get(self.string, self.string), color=self.color)
+        return self.__class__(
+            replacements.get(self.string, self.string),
+            fg_color=self.fg_color,
+            bg_color=self.bg_color
+        )

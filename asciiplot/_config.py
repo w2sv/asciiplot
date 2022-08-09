@@ -13,6 +13,7 @@ class Config:
     inter_points_margin: int
 
     sequence_colors: Sequence[Color]
+    background_color: Color
     label_color: Color
 
     x_axis_tick_labels: Optional[TickValues]
