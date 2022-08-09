@@ -1,6 +1,6 @@
 import pytest
 
-from asciiplot._sequence_interpolation import PlotSequences
+from asciiplot._utils.type_aliases import PlotSequences
 
 
 @pytest.fixture

@@ -37,14 +37,14 @@ print(
         height=15,
         inter_points_margin=7,
 
-        x_axis_ticks=list(range(1, 9)),
-        y_axis_tick_decimal_places=0,
+        x_axis_tick_labels=list(range(1, 9)),
+        y_axis_tick_label_decimal_places=0,
 
         x_axis_description='Iteration',
         y_axis_description='Value',
 
         title='Fibonacci Sequence',
-        indentation=6
+        horizontal_indentation=6
     )
 )
 ```
@@ -81,11 +81,11 @@ print(
         height=10,
         inter_points_margin=2,
 
-        x_axis_ticks=list(range(1, 31)),
-        y_axis_tick_decimal_places=1,
+        x_axis_tick_labels=list(range(1, 31)),
+        y_axis_tick_label_decimal_places=1,
 
         title='Random Values',
-        indentation=6
+        horizontal_indentation=6
     )
 )
 ```

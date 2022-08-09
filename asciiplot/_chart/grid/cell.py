@@ -1,26 +1,20 @@
-from typing import Dict
-
-from asciiplot._coloring import Color, colored
+from asciiplot._coloring import Color, ColoredString
 
 
-class Cell(str):
-    def __new__(cls, segment=' ', color=Color.DEFAULT):
-        return super().__new__(cls, colored(segment, color=color))
+_DEFAULT_CONTENT = ' '
 
-    def __init__(self, segment=' ', color=Color.DEFAULT):
-        self.segment = segment
-        self.color = color
+
+class Cell(ColoredString):
+    def __new__(cls, content=_DEFAULT_CONTENT, color=Color.DEFAULT):
+        return super().__new__(cls, content, color)
+
+    def __init__(self, content=_DEFAULT_CONTENT, color=Color.DEFAULT):
+        super().__init__(content, color)
 
     @property
     def is_empty(self) -> bool:
-        return self.segment == ' '
+        """
+        >>> Cell().is_empty
+        True """
 
-    def replace_segment(self, segment_replacements: Dict[str, str]):
-        r"""
-        >>> SEGMENT_REPLACEMENTS = {'┤': '┼'}
-        >>> Cell('┤').replace_segment(SEGMENT_REPLACEMENTS)
-        '┼'
-        >>> repr(Cell('┤', color=Color.RED).replace_segment(SEGMENT_REPLACEMENTS))
-        "'\\x1b[38;5;1m┼\\x1b[0m'" """
-
-        return self.__class__(segment_replacements.get(self.segment, self.segment), color=self.color)
+        return self.string == _DEFAULT_CONTENT

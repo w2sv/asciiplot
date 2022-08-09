@@ -1,7 +1,7 @@
 import pytest
 
 from asciiplot._chart.grid import ChartGrid
-from asciiplot._coloring import Color
+from asciiplot._coloring import Color, ColoredString
 from asciiplot._config import Config
 
 
@@ -13,16 +13,14 @@ from asciiplot._config import Config
                     config=Config(
                         height=5,
                         inter_points_margin=3,
-                        axis_description_color=Color.DEFAULT,
-                        x_axis_description='x_axis',
-                        y_axis_description='y_axis',
-                        y_axis_tick_decimal_places=3,
-                        tick_color=Color.DEFAULT,
-                        title_color=Color.DEFAULT,
-                        title='title',
-                        x_axis_ticks=list(range(3)),
-                        center=False,
-                        indentation=4,
+                        x_axis_description=ColoredString('x_axis'),
+                        y_axis_description=ColoredString('y_axis'),
+                        y_axis_tick_label_decimal_places=3,
+                        label_color=Color.DEFAULT,
+                        title=ColoredString('title'),
+                        x_axis_tick_labels=list(range(3)),
+                        center_horizontally=False,
+                        horizontal_indentation=4,
                         sequence_colors=[Color.DEFAULT]
                     )
                 ),
@@ -44,16 +42,14 @@ from asciiplot._config import Config
                     config=Config(
                         height=27,
                         inter_points_margin=11,
-                        axis_description_color=Color.DEFAULT,
-                        x_axis_description='x_axis',
-                        y_axis_description='y_axis',
-                        y_axis_tick_decimal_places=1,
-                        tick_color=Color.DEFAULT,
-                        title_color=Color.DEFAULT,
-                        title='title',
-                        x_axis_ticks=list(range(5)),
-                        center=False,
-                        indentation=7,
+                        x_axis_description=ColoredString('x_axis'),
+                        y_axis_description=ColoredString('y_axis'),
+                        y_axis_tick_label_decimal_places=1,
+                        label_color=Color.DEFAULT,
+                        title=ColoredString('title'),
+                        x_axis_tick_labels=list(range(5)),
+                        center_horizontally=False,
+                        horizontal_indentation=7,
                         sequence_colors=[Color.DEFAULT]
                     )
                 ),

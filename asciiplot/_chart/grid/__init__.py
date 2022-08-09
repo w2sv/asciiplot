@@ -6,9 +6,10 @@ from asciiplot._chart.grid import cell as _parcel
 from asciiplot._chart.grid.cell import Cell
 from asciiplot._coloring import colored
 from asciiplot._config import Config
-from asciiplot._sequence_interpolation import PlotSequences
 from asciiplot._utils import terminal_width
 from asciiplot._utils.formatting import centering_indentation_len, indented
+from asciiplot._utils.sequences import max_sequence_length
+from asciiplot._utils.type_aliases import PlotSequences
 
 
 class ChartGrid(List[List[Cell]]):
@@ -27,22 +28,20 @@ class ChartGrid(List[List[Cell]]):
 
             self.y_value_range: float = abs(y_max - y_min)
             self.delta_row_index_per_y: float = max(1., config.height / self.y_value_range)
-            self.y_axis_ticks: List[str] = list(self._y_axis_ticks(config.height, config.y_axis_tick_decimal_places))
+            self.y_axis_ticks: List[str] = list(self._y_axis_ticks(config.height, config.y_axis_tick_label_decimal_places))
 
             self.y_tick_columns: int = max(map(len, self.y_axis_ticks))
-            self.columns_to_y_axis_ticks: int = self.y_tick_columns + config.indentation
+            self.columns_to_y_axis_ticks: int = self.y_tick_columns + config.horizontal_indentation
 
         @classmethod
         def extract(cls, sequences: PlotSequences, config: Config):
             values: List[float] = list(itt.chain.from_iterable(sequences))
 
-            print(sequences)
-
             return cls(
                 y_min=int(math.floor(min(values))),
                 y_max=int(math.ceil(max(values))),
-                width=max(map(len, sequences)),
-                x_axis_description_len=len(config.x_axis_description),
+                width=max_sequence_length(sequences),
+                x_axis_description_len=len(config.x_axis_description) if config.x_axis_description else 0,
                 config=config
             )
 
@@ -63,7 +62,7 @@ class ChartGrid(List[List[Cell]]):
 
     def __init__(self, config: Config, sequences: PlotSequences):
         self._config = config
-        self.params = self.Params.extract(sequences, self._config)
+        self.params = self.Params.extract(sequences, config)
 
         super().__init__([[Cell() for _ in range(self.params.width)] for _ in range(self._config.height)])
 
@@ -139,9 +138,9 @@ class ChartGrid(List[List[Cell]]):
             if cell.is_empty:
                 axis_segment = '┤'
             else:
-                axis_segment = cell.replace_segment(SEGMENT_REPLACEMENTS).segment
+                axis_segment = cell.replace_string(SEGMENT_REPLACEMENTS).string
 
-            self[i][0] = Cell(f'{colored(self.params.y_axis_ticks[i].rjust(self.params.y_tick_columns), color=self._config.tick_color)}{axis_segment}')
+            self[i][0] = Cell(f'{colored(self.params.y_axis_ticks[i].rjust(self.params.y_tick_columns), color=self._config.label_color)}{axis_segment}')
 
     def _add_x_axis(self):
         SEGMENTS = ('┼', '┤', '┬', '─')
@@ -172,21 +171,21 @@ class ChartGrid(List[List[Cell]]):
             if cell.is_empty:
                 last_row[i] = Cell(SEGMENTS[2] if _is_data_point else SEGMENTS[3])
             elif _is_data_point:
-                last_row[i] = cell.replace_segment(SEGMENT_REPLACEMENTS)
+                last_row[i] = cell.replace_string(SEGMENT_REPLACEMENTS)
 
     def _indent_if_applicable(self):
         _n_terminal_columns = terminal_width()
 
-        if self._config.indentation:
+        if self._config.horizontal_indentation:
 
             # raise if total width exceeding terminal columns
             if self.params.total_width > _n_terminal_columns:
                 raise ValueError(f'Plot width = {self.params.total_width} > terminal width = {_n_terminal_columns}')
 
             for i in range(len(self)):
-                self[i][0] = Cell(indented(self[i][0], columns=self._config.indentation))
+                self[i][0] = Cell(indented(self[i][0], columns=self._config.horizontal_indentation))
 
-        elif self._config.center:
+        elif self._config.center_horizontally:
             n_whitespaces = centering_indentation_len(self.params.total_width, reference_length=_n_terminal_columns)
             centering_margin = ' '.rjust(n_whitespaces)
 

@@ -1,39 +1,27 @@
 import dataclasses
-from typing import Sequence, Optional, Union
+from typing import Optional, Sequence
 
-from typing_extensions import TypeAlias
-
-from asciiplot._coloring import colored, Color
-
-
-TickValue: TypeAlias = Union[str, float]
-TickValues: TypeAlias = Sequence[Optional[TickValue]]
+from asciiplot._coloring import Color, ColoredString
+from asciiplot._utils.type_aliases import TickValues
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class Config:
+    """ Collection of received chart configuration options """
+
     height: int
     inter_points_margin: int
 
     sequence_colors: Sequence[Color]
-    tick_color: Color
+    label_color: Color
 
-    x_axis_ticks: Optional[TickValues]
-    y_axis_tick_decimal_places: int
+    x_axis_tick_labels: Optional[TickValues]
+    y_axis_tick_label_decimal_places: int
 
-    x_axis_description: str
-    colored_x_axis_description: str = dataclasses.field(init=False)
-    y_axis_description: str
-    colored_y_axis_description: str = dataclasses.field(init=False)
+    x_axis_description: Optional[ColoredString]
+    y_axis_description: Optional[ColoredString]
 
-    axis_description_color: dataclasses.InitVar[Color]
+    title: Optional[ColoredString]
 
-    title: Optional[str]
-    title_color: Color
-
-    indentation: int
-    center: bool
-
-    def __post_init__(self, axis_description_color: Color):
-        self.colored_x_axis_description = colored(self.x_axis_description, color=axis_description_color)
-        self.colored_y_axis_description = colored(self.y_axis_description, color=axis_description_color)
+    horizontal_indentation: int
+    center_horizontally: bool

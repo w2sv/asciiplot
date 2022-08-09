@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 
 import more_itertools
 
-from asciiplot._config import TickValues
+from asciiplot._utils.type_aliases import TickValues
 from asciiplot._coloring import colored, Color
 from asciiplot._utils.formatting import indented
 

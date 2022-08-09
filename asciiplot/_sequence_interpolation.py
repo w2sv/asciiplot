@@ -1,16 +1,12 @@
-from typing import Iterator, List, Sequence
 import itertools as itt
+from typing import Iterator
 
 import more_itertools
-from typing_extensions import TypeAlias
+
+from asciiplot._utils.type_aliases import PlotSequence, PlotSequences
 
 
-PlotSequence: TypeAlias = List[float]
-PlotSequences: TypeAlias = Sequence[PlotSequence]
-PlotSequenceIterator: TypeAlias = Iterator[PlotSequence]
-
-
-def interpolated_sequences(sequences: PlotSequences, inter_points_margin: int) -> PlotSequenceIterator:
+def interpolated_sequences(sequences: PlotSequences, inter_points_margin: int) -> Iterator[PlotSequence]:
     yield from map(
         lambda sequence: _interpolated_sequence(sequence, inter_points_margin=inter_points_margin),
         sequences

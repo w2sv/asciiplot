@@ -1,12 +1,13 @@
 import enum
+from typing import Dict, Optional
 
 import colored as _colored
 
-from asciiplot._utils.types import Serializable
+from asciiplot._utils.type_aliases import Serializable
 
 
 class Color(enum.Enum):
-    DEFAULT = None
+    DEFAULT = enum.auto()
     BLACK = enum.auto()
     RED = enum.auto()
     GREEN = enum.auto()
@@ -269,9 +270,6 @@ class Color(enum.Enum):
         return self.name.lower()
 
 
-RESET_COLOR_ANSI: str = _colored.style.RESET
-
-
 def colored(serializable: Serializable, color=Color.DEFAULT) -> str:
     r"""
     >>> colored(69)
@@ -283,4 +281,37 @@ def colored(serializable: Serializable, color=Color.DEFAULT) -> str:
 
     if color is Color.DEFAULT:
         return str(serializable)
-    return f'{_colored.fg(color.value)}{serializable}{RESET_COLOR_ANSI}'
+    return f'{_colored.fg(color.value)}{serializable}{_colored.style.RESET}'
+
+
+class ColoredString(str):
+    @classmethod
+    def get(cls, string: Optional[str], color=Color.DEFAULT):
+        if string is None:
+            return None
+        return cls(string, color)
+
+    def __new__(cls, string: str, color=Color.DEFAULT):
+        return super().__new__(cls, colored(string, color))
+
+    def __init__(self, string: str, color: Color = Color.DEFAULT):
+        self.string = string
+        self.color = color
+
+    @property
+    def display_length(self) -> int:
+        """
+        >>> ColoredString('uiuiui', Color.DARK_CYAN).display_length
+        6 """
+
+        return len(self.string)
+
+    def replace_string(self, replacements: Dict[str, str]):
+        r"""
+        >>> SEGMENT_REPLACEMENTS = {'┤': '┼'}
+        >>> ColoredString('┤').replace_string(SEGMENT_REPLACEMENTS)
+        '┼'
+        >>> repr(ColoredString('┤', color=Color.RED).replace_string(SEGMENT_REPLACEMENTS))
+        "'\\x1b[38;5;1m┼\\x1b[0m'" """
+
+        return self.__class__(replacements.get(self.string, self.string), color=self.color)
