@@ -1,31 +1,33 @@
-from typing import Iterator, List, Sequence as _Sequence
+from typing import Iterator, List, Sequence
 import itertools as itt
 
 import more_itertools
+from typing_extensions import TypeAlias
 
 
-Sequence = List[float]
-Sequences = _Sequence[Sequence]
+PlotSequence: TypeAlias = List[float]
+PlotSequences: TypeAlias = Sequence[PlotSequence]
+PlotSequenceIterator: TypeAlias = Iterator[PlotSequence]
 
 
-# ---------------
-# Padding
-# ---------------
-def stretched_sequences(sequences: Sequences, n_fill_points: int) -> Sequences:
-    return tuple(map(lambda sequence: _interpolated_sequence(sequence, n_fill_points=n_fill_points), sequences))
+def interpolated_sequences(sequences: PlotSequences, inter_points_margin: int) -> PlotSequenceIterator:
+    yield from map(
+        lambda sequence: _interpolated_sequence(sequence, inter_points_margin=inter_points_margin),
+        sequences
+    )
 
 
-def _interpolated_sequence(sequence: Sequence, n_fill_points: int) -> Sequence:
+def _interpolated_sequence(sequence: PlotSequence, inter_points_margin: int) -> PlotSequence:
     """
-        >>> _interpolated_sequence(list(range(4)), n_fill_points=3)
+        >>> _interpolated_sequence(list(range(4)), inter_points_margin=3)
         [0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3]
-        >>> _interpolated_sequence(list(range(67, 87, 3)), n_fill_points=1)
+        >>> _interpolated_sequence(list(range(67, 87, 3)), inter_points_margin=1)
         [67, 68.5, 70, 71.5, 73, 74.5, 76, 77.5, 79, 80.5, 82, 83.5, 85] """
 
     return list(
         itt.chain(
             itt.chain.from_iterable(
-                ((i, *_fill_points(i, j, n=n_fill_points)) for i, j in more_itertools.pairwise(sequence))
+                ((i, *_fill_points(i, j, n=inter_points_margin)) for i, j in more_itertools.pairwise(sequence))
             ),
             [sequence[-1]]
         )

@@ -1,7 +1,5 @@
 import shutil
 
-from .formatting import *
 
-
-def terminal_columns() -> int:
+def terminal_width() -> int:
     return shutil.get_terminal_size().columns

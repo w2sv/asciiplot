@@ -3,13 +3,13 @@ from typing import List, Optional, Union
 
 import more_itertools
 
-from asciiplot._config import Ticks
-from asciiplot._utils import indented
+from asciiplot._config import TickValues
 from asciiplot._coloring import colored, Color
+from asciiplot._utils.formatting import indented
 
 
-def render(
-        x_axis_ticks: Ticks,
+def x_axis_tick_row(
+        x_axis_ticks: TickValues,
         tick_color: Color,
         horizontal_y_axis_offset: int,
         inter_points_margin: int) -> str:

@@ -1,11 +1,12 @@
 import enum
-from typing import Any
 
 import colored as _colored
 
+from asciiplot._utils.types import Serializable
+
 
 class Color(enum.Enum):
-    DEFAULT = -1
+    DEFAULT = None
     BLACK = enum.auto()
     RED = enum.auto()
     GREEN = enum.auto()
@@ -263,17 +264,23 @@ class Color(enum.Enum):
     GREY_89 = enum.auto()
     GREY_93 = enum.auto()
 
+    @property
+    def value(self) -> str:
+        return self.name.lower()
+
 
 RESET_COLOR_ANSI: str = _colored.style.RESET
 
 
-def colored(serializable_obj: Any, color: Color) -> str:
-    """
-    >>> print(colored('yessir', Color.BLACK))
-    \x1b[38;5;0myessir\x1b[0m
-    >>> print(colored('wasssup', Color.GREY_93))
-    \x1b[38;5;255mwasssup\x1b[0m """
+def colored(serializable: Serializable, color=Color.DEFAULT) -> str:
+    r"""
+    >>> colored(69)
+    '69'
+    >>> repr(colored('yessir', Color.BLACK))
+    "'\\x1b[38;5;0myessir\\x1b[0m'"
+    >>> repr(colored('wasssup', Color.GREY_93))
+    "'\\x1b[38;5;255mwasssup\\x1b[0m'" """
 
     if color is Color.DEFAULT:
-        return str(serializable_obj)
-    return f'{_colored.fg(color.name.lower())}{serializable_obj}{RESET_COLOR_ANSI}'
+        return str(serializable)
+    return f'{_colored.fg(color.value)}{serializable}{RESET_COLOR_ANSI}'

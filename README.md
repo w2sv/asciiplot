@@ -29,15 +29,16 @@ Set:
 ```python
 from asciiplot import asciiize
 
+
 print(
     asciiize(
         [1, 1, 2, 3, 5, 8, 13, 21],
-        
+
         height=15,
         inter_points_margin=7,
 
-        x_ticks=list(range(1, 9)),
-        y_ticks_decimal_places=0,
+        x_axis_ticks=list(range(1, 9)),
+        y_axis_tick_decimal_places=0,
 
         x_axis_description='Iteration',
         y_axis_description='Value',
@@ -71,17 +72,18 @@ print(
 import numpy as np
 from asciiplot import asciiize
 
+
 print(
     asciiize(
         np.random.randint(-100, 100, 30),
         np.random.randint(-100, 100, 30),
-        
+
         height=10,
         inter_points_margin=2,
-    
-        x_ticks=list(range(1, 31)),
-        y_ticks_decimal_places=1,
-    
+
+        x_axis_ticks=list(range(1, 31)),
+        y_axis_tick_decimal_places=1,
+
         title='Random Values',
         indentation=6
     )

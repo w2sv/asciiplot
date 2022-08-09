@@ -1,10 +1,6 @@
 SHELL=/bin/bash
 
-###########
-# Testing #
-###########
-
-test: mypy pytest doctest coverage-report  # run with -k flag in order to continue in case of recipe failure
+test: mypy pytest doctest coverage-report  # run with -k flag to continue in case of recipe failure
 
 mypy:
 	mypy asciiplot/

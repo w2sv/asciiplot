@@ -1,12 +1,4 @@
-__all__ = [
-    'centering_indentation_len',
-    'indented',
-    'newlined',
-    'newline_succeeded'
-]
-
-from typing import Any
-import functools
+from asciiplot._utils.types import Serializable
 
 
 def centering_indentation_len(string_length: int, reference_length: int) -> int:
@@ -22,16 +14,13 @@ def centering_indentation_len(string_length: int, reference_length: int) -> int:
     return reference_length // 2 - string_length // 2
 
 
-def indented(serializable_obj: Any, columns: int) -> str:
-    return f'{" ".rjust(columns)}{serializable_obj}'
+def indented(serializable: Serializable, columns: int) -> str:
+    """
+    >>> indented('AYYYYYYAYAYAYAYAY', 7)
+    '       AYYYYYYAYAYAYAYAY' """
+
+    return f'{" ".rjust(columns)}{serializable}'
 
 
-def newlined(serializable_obj: Any) -> str:
-    return f'{serializable_obj}\n'
-
-
-def newline_succeeded(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        return newlined(func(*args, **kwargs))
-    return wrapper
+def newline_succeeded(serializable: Serializable) -> str:
+    return f'{serializable}\n'
