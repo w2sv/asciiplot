@@ -23,6 +23,7 @@ class SerializedChart(str):
 
         if config.x_axis_description:
             laid_out_chart += f' {config.x_axis_description}'
+        laid_out_chart = newline_succeeded(laid_out_chart)
 
         if config.y_axis_description:
             positioned_y_axis_description = newline_succeeded(
