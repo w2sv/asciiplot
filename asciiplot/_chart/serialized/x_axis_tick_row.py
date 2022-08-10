@@ -10,6 +10,7 @@ from asciiplot._utils.formatting import indented
 
 def x_axis_tick_label_row(x_axis_tick_labels: TickLabelValues,
                           tick_color: Color,
+                          bg: Color,
                           horizontal_y_axis_offset: int,
                           inter_points_margin: int) -> str:
 
@@ -26,7 +27,7 @@ def x_axis_tick_label_row(x_axis_tick_labels: TickLabelValues,
     )
 
     return indented(
-        _tick_row(ticks, inter_points_margin=inter_points_margin),
+        _tick_row(ticks, inter_points_margin=inter_points_margin, bg=bg),
         columns=(horizontal_y_axis_offset - ticks[0].left_margin_length)
     )
 
@@ -64,28 +65,28 @@ class _XAxisTickLabel(str):
         else:
             self.left_margin_length = self.right_margin_length = 0
 
-    def whitespace_succeeded(self, succeeding_tick, inter_points_margin: int) -> str:
+    def whitespace_succeeded(self, succeeding_tick, inter_points_margin: int, bg: Color) -> str:
         n_whitespaces = inter_points_margin - self.right_margin_length - succeeding_tick.left_margin_length
         if n_whitespaces < 0 and str(self) != ' ':
             raise ValueError(f'Adjacent x-axis tick labels {self} and {succeeding_tick} are overlapping')
 
-        return str(self) + (" ".rjust(n_whitespaces) if n_whitespaces else '')
+        return colored(self, bg=bg) + colored(" ".rjust(n_whitespaces) if n_whitespaces else '', bg=bg)
 
 
-def _tick_row(ticks: List[_XAxisTickLabel], inter_points_margin: int) -> str:
+def _tick_row(ticks: List[_XAxisTickLabel], inter_points_margin: int, bg: Color) -> str:
     """
-    >>> _tick_row(list(map(_XAxisTickLabel, ['great', 'cool', 'splendid', 'sick'])), inter_points_margin=6)
+    >>> _tick_row(list(map(_XAxisTickLabel, ['great', 'cool', 'splendid', 'sick'])), inter_points_margin=6, bg=Color.NONE)
     'great   cool splendid sick'
-    >>> _tick_row(list(map(_XAxisTickLabel, ['first', 'second', 'third', 'fourth'])), inter_points_margin=8)
+    >>> _tick_row(list(map(_XAxisTickLabel, ['first', 'second', 'third', 'fourth'])), inter_points_margin=8, bg=Color.NONE)
     'first    second   third    fourth'
-    >>> _tick_row(list(map(_XAxisTickLabel, range(9, 14))), inter_points_margin=3)
+    >>> _tick_row(list(map(_XAxisTickLabel, range(9, 14))), inter_points_margin=3, bg=Color.NONE)
     '9   10  11  12  13'
-    >>> _tick_row(list(map(_XAxisTickLabel, range(4))), inter_points_margin=0)
+    >>> _tick_row(list(map(_XAxisTickLabel, range(4))), inter_points_margin=0, bg=Color.NONE)
     '0123' """
 
     return ''.join(
         itt.starmap(
-            lambda a, b: a.whitespace_succeeded(b, inter_points_margin=inter_points_margin),
+            lambda a, b: a.whitespace_succeeded(b, inter_points_margin=inter_points_margin, bg=bg),
             more_itertools.pairwise(ticks)
         )
-    ) + ticks[-1]
+    ) + colored(ticks[-1], bg=bg)

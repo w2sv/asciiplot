@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "asciiplot"
-version = "0.1.5"
+version = "0.1.6"
 description = "Platform-agnostic, customizable sequence plotting in console"
 authors = ["w2sv <zangenbergjanek@googlemail.com>"]
 license = "MIT"

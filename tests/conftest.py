@@ -2,7 +2,7 @@ import pytest
 
 from asciiplot._coloring import Color, ColoredString
 from asciiplot._config import Config
-from asciiplot._type_aliases import PlotSequences
+from asciiplot._type_aliases import PlotSequence, PlotSequences
 
 
 @pytest.fixture
@@ -12,6 +12,11 @@ def sequences() -> PlotSequences:
         [5, 5, 5],
         [8, 3]
     ]
+
+
+@pytest.fixture
+def fibonacci() -> PlotSequence:
+    return [1, 1, 2, 3, 5, 8, 13, 21]
 
 
 @pytest.fixture
@@ -29,5 +34,6 @@ def config() -> Config:
         center_horizontally=False,
         horizontal_indentation=4,
         sequence_colors=[Color.NONE],
-        n_points=3
+        n_points=3,
+        tick_label_background_color=Color.CHARTREUSE_2B
     )

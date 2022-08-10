@@ -270,7 +270,7 @@ class Color(enum.Enum):
         return self.name.lower()
 
 
-def colored(serializable: Serializable, fg_color=Color.NONE, bg_color=Color.NONE) -> str:
+def colored(serializable: Serializable, fg=Color.NONE, bg=Color.NONE) -> str:
     r"""
     >>> colored(69)
     '69'
@@ -279,8 +279,8 @@ def colored(serializable: Serializable, fg_color=Color.NONE, bg_color=Color.NONE
     >>> repr(colored('wasssup', Color.GREY_93))
     "'\\x1b[38;5;255mwasssup\\x1b[0m'" """
 
-    fg_prefix = _colored.fg(fg_color.value) if fg_color is not Color.NONE else ''
-    bg_prefix = _colored.bg(bg_color.value) if bg_color is not Color.NONE else ''
+    fg_prefix = _colored.fg(fg.value) if fg is not Color.NONE else ''
+    bg_prefix = _colored.bg(bg.value) if bg is not Color.NONE else ''
 
     if not fg_prefix and not bg_prefix:
         return str(serializable)
@@ -289,18 +289,24 @@ def colored(serializable: Serializable, fg_color=Color.NONE, bg_color=Color.NONE
 
 class ColoredString(str):
     @classmethod
-    def get(cls, string: Optional[str], fg_color=Color.NONE, bg_color=Color.NONE):
+    def get(cls, string: Optional[str], fg=Color.NONE, bg=Color.NONE):
         if string is None:
             return None
-        return cls(string, fg_color, bg_color)
+        return cls(string, fg, bg)
 
-    def __new__(cls, string: str, fg_color=Color.NONE, bg_color=Color.NONE):
-        return super().__new__(cls, colored(string, fg_color, bg_color))
+    def __new__(cls, string: str, fg=Color.NONE, bg=Color.NONE):
+        return super().__new__(cls, colored(string, fg, bg))
 
-    def __init__(self, string: str, fg_color=Color.NONE, bg_color=Color.NONE):
+    def __init__(self, string: str, fg=Color.NONE, bg=Color.NONE):
+        r"""
+        >>> str(ColoredString('yauoi'))
+        'yauoi'
+        >>> str(ColoredString('yauoi', fg=Color.TAN, bg=Color.AQUAMARINE_3))
+        '\x1b[38;5;180m\x1b[48;5;79myauoi\x1b[0m' """
+
         self.string = string
-        self.fg_color = fg_color
-        self.bg_color = bg_color
+        self.fg = fg
+        self.bg = bg
 
     @property
     def display_length(self) -> int:
@@ -313,8 +319,8 @@ class ColoredString(str):
     def replace_string(self, replacement: str):
         return self.__class__(
             replacement,
-            fg_color=self.fg_color,
-            bg_color=self.bg_color
+            fg=self.fg,
+            bg=self.bg
         )
 
     def replace_string_if_applicable(self, replacements: Dict[str, str]):
@@ -322,11 +328,11 @@ class ColoredString(str):
         >>> SEGMENT_REPLACEMENTS = {'┤': '┼'}
         >>> ColoredString('┤').replace_string_if_applicable(SEGMENT_REPLACEMENTS)
         '┼'
-        >>> repr(ColoredString('┤', fg_color=Color.RED).replace_string_if_applicable(SEGMENT_REPLACEMENTS))
+        >>> repr(ColoredString('┤', fg=Color.RED).replace_string_if_applicable(SEGMENT_REPLACEMENTS))
         "'\\x1b[38;5;1m┼\\x1b[0m'" """
 
         return self.__class__(
             replacements.get(self.string, self.string),
-            fg_color=self.fg_color,
-            bg_color=self.bg_color
+            fg=self.fg,
+            bg=self.bg
         )

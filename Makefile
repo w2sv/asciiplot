@@ -14,3 +14,7 @@ doctest:
 coverage-report:
 	coverage xml
 	coverage report
+
+coverage-html:
+	coverage html
+	firefox htmlcov/index.html

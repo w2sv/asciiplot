@@ -13,7 +13,7 @@ class ChartGrid(List[List[Cell]]):
         self._config = config
         self._params = params
 
-        super().__init__([[Cell(bg_color=config.background_color) for _ in range(self._params.x_axis_width)] for _ in range(self._config.height)])
+        super().__init__([[Cell(bg=config.background_color) for _ in range(self._params.x_axis_width)] for _ in range(self._config.height)])
 
         self._add_sequences(plot_sequences)
 
@@ -40,7 +40,7 @@ class ChartGrid(List[List[Cell]]):
             j = INIT_VALUE
 
             def set_parcel(row_subtrahend: int, segment: str):
-                self[self._config.height - 1 - row_subtrahend][j + 1] = Cell(segment, fg_color=color, bg_color=self._config.background_color)
+                self[self._config.height - 1 - row_subtrahend][j + 1] = Cell(segment, fg=color, bg=self._config.background_color)
 
             # add '┼' at sequence beginning where sequences overlaps with y-axis
             set_parcel(row_index(sequence[0]), SEGMENTS[0])
@@ -110,8 +110,8 @@ class ChartGrid(List[List[Cell]]):
             else:
                 axis_cell = axis_cell.replace_string_if_applicable(SEGMENT_REPLACEMENTS)
 
-            tick_label_cell = Cell(self._params.y_axis_tick_labels[i].rjust(self._params.y_tick_columns), fg_color=self._config.label_color)
-            self[i][0] = Cell(tick_label_cell + axis_cell)  # TODO
+            tick_label_cell = Cell(self._params.y_axis_tick_labels[i].rjust(self._params.y_tick_columns), fg=self._config.label_color)
+            self[i][0] = Cell(tick_label_cell + axis_cell, bg=self._config.tick_label_background_color)  # TODO
 
     def _is_data_point(self, point_index: int) -> bool:
         """ Returns:

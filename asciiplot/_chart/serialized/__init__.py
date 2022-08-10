@@ -58,6 +58,7 @@ class SerializedChart(str):
             laid_out_chart += x_axis_tick_label_row(
                 params.x_axis_tick_label_values,
                 config.label_color,
+                config.tick_label_background_color,
                 params.columns_to_y_axis_ticks,
                 config.inter_points_margin
             )

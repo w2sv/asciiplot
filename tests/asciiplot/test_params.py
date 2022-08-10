@@ -24,7 +24,8 @@ from asciiplot._params import Params
                             center_horizontally=False,
                             horizontal_indentation=4,
                             sequence_colors=[Color.NONE],
-                            n_points=3
+                            n_points=3,
+                            tick_label_background_color=Color.CHARTREUSE_2B
                         )
                 ),
                 {
@@ -56,7 +57,8 @@ from asciiplot._params import Params
                             center_horizontally=False,
                             horizontal_indentation=7,
                             sequence_colors=[Color.NONE],
-                            n_points=5
+                            n_points=5,
+                            tick_label_background_color=Color.CHARTREUSE_2B
                         )
                 ),
                 {
@@ -65,7 +67,8 @@ from asciiplot._params import Params
                     'x_axis_description_len': 6,
                     'x_axis_tick_label_values': range(1, 6),
                     'x_axis_width': 5,
-                    'y_axis_tick_labels': ['101.0',
+                    'y_axis_tick_labels': [
+                        '101.0',
                         '94.0',
                         '87.1',
                         '80.1',
@@ -91,7 +94,8 @@ from asciiplot._params import Params
                         '-59.1',
                         '-66.1',
                         '-73.0',
-                        '-80.0'],
+                        '-80.0'
+                    ],
                     'y_max': 101,
                     'y_min': -80,
                     'y_tick_columns': 5,
