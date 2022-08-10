@@ -3,7 +3,7 @@ from typing import List
 from asciiplot._chart.grid.cell import Cell
 from asciiplot._config import Config
 from asciiplot._params import Params
-from asciiplot._utils import terminal_width
+from asciiplot._utils.console import console_width
 from asciiplot._utils.formatting import centering_indentation_len, indented
 from asciiplot._type_aliases import PlotSequences
 
@@ -13,7 +13,10 @@ class ChartGrid(List[List[Cell]]):
         self._config = config
         self._params = params
 
-        super().__init__([[Cell(bg=config.background_color) for _ in range(self._params.x_axis_width)] for _ in range(self._config.height)])
+        super().__init__(
+            [[Cell(bg=config.background_color) for _ in range(self._params.x_axis_width)] for _ in
+                range(self._config.height)]
+        )
 
         self._add_sequences(plot_sequences)
 
@@ -28,7 +31,11 @@ class ChartGrid(List[List[Cell]]):
             j = -1
 
             def set_cell(row_subtrahend: int, segment: str):
-                self[self._config.height - 1 - row_subtrahend][j + 1] = Cell(segment, fg=color, bg=self._config.background_color)
+                self[self._config.height - 1 - row_subtrahend][j + 1] = Cell(
+                    segment,
+                    fg=color,
+                    bg=self._config.background_color
+                )
 
             # add '┼' at sequence beginning where sequences overlaps with y-axis
             set_cell(self._row_index(sequence[0]), '┼')
@@ -71,14 +78,6 @@ class ChartGrid(List[List[Cell]]):
         return '\n'.join((''.join(row).rstrip() for row in self))
 
     def _add_x_axis(self):
-        SEGMENTS = ('┬', '─')
-        SEGMENT_REPLACEMENTS = {
-            '┤': '┼',
-            '─': '┬',
-            '╰': '├',
-            '╯': '┤'
-        }
-
         for i, cell in enumerate(self[-1]):
             # add straight horizontal axis segment if parcel doesn't contain
             # a sequence segment, otherwise convert present sequence segment
@@ -87,28 +86,37 @@ class ChartGrid(List[List[Cell]]):
 
             is_data_point = self._is_data_point(i)
             if cell.is_empty:
-                self[-1][i] = cell.replace_string(SEGMENTS[0] if is_data_point else SEGMENTS[1])
+                self[-1][i] = cell.replace_string('┬' if is_data_point else '─')
             elif is_data_point:
-                self[-1][i] = cell.replace_string_if_applicable(SEGMENT_REPLACEMENTS)
+                self[-1][i] = cell.replace_string_if_applicable(
+                    replacements={
+                        '┤': '┼',
+                        '─': '┬',
+                        '╰': '├',
+                        '╯': '┤'
+                    }
+                )
 
     def _add_y_axis_with_tick_labels(self):
         """ Besets first parcel of each row with respective y-axis segment
             preceded by colored, adjusted tick value """
 
-        DEFAULT_SEGMENT = '┤'
-        SEGMENT_REPLACEMENTS = {
-            '─': DEFAULT_SEGMENT,
-            '|': '┼'
-        }
-
         for i in range(len(self)):
             axis_cell = self[i][0]
             if axis_cell.is_empty:
-                axis_cell = axis_cell.replace_string(DEFAULT_SEGMENT)
+                axis_cell = axis_cell.replace_string('┤')
             else:
-                axis_cell = axis_cell.replace_string_if_applicable(SEGMENT_REPLACEMENTS)
+                axis_cell = axis_cell.replace_string_if_applicable(
+                    replacements={
+                        '─': '┤',
+                        '|': '┼'
+                    }
+                )
 
-            tick_label_cell = Cell(self._params.y_axis_tick_labels[i].rjust(self._params.y_tick_columns), fg=self._config.label_color)
+            tick_label_cell = Cell(
+                self._params.y_axis_tick_labels[i].rjust(self._params.y_tick_columns),
+                fg=self._config.label_color
+            )
             self[i][0] = Cell(tick_label_cell + axis_cell, bg=self._config.tick_label_background_color)  # TODO
 
     def _is_data_point(self, point_index: int) -> bool:
@@ -120,7 +128,7 @@ class ChartGrid(List[List[Cell]]):
         return not point_index % (self._config.inter_points_margin + 1)
 
     def _indent_if_applicable(self):
-        _n_terminal_columns = terminal_width()
+        _n_terminal_columns = console_width()
 
         if self._config.horizontal_indentation:
 

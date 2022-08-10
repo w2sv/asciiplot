@@ -2,7 +2,7 @@ import pytest
 
 from asciiplot import asciiize
 from asciiplot._coloring import Color
-from asciiplot._utils import terminal_width
+from asciiplot._utils.console import console_width
 
 
 def test_raising_on_too_many_colors(sequences):
@@ -15,7 +15,7 @@ def test_raising_on_too_many_colors(sequences):
 
 
 def test_raising_on_terminal_columns_exceeded(sequences):
-    n_terminal_columns = terminal_width()
+    n_terminal_columns = console_width()
 
     with pytest.raises(ValueError):
         asciiize(*sequences, horizontal_indentation=int(n_terminal_columns * 1.5))

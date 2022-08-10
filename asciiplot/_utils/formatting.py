@@ -19,8 +19,8 @@ def indented(serializable: Serializable, columns: int) -> str:
     >>> indented('AYYYYYYAYAYAYAYAY', 7)
     '       AYYYYYYAYAYAYAYAY' """
 
-    return f'{" ".rjust(columns)}{serializable}'
+    return f'{" " * columns}{serializable}'
 
 
-def newline_succeeded(serializable: Serializable) -> str:
+def newline_trailed(serializable: Serializable) -> str:
     return f'{serializable}\n'

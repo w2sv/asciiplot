@@ -5,7 +5,7 @@ from asciiplot._config import Config
 from asciiplot._params import Params
 from asciiplot._sequence_interpolation import interpolate_sequences
 from asciiplot._type_aliases import PlotSequences
-from asciiplot._utils.formatting import centering_indentation_len, indented, newline_succeeded
+from asciiplot._utils.formatting import centering_indentation_len, indented, newline_trailed
 
 
 class SerializedChart(str):
@@ -33,10 +33,10 @@ class SerializedChart(str):
 
         if config.x_axis_description:
             laid_out_chart += f' {config.x_axis_description}'
-        laid_out_chart = newline_succeeded(laid_out_chart)
+        laid_out_chart = newline_trailed(laid_out_chart)
 
         if config.y_axis_description:
-            positioned_y_axis_description = newline_succeeded(
+            positioned_y_axis_description = newline_trailed(
                 indented(
                     config.y_axis_description,
                     columns=centering_indentation_len(
@@ -73,7 +73,7 @@ def _title_row(title: ColoredString, chart_width: int, horizontal_y_axis_offset:
         >>> repr(_title_row(ColoredString('Creative title', Color.TAN), chart_width=40, horizontal_y_axis_offset=3))
         "'                \\x1b[38;5;180mCreative title\\x1b[0m\\n'" """
 
-    return newline_succeeded(
+    return newline_trailed(
         indented(
             title,
             columns=centering_indentation_len(title.display_length, reference_length=chart_width) + horizontal_y_axis_offset

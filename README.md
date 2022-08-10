@@ -12,7 +12,7 @@
 
 ## Installation
 ```shell
-$pip install asciiplot
+pip install asciiplot
 ```
 
 ## Plot Appearance Configuration Options
