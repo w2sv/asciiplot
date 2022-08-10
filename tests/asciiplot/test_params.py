@@ -1,6 +1,5 @@
 import pytest
 
-from asciiplot._chart.grid import ChartGrid
 from asciiplot._coloring import Color, ColoredString
 from asciiplot._config import Config
 from asciiplot._params import Params

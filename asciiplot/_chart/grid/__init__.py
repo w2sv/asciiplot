@@ -64,7 +64,7 @@ class ChartGrid(List[List[Cell]]):
                     set_parcel(y0, symbol_y0)
                     set_parcel(y1, symbol_y1)
 
-                    # add vertical segmentation in case of consecutive sequence
+                    # add vertical segment in case of consecutive sequence
                     # value steepness
                     for y in range(min(y0, y1) + 1, max(y0, y1)):
                         set_parcel(y, SEGMENTS[6])

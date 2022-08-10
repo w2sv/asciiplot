@@ -19,7 +19,7 @@ def asciiize(
 
         x_axis_tick_labels: TickLabelInput = AUTO,
         y_axis_tick_label_decimal_places: int = 0,
-        tick_label_background_color: Color = Color.NONE,
+        axes_background_color: Color = Color.NONE,
 
         x_axis_description: Optional[str] = None,
         y_axis_description: Optional[str] = None,
@@ -118,7 +118,7 @@ def asciiize(
         label_color=label_color,
         x_axis_tick_label_input=x_axis_tick_labels,
         y_axis_tick_label_decimal_places=y_axis_tick_label_decimal_places,
-        tick_label_background_color=tick_label_background_color,
+        tick_label_background_color=axes_background_color,
         x_axis_description=ColoredString.get(x_axis_description, axis_description_color),
         y_axis_description=ColoredString.get(y_axis_description, axis_description_color),
         title=ColoredString.get(title, title_color),

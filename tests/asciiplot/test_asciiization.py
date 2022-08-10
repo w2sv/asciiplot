@@ -30,7 +30,7 @@ def kwargs():
 def test_tick_label_background_color(fibonacci, kwargs):
     chart = asciiize(
         fibonacci,
-        tick_label_background_color=Color.GOLD_3A,
+        axes_background_color=Color.GOLD_3A,
         **kwargs
     )
     assert chart == ('                       \x1b[38;5;196mFibonacci\x1b[0m\n'
