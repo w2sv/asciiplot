@@ -3,10 +3,10 @@ from typing import Iterator
 
 import more_itertools
 
-from asciiplot._utils.type_aliases import PlotSequence, PlotSequences
+from asciiplot._type_aliases import PlotSequence, PlotSequences
 
 
-def interpolated_sequences(sequences: PlotSequences, inter_points_margin: int) -> Iterator[PlotSequence]:
+def interpolate_sequences(sequences: PlotSequences, inter_points_margin: int) -> Iterator[PlotSequence]:
     yield from map(
         lambda sequence: _interpolated_sequence(sequence, inter_points_margin=inter_points_margin),
         sequences

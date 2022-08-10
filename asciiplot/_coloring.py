@@ -3,7 +3,7 @@ from typing import Dict, Optional
 
 import colored as _colored
 
-from asciiplot._utils.type_aliases import Serializable
+from asciiplot._type_aliases import Serializable
 
 
 class Color(enum.Enum):

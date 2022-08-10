@@ -3,6 +3,7 @@ import pytest
 from asciiplot._chart.grid import ChartGrid
 from asciiplot._coloring import Color, ColoredString
 from asciiplot._config import Config
+from asciiplot._params import Params
 
 
 @pytest.mark.parametrize(
@@ -19,18 +20,20 @@ from asciiplot._config import Config
                             label_color=Color.NONE,
                             background_color=Color.CHARTREUSE_2B,
                             title=ColoredString('title'),
-                            x_axis_tick_labels=list(range(3)),
+                            x_axis_tick_label_input='auto',
                             center_horizontally=False,
                             horizontal_indentation=4,
-                            sequence_colors=[Color.NONE]
+                            sequence_colors=[Color.NONE],
+                            n_points=3
                         )
                 ),
                 {
                     'columns_to_y_axis_ticks': 9,
                     'delta_row_index_per_y': 1.0,
-                    'width': 3,
                     'x_axis_description_len': 6,
-                    'y_axis_ticks': ['9.000', '7.250', '5.500', '3.750', '2.000'],
+                    'x_axis_tick_label_values': range(1, 4),
+                    'x_axis_width': 3,
+                    'y_axis_tick_labels': ['9.000', '7.250', '5.500', '3.750', '2.000'],
                     'y_max': 9,
                     'y_min': 2,
                     'y_tick_columns': 5,
@@ -49,19 +52,20 @@ from asciiplot._config import Config
                             label_color=Color.NONE,
                             background_color=Color.CHARTREUSE_2B,
                             title=ColoredString('title'),
-                            x_axis_tick_labels=list(range(5)),
+                            x_axis_tick_label_input='auto',
                             center_horizontally=False,
                             horizontal_indentation=7,
-                            sequence_colors=[Color.NONE]
+                            sequence_colors=[Color.NONE],
+                            n_points=5
                         )
                 ),
                 {
                     'columns_to_y_axis_ticks': 12,
                     'delta_row_index_per_y': 1.0,
-                    'width': 5,
                     'x_axis_description_len': 6,
-                    'y_axis_ticks': [
-                        '101.0',
+                    'x_axis_tick_label_values': range(1, 6),
+                    'x_axis_width': 5,
+                    'y_axis_tick_labels': ['101.0',
                         '94.0',
                         '87.1',
                         '80.1',
@@ -87,8 +91,7 @@ from asciiplot._config import Config
                         '-59.1',
                         '-66.1',
                         '-73.0',
-                        '-80.0'
-                    ],
+                        '-80.0'],
                     'y_max': 101,
                     'y_min': -80,
                     'y_tick_columns': 5,
@@ -98,14 +101,15 @@ from asciiplot._config import Config
     ]
 )
 def test_extract(extract_args, expected):
-    assert vars(ChartGrid.Params.extract(*extract_args)) == expected
+    assert vars(Params.extract(*extract_args)) == expected
 
 
 def test_total_width(config):
-    assert ChartGrid.Params(
+    assert Params(
         y_min=3,
         y_max=16,
-        width=20,
+        x_axis_tick_label_values='auto',
+        x_axis_width=20,
         x_axis_description_len=5,
         config=config
     ).total_width == 36

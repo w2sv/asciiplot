@@ -1,4 +1,4 @@
-from asciiplot._utils.type_aliases import Serializable
+from asciiplot._type_aliases import Serializable
 
 
 def centering_indentation_len(string_length: int, reference_length: int) -> int:

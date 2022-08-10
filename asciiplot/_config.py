@@ -2,7 +2,7 @@ import dataclasses
 from typing import Optional, Sequence
 
 from asciiplot._coloring import Color, ColoredString
-from asciiplot._utils.type_aliases import TickValues
+from asciiplot._type_aliases import TickLabelInput
 
 
 @dataclasses.dataclass(frozen=True)
@@ -11,12 +11,13 @@ class Config:
 
     height: int
     inter_points_margin: int
+    n_points: int
 
     sequence_colors: Sequence[Color]
     background_color: Color
     label_color: Color
 
-    x_axis_tick_labels: Optional[TickValues]
+    x_axis_tick_label_input: TickLabelInput
     y_axis_tick_label_decimal_places: int
 
     x_axis_description: Optional[ColoredString]

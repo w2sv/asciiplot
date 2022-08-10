@@ -1,65 +1,21 @@
-import itertools as itt
-import math
-from typing import Iterator, List
+from typing import List
 
 from asciiplot._chart.grid.cell import Cell
 from asciiplot._config import Config
+from asciiplot._params import Params
 from asciiplot._utils import terminal_width
 from asciiplot._utils.formatting import centering_indentation_len, indented
-from asciiplot._utils.iterables import max_element_length
-from asciiplot._utils.type_aliases import PlotSequences
+from asciiplot._type_aliases import PlotSequences
 
 
 class ChartGrid(List[List[Cell]]):
-    class Params:
-        def __init__(self,
-                     y_min: int,
-                     y_max: int,
-                     width: int,
-                     x_axis_description_len: int,
-                     config: Config):
-            self.y_min = y_min
-            self.y_max = y_max
-
-            self.width = width
-            self.x_axis_description_len = x_axis_description_len
-
-            self.y_value_range: float = abs(y_max - y_min)
-            self.delta_row_index_per_y: float = max(1., config.height / self.y_value_range)
-            self.y_axis_ticks: List[str] = list(self._y_axis_ticks(config.height, config.y_axis_tick_label_decimal_places))
-
-            self.y_tick_columns: int = max_element_length(self.y_axis_ticks)
-            self.columns_to_y_axis_ticks: int = self.y_tick_columns + config.horizontal_indentation
-
-        @classmethod
-        def extract(cls, sequences: PlotSequences, config: Config):
-            values: List[float] = list(itt.chain.from_iterable(sequences))
-
-            return cls(
-                y_min=int(math.floor(min(values))),
-                y_max=int(math.ceil(max(values))),
-                width=max_element_length(sequences),
-                x_axis_description_len=len(config.x_axis_description) if config.x_axis_description else 0,
-                config=config
-            )
-
-        @property
-        def total_width(self) -> int:
-            return self.columns_to_y_axis_ticks + self.width + self.x_axis_description_len + 1
-
-        def _y_axis_ticks(self, chart_height: int, decimal_places: int) -> Iterator[str]:
-            delta_y_per_row = self.y_value_range / (chart_height - 1)
-            for i in range(chart_height):
-                label: float = self.y_max - i * delta_y_per_row
-                yield f'{round(label, decimal_places):.{decimal_places}f}'
-
-    def __init__(self, config: Config, sequences: PlotSequences):
+    def __init__(self, plot_sequences: PlotSequences, config: Config, params: Params):
         self._config = config
-        self.params = self.Params.extract(sequences, config)
+        self._params = params
 
-        super().__init__([[Cell(bg_color=config.background_color) for _ in range(self.params.width)] for _ in range(self._config.height)])
+        super().__init__([[Cell(bg_color=config.background_color) for _ in range(self._params.x_axis_width)] for _ in range(self._config.height)])
 
-        self._add_sequences(sequences)
+        self._add_sequences(plot_sequences)
 
         self._add_x_axis()
         self._add_y_axis_with_tick_labels()
@@ -77,7 +33,7 @@ class ChartGrid(List[List[Cell]]):
             def clamp_to_row_index_bounds(row_index: int) -> int:
                 return max(min(row_index, self._config.height - 1), 0)
 
-            return clamp_to_row_index_bounds(row_index=int(round((value - self.params.y_min) * self.params.delta_row_index_per_y)))
+            return clamp_to_row_index_bounds(row_index=int(round((value - self._params.y_min) * self._params.delta_row_index_per_y)))
 
         for i, sequence in enumerate(sequences):
             color = self._config.sequence_colors[i % len(self._config.sequence_colors)]
@@ -154,7 +110,7 @@ class ChartGrid(List[List[Cell]]):
             else:
                 axis_cell = axis_cell.replace_string_if_applicable(SEGMENT_REPLACEMENTS)
 
-            tick_label_cell = Cell(self.params.y_axis_ticks[i].rjust(self.params.y_tick_columns), fg_color=self._config.label_color)
+            tick_label_cell = Cell(self._params.y_axis_tick_labels[i].rjust(self._params.y_tick_columns), fg_color=self._config.label_color)
             self[i][0] = Cell(tick_label_cell + axis_cell)  # TODO
 
     def _is_data_point(self, point_index: int) -> bool:
@@ -171,17 +127,17 @@ class ChartGrid(List[List[Cell]]):
         if self._config.horizontal_indentation:
 
             # raise if total width exceeding terminal columns
-            if self.params.total_width > _n_terminal_columns:
-                raise ValueError(f'Plot width = {self.params.total_width} > terminal width = {_n_terminal_columns}')
+            if self._params.total_width > _n_terminal_columns:
+                raise ValueError(f'Plot width = {self._params.total_width} > terminal width = {_n_terminal_columns}')
 
             for i in range(len(self)):
                 self[i][0] = Cell(indented(self[i][0], columns=self._config.horizontal_indentation))
 
         elif self._config.center_horizontally:
-            n_whitespaces = centering_indentation_len(self.params.total_width, reference_length=_n_terminal_columns)
+            n_whitespaces = centering_indentation_len(self._params.total_width, reference_length=_n_terminal_columns)
             centering_margin = ' '.rjust(n_whitespaces)
 
             for row_index in range(len(self)):
                 self[row_index].insert(0, Cell(centering_margin))
 
-            self.params.columns_to_y_axis_ticks += n_whitespaces
+            self._params.columns_to_y_axis_ticks += n_whitespaces

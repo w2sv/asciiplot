@@ -1,24 +1,34 @@
-from asciiplot._config import Config
-from asciiplot._chart.serialized.x_axis_tick_row import x_axis_tick_row
 from asciiplot._chart.grid import ChartGrid
+from asciiplot._chart.serialized.x_axis_tick_row import x_axis_tick_label_row
 from asciiplot._coloring import Color, ColoredString
-from asciiplot._utils.type_aliases import PlotSequences
+from asciiplot._config import Config
+from asciiplot._params import Params
+from asciiplot._sequence_interpolation import interpolate_sequences
+from asciiplot._type_aliases import PlotSequences
 from asciiplot._utils.formatting import centering_indentation_len, indented, newline_succeeded
 
 
 class SerializedChart(str):
     @classmethod
     def fully_rendered(cls, config: Config, sequences: PlotSequences):
-        chart_grid = ChartGrid(config, sequences=sequences)
+        # Interpolate sequences if required
+        if config.inter_points_margin:
+            plot_sequences = tuple(interpolate_sequences(sequences, config.inter_points_margin))
+        else:
+            plot_sequences = sequences  # type: ignore
+
+        params = Params.extract(plot_sequences, config=config)
+        chart_grid = ChartGrid(plot_sequences, config=config, params=params)
+
         return SerializedChart(chart_grid).add_layout_elements(
             config=config,
-            grid_params=chart_grid.params
+            params=params
         )
 
     def __new__(cls, chart_grid: ChartGrid):
         return super().__new__(cls, chart_grid.serialized())
 
-    def add_layout_elements(self, config: Config, grid_params: ChartGrid.Params) -> str:
+    def add_layout_elements(self, config: Config, params: Params) -> str:
         laid_out_chart = str(self)
 
         if config.x_axis_description:
@@ -31,7 +41,7 @@ class SerializedChart(str):
                     config.y_axis_description,
                     columns=centering_indentation_len(
                         len(config.y_axis_description),
-                        reference_length=grid_params.columns_to_y_axis_ticks * 2
+                        reference_length=params.columns_to_y_axis_ticks * 2
                     )
                 )
             )
@@ -40,15 +50,15 @@ class SerializedChart(str):
         if config.title:
             laid_out_chart = _title_row(
                 config.title,
-                grid_params.width,
-                grid_params.columns_to_y_axis_ticks
+                params.x_axis_width,
+                params.columns_to_y_axis_ticks
             ) + laid_out_chart
 
-        if config.x_axis_tick_labels:
-            laid_out_chart += x_axis_tick_row(
-                config.x_axis_tick_labels,
+        if params.x_axis_tick_label_values:
+            laid_out_chart += x_axis_tick_label_row(
+                params.x_axis_tick_label_values,
                 config.label_color,
-                grid_params.columns_to_y_axis_ticks,
+                params.columns_to_y_axis_ticks,
                 config.inter_points_margin
             )
 

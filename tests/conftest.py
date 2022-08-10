@@ -2,7 +2,7 @@ import pytest
 
 from asciiplot._coloring import Color, ColoredString
 from asciiplot._config import Config
-from asciiplot._utils.type_aliases import PlotSequences
+from asciiplot._type_aliases import PlotSequences
 
 
 @pytest.fixture
@@ -25,8 +25,9 @@ def config() -> Config:
         label_color=Color.NONE,
         background_color=Color.CHARTREUSE_2B,
         title=ColoredString('title'),
-        x_axis_tick_labels=list(range(3)),
+        x_axis_tick_label_input=range(3),
         center_horizontally=False,
         horizontal_indentation=4,
-        sequence_colors=[Color.NONE]
+        sequence_colors=[Color.NONE],
+        n_points=3
     )

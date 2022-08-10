@@ -7,7 +7,7 @@ if __name__ == '__main__':
         y_axis_tick_label_decimal_places=0,
         height=21,
         inter_points_margin=5,
-        x_axis_tick_labels=list(range(1, 9)),
+        x_axis_tick_labels='auto',
         sequence_colors=[Color.STEEL_BLUE],
         label_color=Color.BLUE_VIOLET,
         title='Fibonacci',

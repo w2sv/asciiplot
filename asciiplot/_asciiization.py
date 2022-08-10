@@ -3,8 +3,8 @@ from typing import List, Optional, Sequence
 from asciiplot._chart.serialized import SerializedChart
 from asciiplot._coloring import Color, ColoredString
 from asciiplot._config import Config
-from asciiplot._utils.type_aliases import TickValues
-from asciiplot._sequence_interpolation import interpolated_sequences
+from asciiplot._constants import AUTO
+from asciiplot._type_aliases import TickLabelInput
 from asciiplot._utils.iterables import max_element_length
 
 
@@ -17,7 +17,7 @@ def asciiize(
         background_color: Color = Color.NONE,
         label_color: Color = Color.NONE,
 
-        x_axis_tick_labels: Optional[TickValues] = None,
+        x_axis_tick_labels: TickLabelInput = AUTO,
         y_axis_tick_label_decimal_places: int = 0,
 
         x_axis_description: Optional[str] = None,
@@ -35,7 +35,7 @@ def asciiize(
     ... height=15,
     ... inter_points_margin=7,
     ...
-    ... x_axis_tick_labels=list(range(1, 9)),
+    ... x_axis_tick_labels='auto',
     ... y_axis_tick_label_decimal_places=0,
     ...
     ... x_axis_description='iteration',
@@ -67,7 +67,7 @@ def asciiize(
     ... height=14,
     ... inter_points_margin=3,
     ...
-    ... x_axis_tick_labels=range(1, 10),
+    ... x_axis_tick_labels='auto',
     ... x_axis_description='x',
     ... y_axis_description='y',
     ...
@@ -98,33 +98,25 @@ def asciiize(
     4.4┤│
     3.3┤│
     2.1┤│
-    1.0┼┤┬"""
+    1.0┼┤┬
+       123"""
 
     # Ascertain argument validity
     if len(sequence_colors) > len(sequences):
         raise ValueError('Number of received sequence colors exceeds number of sequences')
 
-    _max_sequence_length = max_element_length(sequences)
-    if x_axis_tick_labels is not None and len(x_axis_tick_labels) > _max_sequence_length:
-        raise ValueError(f"number of x-ticks = {len(x_axis_tick_labels)} does not match max sequence length = {_max_sequence_length}")
-
     if horizontal_indentation and center_horizontally:
         raise ValueError('Pass either chart_indentation > 0 or set center_chart to True')
-
-    # Interpolate sequences if required
-    if inter_points_margin:
-        plot_sequences = tuple(interpolated_sequences(sequences, inter_points_margin))
-    else:
-        plot_sequences = sequences
 
     # Provide config
     config = Config(
         height=height,
         inter_points_margin=inter_points_margin,
+        n_points=max_element_length(sequences),
         sequence_colors=sequence_colors,
         background_color=background_color,
         label_color=label_color,
-        x_axis_tick_labels=x_axis_tick_labels,
+        x_axis_tick_label_input=x_axis_tick_labels,
         y_axis_tick_label_decimal_places=y_axis_tick_label_decimal_places,
         x_axis_description=ColoredString.get(x_axis_description, axis_description_color),
         y_axis_description=ColoredString.get(y_axis_description, axis_description_color),
@@ -133,4 +125,4 @@ def asciiize(
         center_horizontally=center_horizontally
     )
 
-    return SerializedChart.fully_rendered(config, sequences=plot_sequences)
+    return SerializedChart.fully_rendered(config, sequences=sequences)

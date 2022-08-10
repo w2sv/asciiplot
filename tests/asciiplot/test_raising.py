@@ -23,13 +23,6 @@ def test_raising_on_terminal_columns_exceeded(sequences):
     asciiize(*sequences, horizontal_indentation=int(n_terminal_columns * 0.8))
 
 
-def test_raisin_on_x_labels_exceeding_domain_of_definition_length(sequences):
-    with pytest.raises(ValueError):
-        asciiize(*sequences, x_axis_tick_labels=list(range(4)), inter_points_margin=5)
-
-    asciiize(*sequences, x_axis_tick_labels=list(range(3)), inter_points_margin=5)
-
-
 def test_raising_on_indentation_and_chart_centering_set(sequences):
     with pytest.raises(ValueError):
         asciiize(*sequences, horizontal_indentation=5, center_horizontally=True)

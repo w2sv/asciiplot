@@ -1,18 +1,17 @@
 import itertools as itt
-from typing import List, Optional, Union
+from typing import List, Optional
 
 import more_itertools
 
-from asciiplot._utils.type_aliases import TickValues
-from asciiplot._coloring import colored, Color
+from asciiplot._coloring import Color, colored
+from asciiplot._type_aliases import TickLabelValue, TickLabelValues
 from asciiplot._utils.formatting import indented
 
 
-def x_axis_tick_row(
-        x_axis_ticks: TickValues,
-        tick_color: Color,
-        horizontal_y_axis_offset: int,
-        inter_points_margin: int) -> str:
+def x_axis_tick_label_row(x_axis_tick_labels: TickLabelValues,
+                          tick_color: Color,
+                          horizontal_y_axis_offset: int,
+                          inter_points_margin: int) -> str:
 
     """ Returns:
             x-label-row indented according to chart_indentation """
@@ -22,7 +21,7 @@ def x_axis_tick_row(
     ticks: List[_XAxisTickLabel] = list(
         map(
             lambda label: _XAxisTickLabel(label, color=tick_color),
-            x_axis_ticks
+            x_axis_tick_labels
         )
     )
 
@@ -36,45 +35,41 @@ class _XAxisTickLabel(str):
     """ Serving the creation of helper objects facilitating the computation
     of whitespace sequences in between labels """
 
-    def __new__(cls, content: Optional[Union[str, float]], color: Optional[Color] = None):
-        if not content:
+    def __new__(cls, content: Optional[TickLabelValue], color: Optional[Color] = None):
+        if content is None:
             content = ' '
         elif color:
             content = colored(content, color)
-
         return super().__new__(cls, content)
 
-    def __init__(self, content: Optional[Union[str, float]], color: Optional[Color] = None):
+    def __init__(self, content: Optional[TickLabelValue], color: Optional[Color] = None):
         """ Initialize such that center of serialized label right beneath tick
         in case of odd string length, otherwise shift by one column towards the right
 
-        >>> _XAxisTickLabel(234).margin_lengths
+        >>> margin_lengths = lambda label: [label.left_margin_length, label.right_margin_length]
+        >>> margin_lengths(_XAxisTickLabel(234))
         [1, 1]
-        >>> _XAxisTickLabel(23).margin_lengths
+        >>> margin_lengths(_XAxisTickLabel(23))
         [0, 1]
-        >>> _XAxisTickLabel(2).margin_lengths
+        >>> margin_lengths(_XAxisTickLabel(2))
         [0, 0]
-        >>> _XAxisTickLabel('second').margin_lengths
+        >>> margin_lengths(_XAxisTickLabel('second'))
         [2, 3] """
 
         if content is not None:
             content_str = str(content)
-            is_of_even_length: bool = len(content_str) % 2 == 0
-            self.left_margin_length = len(content_str) // 2 - int(is_of_even_length)
-            self.right_margin_length = self.left_margin_length + int(is_of_even_length)
+            floored_halved_length = len(content_str) // 2
+            self.left_margin_length = floored_halved_length - int(not len(content_str) % 2)
+            self.right_margin_length = floored_halved_length
         else:
             self.left_margin_length = self.right_margin_length = 0
-
-    @property
-    def margin_lengths(self) -> List[int]:
-        return [self.left_margin_length, self.right_margin_length]
 
     def whitespace_succeeded(self, succeeding_tick, inter_points_margin: int) -> str:
         n_whitespaces = inter_points_margin - self.right_margin_length - succeeding_tick.left_margin_length
         if n_whitespaces < 0 and str(self) != ' ':
-            raise ValueError(f'Adjacent x-axis ticks {self} and {succeeding_tick} are overlapping')
+            raise ValueError(f'Adjacent x-axis tick labels {self} and {succeeding_tick} are overlapping')
 
-        return f'{self}{" ".rjust(n_whitespaces)}'
+        return str(self) + (" ".rjust(n_whitespaces) if n_whitespaces else '')
 
 
 def _tick_row(ticks: List[_XAxisTickLabel], inter_points_margin: int) -> str:
@@ -84,7 +79,9 @@ def _tick_row(ticks: List[_XAxisTickLabel], inter_points_margin: int) -> str:
     >>> _tick_row(list(map(_XAxisTickLabel, ['first', 'second', 'third', 'fourth'])), inter_points_margin=8)
     'first    second   third    fourth'
     >>> _tick_row(list(map(_XAxisTickLabel, range(9, 14))), inter_points_margin=3)
-    '9   10  11  12  13' """
+    '9   10  11  12  13'
+    >>> _tick_row(list(map(_XAxisTickLabel, range(4))), inter_points_margin=0)
+    '0123' """
 
     return ''.join(
         itt.starmap(
