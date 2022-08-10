@@ -19,10 +19,12 @@ $pip install asciiplot
 
 Set:
 - chart height & title
-- axes descriptions & tick labels, including the possibility to determine the number of decimal points for float labels
-- the color of virtually all chart components, picked from a wide array of shades due to the integration of [colored](https://pypi.org/project/colored/)
+- the color of virtually all chart components and areas, picked from a wide array of shades due to the integration of [colored](https://pypi.org/project/colored/)
 - consistent margin between consecutive data points to widen your charts
 - the chart indentation within its hosting terminal, or whether it ought to be centered in it, respectively
+- axes descriptions
+- x-axis tick labels, which may be set to contain strings instead of just numeric values
+- y-axis tick label decimal places
 
 ## Usage Examples
 
@@ -33,7 +35,7 @@ from asciiplot import asciiize, Color
 print(
     asciiize(
         [1, 1, 2, 3, 5, 8, 13, 21],
-        sequence_colors=[Color.STEEL_BLUE],
+        sequence_colors=[Color.BLUE_3B],
         height=21,
         inter_points_margin=5,
         background_color=Color.LIGHT_SALMON_1,
@@ -75,6 +77,14 @@ print(
 ## Acknowledgements
 Core sequence asciiization algorithm adopted from https://github.com/kroitor/asciichart/blob/master/asciichartpy/
 
+## Testing
+
+```shell
+git clone https://github.com/w2sv/asciiplot.git
+cd asciiplot
+poetry install
+make test  # runs mypy, pytest doctest and outputs test coverage
+```
 
 ## License
 [MIT License](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
