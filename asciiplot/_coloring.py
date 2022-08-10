@@ -7,7 +7,7 @@ from asciiplot._utils.type_aliases import Serializable
 
 
 class Color(enum.Enum):
-    DEFAULT = enum.auto()
+    NONE = None
     BLACK = enum.auto()
     RED = enum.auto()
     GREEN = enum.auto()
@@ -270,7 +270,7 @@ class Color(enum.Enum):
         return self.name.lower()
 
 
-def colored(serializable: Serializable, fg_color=Color.DEFAULT, bg_color=Color.DEFAULT) -> str:
+def colored(serializable: Serializable, fg_color=Color.NONE, bg_color=Color.NONE) -> str:
     r"""
     >>> colored(69)
     '69'
@@ -279,8 +279,8 @@ def colored(serializable: Serializable, fg_color=Color.DEFAULT, bg_color=Color.D
     >>> repr(colored('wasssup', Color.GREY_93))
     "'\\x1b[38;5;255mwasssup\\x1b[0m'" """
 
-    fg_prefix = _colored.fg(fg_color.value) if fg_color is not Color.DEFAULT else ''
-    bg_prefix = _colored.bg(bg_color.value) if bg_color is not Color.DEFAULT else ''
+    fg_prefix = _colored.fg(fg_color.value) if fg_color is not Color.NONE else ''
+    bg_prefix = _colored.bg(bg_color.value) if bg_color is not Color.NONE else ''
 
     if not fg_prefix and not bg_prefix:
         return str(serializable)
@@ -289,15 +289,15 @@ def colored(serializable: Serializable, fg_color=Color.DEFAULT, bg_color=Color.D
 
 class ColoredString(str):
     @classmethod
-    def get(cls, string: Optional[str], fg_color=Color.DEFAULT, bg_color=Color.DEFAULT):
+    def get(cls, string: Optional[str], fg_color=Color.NONE, bg_color=Color.NONE):
         if string is None:
             return None
         return cls(string, fg_color, bg_color)
 
-    def __new__(cls, string: str, fg_color=Color.DEFAULT, bg_color=Color.DEFAULT):
+    def __new__(cls, string: str, fg_color=Color.NONE, bg_color=Color.NONE):
         return super().__new__(cls, colored(string, fg_color, bg_color))
 
-    def __init__(self, string: str, fg_color=Color.DEFAULT, bg_color=Color.DEFAULT):
+    def __init__(self, string: str, fg_color=Color.NONE, bg_color=Color.NONE):
         self.string = string
         self.fg_color = fg_color
         self.bg_color = bg_color
@@ -310,12 +310,19 @@ class ColoredString(str):
 
         return len(self.string)
 
-    def replace_string(self, replacements: Dict[str, str]):
+    def replace_string(self, replacement: str):
+        return self.__class__(
+            replacement,
+            fg_color=self.fg_color,
+            bg_color=self.bg_color
+        )
+
+    def replace_string_if_applicable(self, replacements: Dict[str, str]):
         r"""
         >>> SEGMENT_REPLACEMENTS = {'┤': '┼'}
-        >>> ColoredString('┤').replace_string(SEGMENT_REPLACEMENTS)
+        >>> ColoredString('┤').replace_string_if_applicable(SEGMENT_REPLACEMENTS)
         '┼'
-        >>> repr(ColoredString('┤', fg_color=Color.RED).replace_string(SEGMENT_REPLACEMENTS))
+        >>> repr(ColoredString('┤', fg_color=Color.RED).replace_string_if_applicable(SEGMENT_REPLACEMENTS))
         "'\\x1b[38;5;1m┼\\x1b[0m'" """
 
         return self.__class__(

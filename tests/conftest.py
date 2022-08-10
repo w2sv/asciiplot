@@ -1,5 +1,7 @@
 import pytest
 
+from asciiplot._coloring import Color, ColoredString
+from asciiplot._config import Config
 from asciiplot._utils.type_aliases import PlotSequences
 
 
@@ -10,3 +12,21 @@ def sequences() -> PlotSequences:
         [5, 5, 5],
         [8, 3]
     ]
+
+
+@pytest.fixture
+def config() -> Config:
+    return Config(
+        height=5,
+        inter_points_margin=3,
+        x_axis_description=ColoredString('x_axis'),
+        y_axis_description=ColoredString('y_axis'),
+        y_axis_tick_label_decimal_places=3,
+        label_color=Color.NONE,
+        background_color=Color.CHARTREUSE_2B,
+        title=ColoredString('title'),
+        x_axis_tick_labels=list(range(3)),
+        center_horizontally=False,
+        horizontal_indentation=4,
+        sequence_colors=[Color.NONE]
+    )

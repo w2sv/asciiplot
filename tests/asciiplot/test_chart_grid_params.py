@@ -6,23 +6,24 @@ from asciiplot._config import Config
 
 
 @pytest.mark.parametrize(
-    'params, expected', [
+    'extract_args, expected', [
         (
-                ChartGrid.Params.extract(
-                    ([5, 9, 2],),
-                    config=Config(
-                        height=5,
-                        inter_points_margin=3,
-                        x_axis_description=ColoredString('x_axis'),
-                        y_axis_description=ColoredString('y_axis'),
-                        y_axis_tick_label_decimal_places=3,
-                        label_color=Color.DEFAULT,
-                        title=ColoredString('title'),
-                        x_axis_tick_labels=list(range(3)),
-                        center_horizontally=False,
-                        horizontal_indentation=4,
-                        sequence_colors=[Color.DEFAULT]
-                    )
+                (
+                        ([5, 9, 2],),
+                        Config(
+                            height=5,
+                            inter_points_margin=3,
+                            x_axis_description=ColoredString('x_axis'),
+                            y_axis_description=ColoredString('y_axis'),
+                            y_axis_tick_label_decimal_places=3,
+                            label_color=Color.NONE,
+                            background_color=Color.CHARTREUSE_2B,
+                            title=ColoredString('title'),
+                            x_axis_tick_labels=list(range(3)),
+                            center_horizontally=False,
+                            horizontal_indentation=4,
+                            sequence_colors=[Color.NONE]
+                        )
                 ),
                 {
                     'columns_to_y_axis_ticks': 9,
@@ -37,21 +38,22 @@ from asciiplot._config import Config
                 }
         ),
         (
-                ChartGrid.Params.extract(
-                    ([89, 4, 53, -80], [92, 75, 44, 44, 101]),
-                    config=Config(
-                        height=27,
-                        inter_points_margin=11,
-                        x_axis_description=ColoredString('x_axis'),
-                        y_axis_description=ColoredString('y_axis'),
-                        y_axis_tick_label_decimal_places=1,
-                        label_color=Color.DEFAULT,
-                        title=ColoredString('title'),
-                        x_axis_tick_labels=list(range(5)),
-                        center_horizontally=False,
-                        horizontal_indentation=7,
-                        sequence_colors=[Color.DEFAULT]
-                    )
+                (
+                        ([89, 4, 53, -80], [92, 75, 44, 44, 101]),
+                        Config(
+                            height=27,
+                            inter_points_margin=11,
+                            x_axis_description=ColoredString('x_axis'),
+                            y_axis_description=ColoredString('y_axis'),
+                            y_axis_tick_label_decimal_places=1,
+                            label_color=Color.NONE,
+                            background_color=Color.CHARTREUSE_2B,
+                            title=ColoredString('title'),
+                            x_axis_tick_labels=list(range(5)),
+                            center_horizontally=False,
+                            horizontal_indentation=7,
+                            sequence_colors=[Color.NONE]
+                        )
                 ),
                 {
                     'columns_to_y_axis_ticks': 12,
@@ -95,5 +97,15 @@ from asciiplot._config import Config
         )
     ]
 )
-def test_chart_params(params, expected):
-    assert vars(params) == expected
+def test_extract(extract_args, expected):
+    assert vars(ChartGrid.Params.extract(*extract_args)) == expected
+
+
+def test_total_width(config):
+    assert ChartGrid.Params(
+        y_min=3,
+        y_max=16,
+        width=20,
+        x_axis_description_len=5,
+        config=config
+    ).total_width == 36

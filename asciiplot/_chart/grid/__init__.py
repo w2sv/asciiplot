@@ -2,9 +2,7 @@ import itertools as itt
 import math
 from typing import Iterator, List
 
-from asciiplot._chart.grid import cell as _parcel
-from asciiplot._chart.grid.cell import Cell, DEFAULT_CONTENT
-from asciiplot._coloring import colored
+from asciiplot._chart.grid.cell import Cell
 from asciiplot._config import Config
 from asciiplot._utils import terminal_width
 from asciiplot._utils.formatting import centering_indentation_len, indented
@@ -53,23 +51,18 @@ class ChartGrid(List[List[Cell]]):
             delta_y_per_row = self.y_value_range / (chart_height - 1)
             for i in range(chart_height):
                 label: float = self.y_max - i * delta_y_per_row
-
-                # format label according to intended decimal places
-                if decimal_places:
-                    yield f'{round(label, decimal_places):.{decimal_places}f}'
-                else:
-                    yield str(int(label))
+                yield f'{round(label, decimal_places):.{decimal_places}f}'
 
     def __init__(self, config: Config, sequences: PlotSequences):
         self._config = config
         self.params = self.Params.extract(sequences, config)
 
-        super().__init__([[Cell(DEFAULT_CONTENT, bg_color=config.background_color) for _ in range(self.params.width)] for _ in range(self._config.height)])
+        super().__init__([[Cell(bg_color=config.background_color) for _ in range(self.params.width)] for _ in range(self._config.height)])
 
         self._add_sequences(sequences)
 
-        self._add_y_axis()
         self._add_x_axis()
+        self._add_y_axis_with_tick_labels()
 
         self._indent_if_applicable()
 
@@ -77,7 +70,7 @@ class ChartGrid(List[List[Cell]]):
         SEGMENTS = ('┼', '─', '╰', '╭', '╮', '╯', '│')
         INIT_VALUE = -1
 
-        def _row_index(value: float) -> int:
+        def row_index(value: float) -> int:
             """ Scales sequence point clamped to desired extrema to
             corresponding point within chart value range """
 
@@ -94,14 +87,14 @@ class ChartGrid(List[List[Cell]]):
                 self[self._config.height - 1 - row_subtrahend][j + 1] = Cell(segment, fg_color=color, bg_color=self._config.background_color)
 
             # add '┼' at sequence beginning where sequences overlaps with y-axis
-            set_parcel(_row_index(sequence[0]), SEGMENTS[0])
+            set_parcel(row_index(sequence[0]), SEGMENTS[0])
 
             # asciiize sequence
             while j < len(sequence) - 2:
                 j += 1
 
-                y0 = _row_index(sequence[j])
-                y1 = _row_index(sequence[j + 1])
+                y0 = row_index(sequence[j])
+                y1 = row_index(sequence[j + 1])
 
                 if y0 == y1:
                     set_parcel(y0, SEGMENTS[1])
@@ -123,26 +116,8 @@ class ChartGrid(List[List[Cell]]):
     def serialized(self) -> str:
         return '\n'.join((''.join(row).rstrip() for row in self))
 
-    def _add_y_axis(self):
-        """ Besets first parcel of each row with respective y-axis segment
-            preceded by colored, adjusted tick value """
-
-        SEGMENT_REPLACEMENTS = {
-            '─': '┤',
-            '|': '┼'
-        }
-
-        for i in range(len(self)):
-            cell = self[i][0]
-            if cell.is_empty:
-                axis_segment = '┤'
-            else:
-                axis_segment = cell.replace_string(SEGMENT_REPLACEMENTS).string
-
-            self[i][0] = Cell(f'{colored(self.params.y_axis_ticks[i].rjust(self.params.y_tick_columns), fg_color=self._config.label_color)}{axis_segment}')
-
     def _add_x_axis(self):
-        SEGMENTS = ('┼', '┤', '┬', '─')
+        SEGMENTS = ('┬', '─')
         SEGMENT_REPLACEMENTS = {
             '┤': '┼',
             '─': '┬',
@@ -150,27 +125,45 @@ class ChartGrid(List[List[Cell]]):
             '╯': '┤'
         }
 
-        def is_data_point(point_index: int) -> bool:
-            """ Returns:
-                    flag whether point corresponding to point_index is actual
-                    data point denoted in original sequences instead of interpolated
-                    one """
-
-            return not point_index % (self._config.inter_points_margin + 1)
-
-        last_row = self[-1]
-
-        for i, cell in enumerate(last_row):
+        for i, cell in enumerate(self[-1]):
             # add straight horizontal axis segment if parcel doesn't contain
             # a sequence segment, otherwise convert present sequence segment
             # to one comprising both the sequence and axis segment in color
             # of respective sequence
 
-            _is_data_point = is_data_point(i)
+            is_data_point = self._is_data_point(i)
             if cell.is_empty:
-                last_row[i] = Cell(SEGMENTS[2] if _is_data_point else SEGMENTS[3])
-            elif _is_data_point:
-                last_row[i] = cell.replace_string(SEGMENT_REPLACEMENTS)
+                self[-1][i] = cell.replace_string(SEGMENTS[0] if is_data_point else SEGMENTS[1])
+            elif is_data_point:
+                self[-1][i] = cell.replace_string_if_applicable(SEGMENT_REPLACEMENTS)
+
+    def _add_y_axis_with_tick_labels(self):
+        """ Besets first parcel of each row with respective y-axis segment
+            preceded by colored, adjusted tick value """
+
+        DEFAULT_SEGMENT = '┤'
+        SEGMENT_REPLACEMENTS = {
+            '─': DEFAULT_SEGMENT,
+            '|': '┼'
+        }
+
+        for i in range(len(self)):
+            axis_cell = self[i][0]
+            if axis_cell.is_empty:
+                axis_cell = axis_cell.replace_string(DEFAULT_SEGMENT)
+            else:
+                axis_cell = axis_cell.replace_string_if_applicable(SEGMENT_REPLACEMENTS)
+
+            tick_label_cell = Cell(self.params.y_axis_ticks[i].rjust(self.params.y_tick_columns), fg_color=self._config.label_color)
+            self[i][0] = Cell(tick_label_cell + axis_cell)  # TODO
+
+    def _is_data_point(self, point_index: int) -> bool:
+        """ Returns:
+                flag whether point corresponding to point_index is actual
+                data point denoted in original sequences instead of interpolated
+                one """
+
+        return not point_index % (self._config.inter_points_margin + 1)
 
     def _indent_if_applicable(self):
         _n_terminal_columns = terminal_width()

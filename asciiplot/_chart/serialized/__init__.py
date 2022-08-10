@@ -1,9 +1,9 @@
 from asciiplot._config import Config
-from .x_axis_tick_row import x_axis_tick_row
-from ..grid import ChartGrid
-from ..._coloring import Color, ColoredString
-from ..._utils.type_aliases import PlotSequences
-from ..._utils.formatting import centering_indentation_len, indented, newline_succeeded
+from asciiplot._chart.serialized.x_axis_tick_row import x_axis_tick_row
+from asciiplot._chart.grid import ChartGrid
+from asciiplot._coloring import Color, ColoredString
+from asciiplot._utils.type_aliases import PlotSequences
+from asciiplot._utils.formatting import centering_indentation_len, indented, newline_succeeded
 
 
 class SerializedChart(str):
