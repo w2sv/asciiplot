@@ -3,9 +3,9 @@ from typing import List
 from asciiplot._chart.grid.cell import Cell
 from asciiplot._config import Config
 from asciiplot._params import Params
+from asciiplot._type_aliases import PlotSequences
 from asciiplot._utils.console import console_width
 from asciiplot._utils.formatting import centering_indentation_len, indented
-from asciiplot._type_aliases import PlotSequences
 
 
 class ChartGrid(List[List[Cell]]):

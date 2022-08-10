@@ -3,9 +3,9 @@ import math
 from typing import Iterator, List, Optional
 
 from asciiplot._config import Config
-from asciiplot._utils.iterables import max_element_length
-from asciiplot._type_aliases import PlotSequences, TickLabelInput, TickLabelValues
 from asciiplot._constants import AUTO
+from asciiplot._type_aliases import PlotSequences, TickLabelInput, TickLabelValues
+from asciiplot._utils.iterables import max_element_length
 
 
 class Params:

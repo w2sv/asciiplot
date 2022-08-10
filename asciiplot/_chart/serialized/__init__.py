@@ -76,6 +76,9 @@ def _title_row(title: ColoredString, chart_width: int, horizontal_y_axis_offset:
     return newline_trailed(
         indented(
             title,
-            columns=centering_indentation_len(title.display_length, reference_length=chart_width) + horizontal_y_axis_offset
+            columns=centering_indentation_len(
+                title.display_length,
+                reference_length=chart_width
+            ) + horizontal_y_axis_offset
         )
     )

@@ -8,28 +8,27 @@ from asciiplot._type_aliases import TickLabelInput
 from asciiplot._utils.iterables import max_element_length
 
 
-def asciiize(
-        *sequences: List[float],
-        height: int = 5,
-        inter_points_margin: int = 0,
+def asciiize(*sequences: List[float],
+             height: int = 5,
+             inter_points_margin: int = 0,
 
-        sequence_colors: Sequence[Color] = (Color.NONE, ),
-        background_color: Color = Color.NONE,
-        label_color: Color = Color.NONE,
+             sequence_colors: Sequence[Color] = (Color.NONE,),
+             background_color: Color = Color.NONE,
+             label_color: Color = Color.NONE,
 
-        x_axis_tick_labels: TickLabelInput = AUTO,
-        y_axis_tick_label_decimal_places: int = 0,
-        axes_background_color: Color = Color.NONE,
+             x_axis_tick_labels: TickLabelInput = AUTO,
+             y_axis_tick_label_decimal_places: int = 0,
+             axes_background_color: Color = Color.NONE,
 
-        x_axis_description: Optional[str] = None,
-        y_axis_description: Optional[str] = None,
-        axis_description_color: Color = Color.NONE,
+             x_axis_description: Optional[str] = None,
+             y_axis_description: Optional[str] = None,
+             axis_description_color: Color = Color.NONE,
 
-        title: Optional[str] = None,
-        title_color: Color = Color.NONE,
+             title: Optional[str] = None,
+             title_color: Color = Color.NONE,
 
-        horizontal_indentation: int = 0,
-        center_horizontally: bool = False) -> str:
+             horizontal_indentation: int = 0,
+             center_horizontally: bool = False) -> str:
     r"""
     >>> print(asciiize(
     ... [1, 1, 2, 3, 5, 8, 13, 21],
