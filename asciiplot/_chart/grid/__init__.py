@@ -23,51 +23,49 @@ class ChartGrid(List[List[Cell]]):
         self._indent_if_applicable()
 
     def _add_sequences(self, sequences: PlotSequences):
-        SEGMENTS = ('┼', '─', '╰', '╭', '╮', '╯', '│')
-        INIT_VALUE = -1
-
-        def row_index(value: float) -> int:
-            """ Scales sequence point clamped to desired extrema to
-            corresponding point within chart value range """
-
-            def clamp_to_row_index_bounds(row_index: int) -> int:
-                return max(min(row_index, self._config.height - 1), 0)
-
-            return clamp_to_row_index_bounds(row_index=int(round((value - self._params.y_min) * self._params.delta_row_index_per_y)))
-
         for i, sequence in enumerate(sequences):
             color = self._config.sequence_colors[i % len(self._config.sequence_colors)]
-            j = INIT_VALUE
+            j = -1
 
-            def set_parcel(row_subtrahend: int, segment: str):
+            def set_cell(row_subtrahend: int, segment: str):
                 self[self._config.height - 1 - row_subtrahend][j + 1] = Cell(segment, fg=color, bg=self._config.background_color)
 
             # add '┼' at sequence beginning where sequences overlaps with y-axis
-            set_parcel(row_index(sequence[0]), SEGMENTS[0])
+            set_cell(self._row_index(sequence[0]), '┼')
 
             # asciiize sequence
             while j < len(sequence) - 2:
                 j += 1
 
-                y0 = row_index(sequence[j])
-                y1 = row_index(sequence[j + 1])
+                y0 = self._row_index(sequence[j])
+                y1 = self._row_index(sequence[j + 1])
 
                 if y0 == y1:
-                    set_parcel(y0, SEGMENTS[1])
-
+                    set_cell(y0, '─')
                 else:
                     if y0 > y1:
-                        symbol_y0, symbol_y1 = SEGMENTS[4], SEGMENTS[2]
+                        symbol_y0, symbol_y1 = '╮', '╰'
                     else:
-                        symbol_y0, symbol_y1 = SEGMENTS[5], SEGMENTS[3]
+                        symbol_y0, symbol_y1 = '╯', '╭'
 
-                    set_parcel(y0, symbol_y0)
-                    set_parcel(y1, symbol_y1)
+                    set_cell(y0, symbol_y0)
+                    set_cell(y1, symbol_y1)
 
                     # add vertical segment in case of consecutive sequence
                     # value steepness
                     for y in range(min(y0, y1) + 1, max(y0, y1)):
-                        set_parcel(y, SEGMENTS[6])
+                        set_cell(y, '│')
+
+    def _row_index(self, value: float) -> int:
+        """ Scales sequence point clamped to desired extrema to
+        corresponding point within chart value range """
+
+        def clamp_to_row_index_bounds(row_index: int) -> int:
+            return max(min(row_index, self._config.height - 1), 0)
+
+        return clamp_to_row_index_bounds(
+            row_index=int(round((value - self._params.y_min) * self._params.delta_row_index_per_y))
+        )
 
     def serialized(self) -> str:
         return '\n'.join((''.join(row).rstrip() for row in self))

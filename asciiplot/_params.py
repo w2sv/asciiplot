@@ -35,12 +35,11 @@ class Params:
     @classmethod
     def extract(cls, plot_sequences: PlotSequences, config: Config):
         values: List[float] = list(itt.chain.from_iterable(plot_sequences))
-        x_axis_width = max_element_length(plot_sequences)
 
         return cls(
             y_min=int(math.floor(min(values))),
             y_max=int(math.ceil(max(values))),
-            x_axis_width=x_axis_width,
+            x_axis_width=max_element_length(plot_sequences),
             x_axis_tick_label_values=cls._x_axis_tick_label_values(
                 config.x_axis_tick_label_input,
                 config.n_points
