@@ -13,6 +13,9 @@ if __name__ == '__main__':
         title='Fibonacci',
         title_color=Color.RED_1,
         center_horizontally=True,
-        background_color=Color.LIGHT_SALMON_1
+        background_color=Color.LIGHT_SALMON_1,
+        tick_label_background_color=Color.DEEP_PINK_3A,
+        x_axis_description='x',
+        y_axis_description='y'
     )
     print(chart)

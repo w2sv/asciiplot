@@ -19,6 +19,7 @@ class Config:
 
     x_axis_tick_label_input: TickLabelInput
     y_axis_tick_label_decimal_places: int
+    tick_label_background_color: Color
 
     x_axis_description: Optional[ColoredString]
     y_axis_description: Optional[ColoredString]

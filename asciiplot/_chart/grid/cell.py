@@ -5,11 +5,11 @@ _DEFAULT_CONTENT = ' '
 
 
 class Cell(ColoredString):
-    def __new__(cls, string=_DEFAULT_CONTENT, fg_color=Color.NONE, bg_color=Color.NONE):
-        return super().__new__(cls, string, fg_color, bg_color)
+    def __new__(cls, string=_DEFAULT_CONTENT, fg=Color.NONE, bg=Color.NONE):
+        return super().__new__(cls, string, fg, bg)
 
-    def __init__(self, string=_DEFAULT_CONTENT, fg_color=Color.NONE, bg_color=Color.NONE):
-        super().__init__(string, fg_color, bg_color)
+    def __init__(self, string=_DEFAULT_CONTENT, fg=Color.NONE, bg=Color.NONE):
+        super().__init__(string, fg, bg)
 
     @property
     def is_empty(self) -> bool:

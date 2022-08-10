@@ -29,5 +29,6 @@ def config() -> Config:
         center_horizontally=False,
         horizontal_indentation=4,
         sequence_colors=[Color.NONE],
-        n_points=3
+        n_points=3,
+        tick_label_background_color=Color.CHARTREUSE_2B
     )
