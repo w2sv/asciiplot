@@ -10,7 +10,7 @@
 
 #### Platform-agnostic, highly customizable sequence plotting in console
 
-![alt text](https://github.com/w2sv/asciiplot/blob/master/readme-images/sin&cos.png?raw=true)
+![alt text](https://github.com/w2sv/asciiplot/blob/master/assets/sin&cos.png?raw=true)
 
 ## Installation
 ```shell
@@ -51,7 +51,7 @@ print(
     )
 )
 ```
-![alt text](https://github.com/w2sv/asciiplot/blob/master/readme-images/fibonacci.png?raw=true)
+![alt text](https://github.com/w2sv/asciiplot/blob/master/assets/fibonacci.png?raw=true)
 
 ```python
 from asciiplot import asciiize, Color
@@ -74,7 +74,7 @@ print(
     )
 )
 ```
-![alt text](https://github.com/w2sv/asciiplot/blob/master/readme-images/random.png?raw=true)
+![alt text](https://github.com/w2sv/asciiplot/blob/master/assets/random.png?raw=true)
 
 ## Acknowledgements
 Core sequence asciiization algorithm adopted from https://github.com/kroitor/asciichart/blob/master/asciichartpy/
