@@ -27,16 +27,13 @@ if __name__ == '__main__':
     chart = asciiize(
         y_sin,
         y_cos,
-        title='Sin & Cos [0,2π]',
         title_color=Color.DARK_GOLDENROD,
         sequence_colors=[Color.PURPLE_3, Color.RED_1],
         background_color=Color.BLACK,
         label_background_color=Color.DARK_GOLDENROD,
         x_axis_tick_labels=[f'{label:.1f}' for label in x],
         inter_points_margin=6,
-        height=15,
-        x_axis_description='x',
-        y_axis_description='y',
+        height=10,
         y_axis_tick_label_decimal_places=2,
         center_horizontally=True
     )
