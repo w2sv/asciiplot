@@ -2,20 +2,60 @@ from asciiplot import Color, asciiize
 
 
 if __name__ == '__main__':
+    import numpy as np
+
+    # def sigmoid(x):
+    #     return 1 / (1 + np.exp(-x))
+    #
+    # x = np.linspace(-5, 5, 10)
+    # y = [sigmoid(x_i) for x_i in x]
+    #
+    # chart = asciiize(
+    #     y,
+    #     x_axis_tick_labels=[f'{label:.1f}' for label in x],
+    #     inter_points_margin=6,
+    #     height=15,
+    #     x_axis_description='x',
+    #     y_axis_description='y',
+    #     y_axis_tick_label_decimal_places=2
+    # )
+
+    x = np.linspace(0, 2 * np.pi, 10)
+    y_sin = [np.sin(x_i) for x_i in x]
+    y_cos = [np.cos(x_i) for x_i in x]
+
     chart = asciiize(
-        [1, 1, 2, 3, 5, 8, 13, 21],
-        height=21,
-        inter_points_margin=5,
-        sequence_colors=[Color.BLUE_3B],
-        label_color=Color.BLUE_VIOLET,
-        title='Fibonacci',
-        title_color=Color.RED_1,
-        center_horizontally=True,
-        background_color=Color.LIGHT_SALMON_1,
-        axes_background_color=Color.DEEP_PINK_3A,
+        y_sin,
+        y_cos,
+        title='Sin & Cos [0,2π]',
+        title_color=Color.DARK_GOLDENROD,
+        sequence_colors=[Color.PURPLE_3, Color.RED_1],
+        background_color=Color.BLACK,
+        label_background_color=Color.DARK_GOLDENROD,
+        x_axis_tick_labels=[f'{label:.1f}' for label in x],
+        inter_points_margin=6,
+        height=15,
         x_axis_description='x',
-        y_axis_description='y'
+        y_axis_description='y',
+        y_axis_tick_label_decimal_places=2,
+        center_horizontally=True
     )
+
+    # chart = asciiize(
+    #     [1, 1, 2, 3, 5, 8, 13, 21],
+    #     height=21,
+    #     inter_points_margin=5,
+    #     sequence_colors=[Color.BLUE_3B],
+    #     label_color=Color.BLUE_VIOLET,
+    #     title='Fibonacci',
+    #     title_color=Color.RED_1,
+    #     center_horizontally=True,
+    #     background_color=Color.LIGHT_SALMON_1,
+    #     label_background_color=Color.DEEP_PINK_3A,
+    #     x_axis_description='x',
+    #     y_axis_description='y'
+    # )
+
     # chart = asciiize(
     #     [17, 21, 19, 19, 5, 7, 12, 4],
     #     [7, 8, 3, 17, 19, 18, 5, 2, 20],

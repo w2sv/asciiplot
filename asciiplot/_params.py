@@ -24,8 +24,8 @@ class Params:
         self.x_axis_tick_label_values = x_axis_tick_label_values
         self.x_axis_description_len = x_axis_description_len
 
-        self.y_value_range: float = abs(y_max - y_min)
-        self.delta_row_index_per_y: float = max(1., config.height / self.y_value_range)
+        self.y_range: float = abs(y_max - y_min)
+        self.i_row_per_y: float = max(1., config.height / self.y_range)
         self.y_axis_tick_labels: List[str] = list(
             self._y_axis_tick_labels(config.height, config.y_axis_tick_label_decimal_places)
         )
@@ -63,7 +63,7 @@ class Params:
         return self.columns_to_y_axis_ticks + self.x_axis_width + self.x_axis_description_len + 1
 
     def _y_axis_tick_labels(self, chart_height: int, decimal_places: int) -> Iterator[str]:
-        delta_y_per_row = self.y_value_range / (chart_height - 1)
+        delta_y_per_row = self.y_range / (chart_height - 1)
         for i in range(chart_height):
             label: float = self.y_max - i * delta_y_per_row
             yield f'{round(label, decimal_places):.{decimal_places}f}'

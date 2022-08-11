@@ -15,10 +15,10 @@ def asciiize(*sequences: List[float],
              sequence_colors: Sequence[Color] = (Color.NONE,),
              background_color: Color = Color.NONE,
              label_color: Color = Color.NONE,
+             label_background_color: Color = Color.NONE,
 
              x_axis_tick_labels: TickLabelInput = AUTO,
              y_axis_tick_label_decimal_places: int = 0,
-             axes_background_color: Color = Color.NONE,
 
              x_axis_description: Optional[str] = None,
              y_axis_description: Optional[str] = None,
@@ -32,7 +32,7 @@ def asciiize(*sequences: List[float],
     r"""
     >>> print(asciiize(
     ... [1, 1, 2, 3, 5, 8, 13, 21],
-    ... height=15,
+    ... height=20,
     ... inter_points_margin=7,
     ...
     ... x_axis_tick_labels='auto',
@@ -43,22 +43,27 @@ def asciiize(*sequences: List[float],
     ...
     ... title='Fibonacci Sequence'))
                              Fibonacci Sequence
-     number
-    21┤                                                 ╭──────
-    20┤                                                ╭╯
-    18┤                                               ╭╯
-    17┤                                             ╭─╯
-    15┤                                           ╭─╯
-    14┤                                          ╭╯
-    12┤                                        ╭─╯
-    11┤                                      ╭─╯
-    10┤                                   ╭──╯
-     8┤                                 ╭─╯
-     7┤                             ╭───╯
-     5┤                          ╭──╯
-     4┤                   ╭──────╯
-     2┤            ╭──────╯
-     1┼───────┬────╯──┬───────┬───────┬───────┬───────┬───────┬ iteration
+    number
+    21┤                                                      ╭─
+    20┤                                                     ╭╯
+    19┤                                                    ╭╯
+    18┤                                                   ╭╯
+    17┤                                                  ╭╯
+    16┤                                                 ╭╯
+    15┤                                                ╭╯
+    14┤                                               ╭╯
+    13┤                                              ╭╯
+    12┤                                            ╭─╯
+    10┤                                           ╭╯
+     9┤                                         ╭─╯
+     8┤                                       ╭─╯
+     7┤                                     ╭─╯
+     6┤                                  ╭──╯
+     5┤                               ╭──╯
+     4┤                           ╭───╯
+     3┤                       ╭───╯
+     2┤               ╭───────╯
+     1┼───────┬───────┤───────┬───────┬───────┬───────┬───────┬ iteration
       1       2       3       4       5       6       7       8
 
     >>> print(asciiize(
@@ -74,20 +79,20 @@ def asciiize(*sequences: List[float],
     ... title='Parabola'))
                       Parabola
       y
-    12┼─╮                            ╭─
-    11┤ ╰╮                           │
-    10┤  ╰╮                         ╭╯
-     9┤   ╰╮                       ╭╯
-     8┤    ╰╮                     ╭╯
-     7┤     ╰╮                   ╭╯
-     6┤      ╰╮                 ╭╯
-     5┤       ╰─╮              ╭╯
-     4┤         ╰─╮          ╭─╯
-     3┤           ╰╮       ╭─╯
-     2┤            ╰╮     ╭╯
-     1┤             ╰╮  ╭─╯
-     0┤              ╰╮╭╯
-    -1┬───┬───┬───┬───├╯──┬───┬───┬───┬ x
+    12┼╮                              ╭
+    11┤╰╮                            ╭╯
+    10┤ ╰╮                          ╭╯
+     9┤  ╰╮                         │
+     8┤   ╰╮                       ╭╯
+     7┤    ╰─╮                    ╭╯
+     6┤      ╰╮                 ╭─╯
+     5┤       ╰╮               ╭╯
+     4┤        ╰─╮            ╭╯
+     3┤          ╰─╮        ╭─╯
+     2┤            ╰╮     ╭─╯
+     1┤             ╰╮   ╭╯
+     0┤              ╰╮ ╭╯
+    -1┬───┬───┬───┬───├─╯─┬───┬───┬───┬ x
       1   2   3   4   5   6   7   8   9
 
     >>> print(asciiize([1, 9, 5], height=8, y_axis_tick_label_decimal_places=1))
@@ -117,7 +122,7 @@ def asciiize(*sequences: List[float],
         label_color=label_color,
         x_axis_tick_label_input=x_axis_tick_labels,
         y_axis_tick_label_decimal_places=y_axis_tick_label_decimal_places,
-        tick_label_background_color=axes_background_color,
+        tick_label_background_color=label_background_color,
         x_axis_description=ColoredString.get(x_axis_description, axis_description_color),
         y_axis_description=ColoredString.get(y_axis_description, axis_description_color),
         title=ColoredString.get(title, title_color),

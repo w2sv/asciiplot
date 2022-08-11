@@ -1,11 +1,16 @@
+from functools import partial
 from typing import List
 
+from more_itertools import pairwise
+
+from asciiplot._coloring import Color
 from asciiplot._chart.grid.cell import Cell
 from asciiplot._config import Config
 from asciiplot._params import Params
 from asciiplot._type_aliases import PlotSequences
 from asciiplot._utils.console import console_width
 from asciiplot._utils.formatting import centering_indentation_len, indented
+from asciiplot._utils.numerical_manipulation import clamp_value
 
 
 class ChartGrid(List[List[Cell]]):
@@ -13,9 +18,10 @@ class ChartGrid(List[List[Cell]]):
         self._config = config
         self._params = params
 
+        self._last_row_index = self._config.height - 1
+
         super().__init__(
-            [[Cell(bg=config.background_color) for _ in range(self._params.x_axis_width)] for _ in
-                range(self._config.height)]
+            [[Cell(bg=config.background_color) for _ in range(self._params.x_axis_width)] for _ in range(self._config.height)]
         )
 
         self._add_sequences(plot_sequences)
@@ -26,52 +32,50 @@ class ChartGrid(List[List[Cell]]):
         self._indent_if_applicable()
 
     def _add_sequences(self, sequences: PlotSequences):
-        for i, sequence in enumerate(sequences):
-            color = self._config.sequence_colors[i % len(self._config.sequence_colors)]
-            j = -1
+        for i_sequence, sequence in enumerate(sequences):
+            set_sequence_cell = partial(
+                self._set_cell,
+                color=self._config.sequence_colors[i_sequence % len(self._config.sequence_colors)]
+            )
 
-            def set_cell(row_subtrahend: int, segment: str):
-                self[self._config.height - 1 - row_subtrahend][j + 1] = Cell(
-                    segment,
-                    fg=color,
-                    bg=self._config.background_color
-                )
-
-            # add '┼' at sequence beginning where sequences overlaps with y-axis
-            set_cell(self._row_index(sequence[0]), '┼')
+            # add '┼' at beginning where sequence overlaps with y-axis
+            set_sequence_cell('┼', self._row_index(sequence[0]), 0)
 
             # asciiize sequence
-            while j < len(sequence) - 2:
-                j += 1
+            for i_point_a, i_point_b in pairwise(range(len(sequence))):
+                set_cell_at_col = partial(set_sequence_cell, i_col=i_point_b)
 
-                y0 = self._row_index(sequence[j])
-                y1 = self._row_index(sequence[j + 1])
+                y0 = self._row_index(sequence[i_point_a])
+                y1 = self._row_index(sequence[i_point_b])
 
                 if y0 == y1:
-                    set_cell(y0, '─')
+                    set_cell_at_col('─', y0)
                 else:
                     if y0 > y1:
                         symbol_y0, symbol_y1 = '╮', '╰'
                     else:
                         symbol_y0, symbol_y1 = '╯', '╭'
 
-                    set_cell(y0, symbol_y0)
-                    set_cell(y1, symbol_y1)
+                    set_cell_at_col(symbol_y0, y0)
+                    set_cell_at_col(symbol_y1, y1)
 
                     # add vertical segment in case of consecutive sequence
                     # value steepness
                     for y in range(min(y0, y1) + 1, max(y0, y1)):
-                        set_cell(y, '│')
+                        set_cell_at_col('│', y)
+
+    def _set_cell(self, segment: str, i_row: int, i_col, color: Color):
+        self[self._last_row_index - i_row][i_col] = Cell(
+            segment,
+            fg=color,
+            bg=self._config.background_color
+        )
 
     def _row_index(self, value: float) -> int:
-        """ Scales sequence point clamped to desired extrema to
-        corresponding point within chart value range """
-
-        def clamp_to_row_index_bounds(row_index: int) -> int:
-            return max(min(row_index, self._config.height - 1), 0)
-
-        return clamp_to_row_index_bounds(
-            row_index=int(round((value - self._params.y_min) * self._params.delta_row_index_per_y))
+        return clamp_value(
+            int((value - self._params.y_min) * self._params.i_row_per_y),
+            lower_bound=0,
+            upper_bound=self._last_row_index
         )
 
     def serialized(self) -> str:
@@ -115,9 +119,10 @@ class ChartGrid(List[List[Cell]]):
 
             tick_label_cell = Cell(
                 self._params.y_axis_tick_labels[i].rjust(self._params.y_tick_columns),
-                fg=self._config.label_color
+                fg=self._config.label_color,
+                bg=self._config.tick_label_background_color
             )
-            self[i][0] = Cell(tick_label_cell + axis_cell, bg=self._config.tick_label_background_color)  # TODO
+            self[i][0] = Cell(tick_label_cell + axis_cell)
 
     def _is_data_point(self, point_index: int) -> bool:
         """ Returns:
@@ -131,10 +136,9 @@ class ChartGrid(List[List[Cell]]):
         _n_terminal_columns = console_width()
 
         if self._config.horizontal_indentation:
-
             # raise if total width exceeding terminal columns
             if self._params.total_width > _n_terminal_columns:
-                raise ValueError(f'Plot width = {self._params.total_width} > terminal width = {_n_terminal_columns}')
+                raise ValueError(f'Chart width = {self._params.total_width} > terminal width = {_n_terminal_columns}')
 
             for i in range(len(self)):
                 self[i][0] = Cell(indented(self[i][0], columns=self._config.horizontal_indentation))

@@ -10,6 +10,8 @@
 
 #### Platform-agnostic, highly customizable sequence plotting in console
 
+![alt text](https://github.com/w2sv/asciiplot/blob/master/readme-images/sin&cos.png?raw=true)
+
 ## Installation
 ```shell
 pip install asciiplot
@@ -40,7 +42,7 @@ print(
         inter_points_margin=5,
         background_color=Color.LIGHT_SALMON_1,
         label_color=Color.BLUE_VIOLET,
-        axes_background_color=Color.DEEP_PINK_3A,
+        label_background_color=Color.DEEP_PINK_3A,
         title='Fibonacci',
         title_color=Color.RED_1,
         x_axis_description='x',

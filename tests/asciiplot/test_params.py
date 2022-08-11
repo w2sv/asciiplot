@@ -29,7 +29,7 @@ from asciiplot._params import Params
                 ),
                 {
                     'columns_to_y_axis_ticks': 9,
-                    'delta_row_index_per_y': 1.0,
+                    'i_row_per_y': 1.0,
                     'x_axis_description_len': 6,
                     'x_axis_tick_label_values': range(1, 4),
                     'x_axis_width': 3,
@@ -37,7 +37,7 @@ from asciiplot._params import Params
                     'y_max': 9,
                     'y_min': 2,
                     'y_tick_columns': 5,
-                    'y_value_range': 7
+                    'y_range': 7
                 }
         ),
         (
@@ -62,7 +62,7 @@ from asciiplot._params import Params
                 ),
                 {
                     'columns_to_y_axis_ticks': 12,
-                    'delta_row_index_per_y': 1.0,
+                    'i_row_per_y': 1.0,
                     'x_axis_description_len': 6,
                     'x_axis_tick_label_values': range(1, 6),
                     'x_axis_width': 5,
@@ -98,7 +98,7 @@ from asciiplot._params import Params
                     'y_max': 101,
                     'y_min': -80,
                     'y_tick_columns': 5,
-                    'y_value_range': 181
+                    'y_range': 181
                 }
         )
     ]
