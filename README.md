@@ -9,10 +9,7 @@
 [![GitHub](https://img.shields.io/github/license/w2sv/asciiplot?style=plastic)](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
 
 #### Platform-agnostic, highly customizable sequence plotting in console
-
-<p align="center">
-  <img width="870" height="385" src="https://github.com/w2sv/asciiplot/blob/master/assets/sin&cos.png?raw=true">
-</p>
+![alt text](https://github.com/w2sv/asciiplot/blob/master/assets/sin&cos.png?raw=true)
 
 ## Installation
 ```shell
