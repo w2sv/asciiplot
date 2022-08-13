@@ -78,7 +78,7 @@ print(
 ## Acknowledgements
 Core sequence asciiization algorithm adopted from https://github.com/kroitor/asciichart/blob/master/asciichartpy/
 
-## Test
+## Run Tests
 
 ```shell
 git clone https://github.com/w2sv/asciiplot.git
