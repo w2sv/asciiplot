@@ -6,7 +6,7 @@
 [![PyPI](https://img.shields.io/pypi/v/asciiplot)](https://pypi.org/project/asciiplot)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/w2sv/asciiplot)
 [![Downloads](https://pepy.tech/badge/asciiplot)](https://pepy.tech/project/asciiplot)
-[![GitHub](https://img.shields.io/github/license/w2sv/asciiplot?style=plastic)](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
+[![GitHub](https://img.shields.io/github/license/w2sv/asciiplot?)](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
 
 #### Platform-agnostic, highly customizable sequence plotting in console
 ![alt text](https://github.com/w2sv/asciiplot/blob/master/assets/sin&cos.png?raw=true)
