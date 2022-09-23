@@ -5,7 +5,7 @@
 [![codecov](https://codecov.io/gh/w2sv/asciiplot/branch/master/graph/badge.svg?token=69Q1VL8IHI)](https://codecov.io/gh/w2sv/asciiplot)
 [![PyPI](https://img.shields.io/pypi/v/asciiplot)](https://pypi.org/project/asciiplot)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/w2sv/asciiplot)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/asciiplot)
+[![Downloads](https://pepy.tech/badge/asciiplot)](https://pepy.tech/project/asciiplot)
 [![GitHub](https://img.shields.io/github/license/w2sv/asciiplot?style=plastic)](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
 
 #### Platform-agnostic, highly customizable sequence plotting in console
