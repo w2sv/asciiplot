@@ -88,4 +88,4 @@ make test  # runs mypy, pytest doctest and outputs test coverage
 ```
 
 ## License
-[MIT License](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
+[MIT](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
