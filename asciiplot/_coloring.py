@@ -1,9 +1,7 @@
 import enum
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 
 import colored as _colored
-
-from asciiplot._type_aliases import Serializable
 
 
 class Color(enum.Enum):
@@ -270,7 +268,7 @@ class Color(enum.Enum):
         return self.name.lower()
 
 
-def colored(serializable: Serializable, fg=Color.NONE, bg=Color.NONE) -> str:
+def colored(serializable: Any, fg=Color.NONE, bg=Color.NONE) -> str:
     r"""
     >>> colored(69)
     '69'

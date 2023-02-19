@@ -1,12 +1,6 @@
+from typing_extensions import Literal, TypeAlias
+
 from typing import Iterable, List, Optional, Sequence, Union
-
-from typing_extensions import Literal, Protocol, TypeAlias
-
-
-class Serializable(Protocol):
-    def __str__(self) -> str:
-        ...
-
 
 PlotSequence: TypeAlias = List[float]
 PlotSequences: TypeAlias = Sequence[PlotSequence]

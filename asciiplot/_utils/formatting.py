@@ -1,4 +1,4 @@
-from asciiplot._type_aliases import Serializable
+from typing import Any
 
 
 def centering_indentation_len(string_length: int, reference_length: int) -> int:
@@ -14,7 +14,7 @@ def centering_indentation_len(string_length: int, reference_length: int) -> int:
     return reference_length // 2 - string_length // 2
 
 
-def indented(serializable: Serializable, columns: int) -> str:
+def indented(serializable: Any, columns: int) -> str:
     """
     >>> indented('AYYYYYYAYAYAYAYAY', 7)
     '       AYYYYYYAYAYAYAYAY' """
@@ -22,5 +22,5 @@ def indented(serializable: Serializable, columns: int) -> str:
     return f'{" " * columns}{serializable}'
 
 
-def newline_trailed(serializable: Serializable) -> str:
+def newline_trailed(serializable: Any) -> str:
     return f'{serializable}\n'
