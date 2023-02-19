@@ -1,8 +1,6 @@
-# https://github.com/snok/install-poetry
+name: Test
 
-name: Build
-
-on: [push]
+on: [push, pull_request]
 
 jobs:
   test:
@@ -10,23 +8,27 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [ '3.6', '3.9', '3.10' ]
+        python-version: [ '3.6', '3.10', '3.11' ]
 
     steps:
       #----------------------------------------------
-      #       check-out repo and set-up python
+      #       check-out repo
       #----------------------------------------------
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
+      #----------------------------------------------
+      #       set up python
+      #----------------------------------------------
       - name: Set up python
         id: setup-python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
       #----------------------------------------------
-      #  -----  install & configure poetry  -----
+      #         install & configure poetry
+      #   https://github.com/snok/install-poetry
       #----------------------------------------------
       - name: Install Poetry
         uses: snok/install-poetry@v1
@@ -36,11 +38,11 @@ jobs:
           installer-parallel: true
 
       #----------------------------------------------
-      #       load cached venv if cache exists
+      #       load cached venv if exists
       #----------------------------------------------
       - name: Load cached venv
         id: cached-poetry-dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}

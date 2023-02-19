@@ -1,14 +1,14 @@
 # __asciiplot__
 
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/asciiplot)
-[![Build](https://github.com/w2sv/asciiplot/actions/workflows/build.yaml/badge.svg)](https://github.com/w2sv/asciiplot/actions/workflows/build.yaml)
+[![Build](https://github.com/w2sv/asciiplot/actions/workflows/workflow.yaml/badge.svg)](https://github.com/w2sv/asciiplot/actions/workflows/workflow.yaml)
 [![codecov](https://codecov.io/gh/w2sv/asciiplot/branch/master/graph/badge.svg?token=69Q1VL8IHI)](https://codecov.io/gh/w2sv/asciiplot)
 [![PyPI](https://img.shields.io/pypi/v/asciiplot)](https://pypi.org/project/asciiplot)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/w2sv/asciiplot)
 [![Downloads](https://pepy.tech/badge/asciiplot)](https://pepy.tech/project/asciiplot)
 [![GitHub](https://img.shields.io/github/license/w2sv/asciiplot?)](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
 
-#### Platform-agnostic, highly customizable sequence plotting in console
+#### Platform-agnostic, highly customizable sequence plotting in the console
 ![alt text](https://github.com/w2sv/asciiplot/blob/master/assets/sin&cos.png?raw=true)
 
 ## Installation
@@ -76,7 +76,7 @@ print(
 ![alt text](https://github.com/w2sv/asciiplot/blob/master/assets/random.png?raw=true)
 
 ## Acknowledgements
-Core sequence asciiization algorithm adopted from https://github.com/kroitor/asciichart/blob/master/asciichartpy/
+Core sequence asciiization algorithm adopted from [asciichartpy](https://github.com/kroitor/asciichart/blob/master/asciichartpy/)
 
 ## Run Tests
 
