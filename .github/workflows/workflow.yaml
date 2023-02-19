@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-18.04
 
     strategy:
       matrix:
@@ -35,7 +35,6 @@ jobs:
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
-          installer-parallel: true
 
       #----------------------------------------------
       #       load cached venv if exists
