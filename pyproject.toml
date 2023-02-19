@@ -22,7 +22,14 @@ more-itertools = "*"
 [tool.poetry.dev-dependencies]
 mypy = "*"
 pytest = "*"
-coverage = "*"
+coverage = [  # https://github.com/nedbat/coveragepy/issues/1376#issuecomment-1284345273
+    { extras = [
+        "toml",
+    ], version = "^6.0", python = ">=3.6,<3.7" },
+    { extras = [
+        "toml",
+    ], version = ">=6.5", python = ">=3.7" },
+]
 types-dataclasses = "*"
 
 [build-system]
