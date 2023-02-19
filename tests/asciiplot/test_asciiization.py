@@ -29,7 +29,7 @@ def kwargs():
     )
 
 
-@pytest.mark.skipif(sys.version_info >= (3, 10))
+@pytest.mark.skipif(sys.version_info >= (3, 10), reason="To be investigated")
 def test_tick_label_background_color(fibonacci, kwargs):
     chart = asciiize(
         fibonacci,
@@ -95,7 +95,7 @@ def test_tick_label_background_color(fibonacci, kwargs):
                      '\x1b[0m\x1b[48;5;142m\x1b[38;5;57m8\x1b[0m\x1b[0m')
 
 
-@pytest.mark.skipif(sys.version_info >= (3, 10))
+@pytest.mark.skipif(sys.version_info >= (3, 10), reason="To be investigated")
 def test_background_color(fibonacci, kwargs):
     chart = asciiize(
         fibonacci,
