@@ -1,11 +1,11 @@
+import colored as _colored
+
 import enum
 from typing import Dict, Optional, Any
 
-import colored as _colored
-
 
 class Color(enum.Enum):
-    NONE = None
+    DEFAULT = None
     BLACK = enum.auto()
     RED = enum.auto()
     GREEN = enum.auto()
@@ -267,35 +267,39 @@ class Color(enum.Enum):
     def value(self) -> str:
         return self.name.lower()
 
+    @property
+    def fg_code(self) -> str:
+        return _colored.fg(self.value) if self is not Color.DEFAULT else ''
 
-def colored(serializable: Any, fg=Color.NONE, bg=Color.NONE) -> str:
+    @property
+    def bg_code(self) -> str:
+        return _colored.bg(self.value) if self is not Color.DEFAULT else ''
+
+
+def colored(obj: Any, fg=Color.DEFAULT, bg=Color.DEFAULT) -> str:
     r"""
-    >>> colored(69)
-    '69'
-    >>> repr(colored('yessir', Color.BLACK))
+    >>> repr(colored(69))
+    "'69'"
+    >>> repr(colored('yessir', fg=Color.BLACK))
     "'\\x1b[38;5;0myessir\\x1b[0m'"
-    >>> repr(colored('wasssup', Color.GREY_93))
+    >>> repr(colored('wasssup', fg=Color.GREY_93))
     "'\\x1b[38;5;255mwasssup\\x1b[0m'" """
 
-    fg_prefix = _colored.fg(fg.value) if fg is not Color.NONE else ''
-    bg_prefix = _colored.bg(bg.value) if bg is not Color.NONE else ''
-
-    if not fg_prefix and not bg_prefix:
-        return str(serializable)
-    return f'{fg_prefix}{bg_prefix}{serializable}{_colored.style.RESET}'
+    trailing_token = _colored.style.RESET if fg is not Color.DEFAULT or bg is not Color.DEFAULT else ''
+    return f'{fg.fg_code}{bg.bg_code}{obj}{trailing_token}'
 
 
 class ColoredString(str):
     @classmethod
-    def get(cls, string: Optional[str], fg=Color.NONE, bg=Color.NONE):
+    def make_if_string_present(cls, string: Optional[str], fg=Color.DEFAULT, bg=Color.DEFAULT) -> Optional['ColoredString']:
         if string is None:
             return None
         return cls(string, fg, bg)
 
-    def __new__(cls, string: str, fg=Color.NONE, bg=Color.NONE):
+    def __new__(cls, string: str, fg=Color.DEFAULT, bg=Color.DEFAULT):
         return super().__new__(cls, colored(string, fg, bg))
 
-    def __init__(self, string: str, fg=Color.NONE, bg=Color.NONE):
+    def __init__(self, string: str, fg=Color.DEFAULT, bg=Color.DEFAULT):
         r"""
         >>> str(ColoredString('yauoi'))
         'yauoi'
@@ -307,9 +311,9 @@ class ColoredString(str):
         self.bg = bg
 
     @property
-    def display_length(self) -> int:
+    def displayed_length(self) -> int:
         """
-        >>> ColoredString('uiuiui', Color.DARK_CYAN).display_length
+        >>> ColoredString('uiuiui', Color.DARK_CYAN).displayed_length
         6 """
 
         return len(self.string)

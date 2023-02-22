@@ -14,12 +14,12 @@ def centering_indentation_len(string_length: int, reference_length: int) -> int:
     return reference_length // 2 - string_length // 2
 
 
-def indented(serializable: Any, columns: int) -> str:
+def indented(serializable: Any, by: int) -> str:
     """
     >>> indented('AYYYYYYAYAYAYAYAY', 7)
     '       AYYYYYYAYAYAYAYAY' """
 
-    return f'{" " * columns}{serializable}'
+    return f'{" " * by}{serializable}'
 
 
 def newline_trailed(serializable: Any) -> str:

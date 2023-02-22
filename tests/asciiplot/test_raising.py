@@ -21,11 +21,3 @@ def test_raising_on_terminal_columns_exceeded(sequences):
         asciiize(*sequences, horizontal_indentation=int(n_terminal_columns * 1.5))
 
     asciiize(*sequences, horizontal_indentation=int(n_terminal_columns * 0.8))
-
-
-def test_raising_on_indentation_and_chart_centering_set(sequences):
-    with pytest.raises(ValueError):
-        asciiize(*sequences, horizontal_indentation=5, center_horizontally=True)
-
-    asciiize(*sequences, center_horizontally=True)
-    asciiize(*sequences, horizontal_indentation=5)

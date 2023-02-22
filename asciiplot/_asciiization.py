@@ -1,6 +1,9 @@
-from typing import List, Optional, Sequence
+from asciiplot._chart.grid import ChartGrid
+from asciiplot._params import Params
+from asciiplot._sequence_interpolation import interpolate_sequences
+from typing import List, Optional, Sequence, Tuple
 
-from asciiplot._chart.serialized import SerializedChart
+from asciiplot._chart.serialized.layout_elements import with_layout_elements
 from asciiplot._coloring import Color, ColoredString
 from asciiplot._config import Config
 from asciiplot._constants import AUTO
@@ -12,20 +15,20 @@ def asciiize(*sequences: List[float],
              height: int = 5,
              inter_points_margin: int = 0,
 
-             sequence_colors: Sequence[Color] = (Color.NONE,),
-             background_color: Color = Color.NONE,
-             label_color: Color = Color.NONE,
-             label_background_color: Color = Color.NONE,
+             sequence_colors: Sequence[Color] = (Color.DEFAULT,),
+             background_color: Color = Color.DEFAULT,
+             label_color: Color = Color.DEFAULT,
+             label_background_color: Color = Color.DEFAULT,
 
              x_axis_tick_labels: TickLabelInput = AUTO,
              y_axis_tick_label_decimal_places: int = 0,
 
              x_axis_description: Optional[str] = None,
              y_axis_description: Optional[str] = None,
-             axis_description_color: Color = Color.NONE,
+             axis_description_color: Color = Color.DEFAULT,
 
              title: Optional[str] = None,
-             title_color: Color = Color.NONE,
+             title_color: Color = Color.DEFAULT,
 
              horizontal_indentation: int = 0,
              center_horizontally: bool = False) -> str:
@@ -106,12 +109,8 @@ def asciiize(*sequences: List[float],
     1.0┼┤┬
        123"""
 
-    # Assert argument validity
     if len(sequence_colors) > len(sequences):
         raise ValueError('Number of received sequence colors exceeds number of sequences')
-
-    if horizontal_indentation and center_horizontally:
-        raise ValueError('Pass either chart_indentation > 0 or set center_chart to True')
 
     config = Config(
         height=height,
@@ -123,11 +122,24 @@ def asciiize(*sequences: List[float],
         x_axis_tick_label_input=x_axis_tick_labels,
         y_axis_tick_label_decimal_places=y_axis_tick_label_decimal_places,
         tick_label_background_color=label_background_color,
-        x_axis_description=ColoredString.get(x_axis_description, axis_description_color),
-        y_axis_description=ColoredString.get(y_axis_description, axis_description_color),
-        title=ColoredString.get(title, title_color),
+        x_axis_description=ColoredString.make_if_string_present(x_axis_description, axis_description_color),
+        y_axis_description=ColoredString.make_if_string_present(y_axis_description, axis_description_color),
+        title=ColoredString.make_if_string_present(title, title_color),
         horizontal_indentation=horizontal_indentation,
         center_horizontally=center_horizontally
     )
 
-    return SerializedChart.fully_rendered(config, sequences=sequences)
+    plot_sequences = _plot_sequences(sequences, config.inter_points_margin)
+    params = Params.compute(plot_sequences, config=config)
+
+    return with_layout_elements(
+        ChartGrid(plot_sequences, config=config, params=params).serialized(),
+        config,
+        params
+    )
+
+
+def _plot_sequences(sequences: Tuple[List[float], ...], inter_points_margin: int) -> Tuple[List[float], ...]:
+    if inter_points_margin:
+        return tuple(interpolate_sequences(sequences, inter_points_margin))
+    return sequences

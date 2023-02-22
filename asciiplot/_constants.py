@@ -1,1 +1,3 @@
-AUTO = 'auto'
+from typing_extensions import Final
+
+AUTO: Final = 'auto'

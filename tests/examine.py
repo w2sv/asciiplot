@@ -27,6 +27,7 @@ if __name__ == '__main__':
     chart = asciiize(
         y_sin,
         y_cos,
+        title="Sin & Cos",
         title_color=Color.DARK_GOLDENROD,
         sequence_colors=[Color.PURPLE_3, Color.RED_1],
         background_color=Color.BLACK,

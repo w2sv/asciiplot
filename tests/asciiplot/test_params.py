@@ -2,6 +2,7 @@ import pytest
 
 from asciiplot._coloring import Color, ColoredString
 from asciiplot._config import Config
+from asciiplot._constants import AUTO
 from asciiplot._params import Params
 
 
@@ -16,13 +17,13 @@ from asciiplot._params import Params
                             x_axis_description=ColoredString('x_axis'),
                             y_axis_description=ColoredString('y_axis'),
                             y_axis_tick_label_decimal_places=3,
-                            label_color=Color.NONE,
+                            label_color=Color.DEFAULT,
                             background_color=Color.CHARTREUSE_2B,
                             title=ColoredString('title'),
                             x_axis_tick_label_input='auto',
                             center_horizontally=False,
                             horizontal_indentation=4,
-                            sequence_colors=[Color.NONE],
+                            sequence_colors=[Color.DEFAULT],
                             n_points=3,
                             tick_label_background_color=Color.CHARTREUSE_2B
                         )
@@ -49,13 +50,13 @@ from asciiplot._params import Params
                             x_axis_description=ColoredString('x_axis'),
                             y_axis_description=ColoredString('y_axis'),
                             y_axis_tick_label_decimal_places=1,
-                            label_color=Color.NONE,
+                            label_color=Color.DEFAULT,
                             background_color=Color.CHARTREUSE_2B,
                             title=ColoredString('title'),
                             x_axis_tick_label_input='auto',
                             center_horizontally=False,
                             horizontal_indentation=7,
-                            sequence_colors=[Color.NONE],
+                            sequence_colors=[Color.DEFAULT],
                             n_points=5,
                             tick_label_background_color=Color.CHARTREUSE_2B
                         )
@@ -103,15 +104,15 @@ from asciiplot._params import Params
         )
     ]
 )
-def test_extract(extract_args, expected):
-    assert vars(Params.extract(*extract_args)) == expected
+def test_compute(extract_args, expected):
+    assert vars(Params.compute(*extract_args)) == expected
 
 
 def test_total_width(config):
     assert Params(
         y_min=3,
         y_max=16,
-        x_axis_tick_label_values='auto',
+        x_axis_tick_label_values=AUTO,
         x_axis_width=20,
         x_axis_description_len=5,
         config=config

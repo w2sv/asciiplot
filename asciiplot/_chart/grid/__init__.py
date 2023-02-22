@@ -10,7 +10,7 @@ from asciiplot._params import Params
 from asciiplot._type_aliases import PlotSequences
 from asciiplot._utils.console import console_width
 from asciiplot._utils.formatting import centering_indentation_len, indented
-from asciiplot._utils.numerical_manipulation import clamp_value
+from asciiplot._utils.numerical import clamp_value
 
 
 class ChartGrid(List[List[Cell]]):
@@ -141,7 +141,7 @@ class ChartGrid(List[List[Cell]]):
                 raise ValueError(f'Chart width = {self._params.total_width} > terminal width = {_n_terminal_columns}')
 
             for i in range(len(self)):
-                self[i][0] = Cell(indented(self[i][0], columns=self._config.horizontal_indentation))
+                self[i][0] = Cell(indented(self[i][0], by=self._config.horizontal_indentation))
 
         elif self._config.center_horizontally:
             n_whitespaces = centering_indentation_len(self._params.total_width, reference_length=_n_terminal_columns)

@@ -33,7 +33,7 @@ class Params:
         self.columns_to_y_axis_ticks: int = self.y_tick_columns + config.horizontal_indentation
 
     @classmethod
-    def extract(cls, plot_sequences: PlotSequences, config: Config):
+    def compute(cls, plot_sequences: PlotSequences, config: Config):
         values: List[float] = list(itt.chain.from_iterable(plot_sequences))
 
         return cls(

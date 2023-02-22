@@ -8,42 +8,45 @@ from asciiplot._type_aliases import TickLabelValue, TickLabelValues
 from asciiplot._utils.formatting import indented
 
 
-def x_axis_tick_label_row(x_axis_tick_labels: TickLabelValues,
-                          tick_color: Color,
+def x_axis_tick_label_row(tick_label_values: TickLabelValues,
+                          label_color: Color,
                           bg: Color,
-                          horizontal_y_axis_offset: int,
+                          y_axis_column: int,
                           inter_points_margin: int) -> str:
 
-    """ Returns:
-            x-label-row indented according to chart_indentation """
+    r""" Returns:
+            colored, indented x-label-row
+
+        >>> repr(x_axis_tick_label_row(["yo", "ey", "ho"], Color.AQUAMARINE_1A, Color.CHARTREUSE_1, 6, 3))
+        "'      \\x1b[48;5;118m\\x1b[38;5;86myo\\x1b[0m\\x1b[0m\\x1b[48;5;118m  \\x1b[0m\\x1b[48;5;118m\\x1b[38;5;86mey\\x1b[0m\\x1b[0m\\x1b[48;5;118m  \\x1b[0m\\x1b[48;5;118m\\x1b[38;5;86mho\\x1b[0m\\x1b[0m'"
+    """
 
     # provide label sequences containing empty strings as labels for ticks,
     # for which none were given and create labels objects
     ticks: List[_XAxisTickLabel] = list(
         map(
-            lambda label: _XAxisTickLabel(label, color=tick_color),
-            x_axis_tick_labels
+            lambda label: _XAxisTickLabel(label, color=label_color),
+            tick_label_values
         )
     )
 
     return indented(
         _tick_row(ticks, inter_points_margin=inter_points_margin, bg=bg),
-        columns=(horizontal_y_axis_offset - ticks[0].left_margin_length)
+        by=(y_axis_column - ticks[0].left_margin_length)
     )
 
 
 class _XAxisTickLabel(str):
-    """ Serving the creation of helper objects facilitating the computation
-    of whitespace sequences in between labels """
+    """ To facilitate the computation of n_whitespaces between subsequent labels """
 
-    def __new__(cls, content: Optional[TickLabelValue], color: Optional[Color] = None):
-        if content is None:
-            content = ' '
+    def __new__(cls, value: Optional[TickLabelValue], color: Optional[Color] = None):
+        if value is None:
+            value = ' '
         elif color:
-            content = colored(content, color)
-        return super().__new__(cls, content)
+            value = colored(value, color)
+        return super().__new__(cls, value)
 
-    def __init__(self, content: Optional[TickLabelValue], color: Optional[Color] = None):
+    def __init__(self, value: Optional[TickLabelValue], color: Optional[Color] = None):
         """ Initialize such that center of serialized label right beneath tick
         in case of odd string length, otherwise shift by one column towards the right
 
@@ -57,10 +60,10 @@ class _XAxisTickLabel(str):
         >>> margin_lengths(_XAxisTickLabel('second'))
         [2, 3] """
 
-        if content is not None:
-            content_str = str(content)
-            floored_halved_length = len(content_str) // 2
-            self.left_margin_length = floored_halved_length - int(not len(content_str) % 2)
+        if value is not None:
+            value_str = str(value)
+            floored_halved_length = len(value_str) // 2
+            self.left_margin_length = floored_halved_length - int(not len(value_str) % 2)
             self.right_margin_length = floored_halved_length
         else:
             self.left_margin_length = self.right_margin_length = 0
@@ -75,13 +78,13 @@ class _XAxisTickLabel(str):
 
 def _tick_row(ticks: List[_XAxisTickLabel], inter_points_margin: int, bg: Color) -> str:
     """
-    >>> _tick_row(list(map(_XAxisTickLabel, ['great', 'cool', 'splendid', 'sick'])), inter_points_margin=6, bg=Color.NONE)
+    >>> _tick_row(list(map(_XAxisTickLabel, ['great', 'cool', 'splendid', 'sick'])), inter_points_margin=6, bg=Color.DEFAULT)
     'great   cool splendid sick'
-    >>> _tick_row(list(map(_XAxisTickLabel, ['first', 'second', 'third', 'fourth'])), inter_points_margin=8, bg=Color.NONE)
+    >>> _tick_row(list(map(_XAxisTickLabel, ['first', 'second', 'third', 'fourth'])), inter_points_margin=8, bg=Color.DEFAULT)
     'first    second   third    fourth'
-    >>> _tick_row(list(map(_XAxisTickLabel, range(9, 14))), inter_points_margin=3, bg=Color.NONE)
+    >>> _tick_row(list(map(_XAxisTickLabel, range(9, 14))), inter_points_margin=3, bg=Color.DEFAULT)
     '9   10  11  12  13'
-    >>> _tick_row(list(map(_XAxisTickLabel, range(4))), inter_points_margin=0, bg=Color.NONE)
+    >>> _tick_row(list(map(_XAxisTickLabel, range(4))), inter_points_margin=0, bg=Color.DEFAULT)
     '0123' """
 
     return ''.join(
