@@ -2,7 +2,6 @@ import pytest
 
 from asciiplot import asciiize
 from asciiplot._coloring import Color
-from asciiplot._utils.console import console_width
 
 
 def test_raising_on_too_many_colors(sequences):
@@ -12,3 +11,10 @@ def test_raising_on_too_many_colors(sequences):
         asciiize(*sequences[:-1], sequence_colors=SEQUENCE_COLORS)
 
     asciiize(*sequences, sequence_colors=SEQUENCE_COLORS)
+
+
+def test_raising_on_passing_XOR_arguments():
+    with pytest.raises(ValueError):
+        asciiize([1, 77], center_horizontally=True, indentation=6)
+    asciiize([1, 77], center_horizontally=True)
+    asciiize([1, 77], indentation=6)

@@ -32,7 +32,7 @@ def _interpolated_sequence(sequence: PlotSequence, inter_points_margin: int) -> 
 
 def _fill_points(start: float, end: float, n: int) -> Iterator[float]:
     """ Returns:
-            List of n points of equal step size in between the value range from start to end,
+            Iterator of n points, ranging from start to end with equal step size,
             excluding start and end themselves
 
         >>> list(_fill_points(3, 7, n=4))

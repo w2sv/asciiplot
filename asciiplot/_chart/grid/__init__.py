@@ -1,7 +1,6 @@
 from more_itertools import pairwise
 
 from asciiplot._chart.grid.cell import Cell
-from asciiplot._coloring import Color
 from asciiplot._config import Config
 from asciiplot._params import Params
 from asciiplot._type_aliases import PlotSequences
@@ -38,10 +37,10 @@ class ChartGrid(List[List[Cell]]):
             sequence_color = self._config.sequence_colors[i_sequence % len(self._config.sequence_colors)]
 
             # add '┼' at beginning where sequence overlaps with y-axis
-            self._set_cell(self._x_grid_domain(sequence[0]), 0, '┼', sequence_color)
+            self._cell_at(self._x_grid_domain(sequence[0]), 0).set_foreground('┼', sequence_color)
 
             for col_index, (x1_value_domain, x2_value_domain) in enumerate(pairwise(sequence)):
-                set_cell = lambda x, segment: self._set_cell(x, col_index + 1, segment, sequence_color)
+                set_cell = lambda x, segment: self._cell_at(x, col_index + 1).set_foreground(segment, sequence_color)
 
                 x1 = self._x_grid_domain(x1_value_domain)
                 x2 = self._x_grid_domain(x2_value_domain)
@@ -57,14 +56,13 @@ class ChartGrid(List[List[Cell]]):
                     set_cell(x1, segment_x1)
                     set_cell(x2, segment_x2)
 
-                    # add vertical segment in case of consecutive sequence
-                    # value steepness
+                    # add vertical segments if applicable
                     x_min, x_max = sorted([x1, x2])
                     for x in range(x_min + 1, x_max):
                         set_cell(x, '│')
 
-    def _set_cell(self, x: int, y: int, segment: str, color: Color):
-        self[self._last_row_index - x][y].set_foreground(segment, color)
+    def _cell_at(self, x: int, y: int) -> Cell:
+        return self[self._last_row_index - x][y]
 
     def _x_grid_domain(self, x_original_domain: float) -> int:
         return clamp_value(
@@ -119,8 +117,8 @@ class ChartGrid(List[List[Cell]]):
 
     def _is_data_point(self, point_index: int) -> bool:
         """ Returns:
-                flag whether point corresponding to point_index is actual
-                data point denoted in original sequences instead of interpolated
+                boolean, indicating whether point corresponding to point_index is actual
+                data point denoted in original sequences, instead of interpolated
                 one """
 
         return not point_index % (self._config.inter_points_margin + 1)
