@@ -334,6 +334,11 @@ class ColoredString:
         self.string = replacements.get(self.string, self.string)
         return self
 
+    def set_foreground(self, string: str, fg: Color) -> 'ColoredString':
+        self.string = string
+        self.fg = fg
+        return self
+
     def __str__(self):
         return colored(self.string, self.fg, self.bg)
 

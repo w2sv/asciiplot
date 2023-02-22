@@ -7,7 +7,6 @@ from asciiplot._params import Params
 from asciiplot._type_aliases import PlotSequences
 from asciiplot._utils.formatting import indentation
 from asciiplot._utils.numerical import clamp_value
-from functools import partial
 from typing import List
 
 
@@ -36,47 +35,40 @@ class ChartGrid(List[List[Cell]]):
 
     def add_sequences(self, sequences: PlotSequences):
         for i_sequence, sequence in enumerate(sequences):
-            set_sequence_cell = partial(
-                self._set_cell,
-                color=self._config.sequence_colors[i_sequence % len(self._config.sequence_colors)]
-            )
+            sequence_color = self._config.sequence_colors[i_sequence % len(self._config.sequence_colors)]
 
             # add '┼' at beginning where sequence overlaps with y-axis
-            set_sequence_cell('┼', self._row_index(sequence[0]), 0)
+            self._set_cell(self._x_grid_domain(sequence[0]), 0, '┼', sequence_color)
 
-            # asciiize sequence
-            for i_point_a, i_point_b in pairwise(range(len(sequence))):
-                set_cell_at_col = partial(set_sequence_cell, i_col=i_point_b)
+            for col_index, (x1_value_domain, x2_value_domain) in enumerate(pairwise(sequence)):
+                set_cell = lambda x, segment: self._set_cell(x, col_index + 1, segment, sequence_color)
 
-                y0 = self._row_index(sequence[i_point_a])
-                y1 = self._row_index(sequence[i_point_b])
+                x1 = self._x_grid_domain(x1_value_domain)
+                x2 = self._x_grid_domain(x2_value_domain)
 
-                if y0 == y1:
-                    set_cell_at_col('─', y0)
+                if x1 == x2:
+                    set_cell(x1, '─')
                 else:
-                    if y0 > y1:
-                        symbol_y0, symbol_y1 = '╮', '╰'
+                    if x1 > x2:
+                        segment_x1, segment_x2 = '╮', '╰'
                     else:
-                        symbol_y0, symbol_y1 = '╯', '╭'
+                        segment_x1, segment_x2 = '╯', '╭'
 
-                    set_cell_at_col(symbol_y0, y0)
-                    set_cell_at_col(symbol_y1, y1)
+                    set_cell(x1, segment_x1)
+                    set_cell(x2, segment_x2)
 
                     # add vertical segment in case of consecutive sequence
                     # value steepness
-                    for y in range(min(y0, y1) + 1, max(y0, y1)):
-                        set_cell_at_col('│', y)
+                    x_min, x_max = sorted([x1, x2])
+                    for x in range(x_min + 1, x_max):
+                        set_cell(x, '│')
 
-    def _set_cell(self, segment: str, i_row: int, i_col: int, color: Color):
-        self[self._last_row_index - i_row][i_col] = Cell(
-            segment,
-            fg=color,
-            bg=self._config.background_color
-        )
+    def _set_cell(self, x: int, y: int, segment: str, color: Color):
+        self[self._last_row_index - x][y].set_foreground(segment, color)
 
-    def _row_index(self, value: float) -> int:
+    def _x_grid_domain(self, x_original_domain: float) -> int:
         return clamp_value(
-            int((value - self._params.y_min) * self._params.i_row_per_y),
+            int((x_original_domain - self._params.y_min) * self._params.i_row_per_y),
             lower_bound=0,
             upper_bound=self._last_row_index
         )

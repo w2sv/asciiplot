@@ -95,7 +95,7 @@ def asciiize(*sequences: List[float],
      2┤            ╰╮     ╭─╯
      1┤             ╰╮   ╭╯
      0┤              ╰╮ ╭╯
-    -1┬───┬───┬───┬───├─╯─┬───┬───┬───┬ x
+    -1┼───┬───┬───┬───├─╯─┬───┬───┬───┬ x
       1   2   3   4   5   6   7   8   9
 
     >>> print(asciiize([1, 9, 5], height=8, y_axis_tick_label_decimal_places=1))
