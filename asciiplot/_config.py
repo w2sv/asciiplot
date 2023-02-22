@@ -14,6 +14,7 @@ class Config:
     n_points: int
 
     sequence_colors: Sequence[Color]
+    tick_point_color: Color
     background_color: Color
     label_color: Color
 

@@ -8,7 +8,7 @@
 [![Downloads](https://pepy.tech/badge/asciiplot)](https://pepy.tech/project/asciiplot)
 [![GitHub](https://img.shields.io/github/license/w2sv/asciiplot?)](https://github.com/w2sv/asciiplot/blob/master/LICENSE)
 
-#### Platform-agnostic, highly customizable sequence plotting in the console
+__Platform-agnostic, highly customizable sequence plotting in the console__
 ![alt text](https://github.com/w2sv/asciiplot/blob/master/assets/sin&cos.png?raw=true)
 
 ## Installation
@@ -18,11 +18,12 @@ pip install asciiplot
 
 ## Plot Appearance Configuration Options
 
-Set:
+You may set the/a
 - chart height & title
-- the color of virtually all chart components and areas, picked from a wide array of shades due to the integration of [colored](https://pypi.org/project/colored/)
-- consistent margin between consecutive data points to widen your chart
-- the chart indentation within its hosting terminal, or whether it ought to be centered in it, respectively
+- color of virtually all chart components and areas, picked from a wide array of shades due to the integration of [colored](https://pypi.org/project/colored/)
+- margin between consecutive data points to widen your chart
+  - tick point color, to make the tick points visually stand out in case of a margin having been set 
+- chart indentation within its hosting terminal, or whether it ought to be centered in it, respectively
 - axes descriptions
 - x-axis tick labels, which may be set to contain strings instead of just numeric values
 - y-axis tick label decimal places
@@ -35,11 +36,12 @@ from asciiplot import asciiize, Color
 
 print(
     asciiize(
-        [1, 1, 2, 3, 5, 8, 13, 21],
+        [0, 1, 1, 2, 3, 5, 8, 13, 21],
         sequence_colors=[Color.BLUE_3B],
-        height=21,
+        height=22,
         inter_points_margin=5,
         background_color=Color.LIGHT_SALMON_1,
+        tick_point_color=Color.RED_1,
         label_color=Color.BLUE_VIOLET,
         label_background_color=Color.DEEP_PINK_3A,
         title='Fibonacci',
@@ -75,7 +77,7 @@ print(
 ```
 ![alt text](https://github.com/w2sv/asciiplot/blob/master/assets/random.png?raw=true)
 
-## Acknowledgements
+## Credits
 Core sequence asciiization algorithm adopted from [asciichartpy](https://github.com/kroitor/asciichart/blob/master/asciichartpy/)
 
 ## Run Tests

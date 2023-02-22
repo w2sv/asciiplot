@@ -1,5 +1,6 @@
 from more_itertools import pairwise
 
+from asciiplot._coloring import Color
 from asciiplot._chart.grid.cell import Cell
 from asciiplot._config import Config
 from asciiplot._params import Params
@@ -35,15 +36,19 @@ class ChartGrid(List[List[Cell]]):
     def add_sequences(self, sequences: PlotSequences):
         for i_sequence, sequence in enumerate(sequences):
             sequence_color = self._config.sequence_colors[i_sequence % len(self._config.sequence_colors)]
+            tick_point_color = sequence_color if self._config.tick_point_color is Color.DEFAULT else self._config.tick_point_color
 
             # add '┼' at beginning where sequence overlaps with y-axis
-            self._cell_at(self._x_grid_domain(sequence[0]), 0).set_foreground('┼', sequence_color)
+            self._cell_at(self._x_grid_domain(sequence[0]), 0).set_foreground('┼', tick_point_color)
 
             for col_index, (x1_value_domain, x2_value_domain) in enumerate(pairwise(sequence)):
-                set_cell = lambda x, segment: self._cell_at(x, col_index + 1).set_foreground(segment, sequence_color)
+                y = col_index + 1
+                set_cell = lambda x, segment: self._cell_at(x, y).set_foreground(segment, sequence_color)
 
                 x1 = self._x_grid_domain(x1_value_domain)
                 x2 = self._x_grid_domain(x2_value_domain)
+
+                x_min, x_max = sorted([x1, x2])
 
                 if x1 == x2:
                     set_cell(x1, '─')
@@ -57,9 +62,11 @@ class ChartGrid(List[List[Cell]]):
                     set_cell(x2, segment_x2)
 
                     # add vertical segments if applicable
-                    x_min, x_max = sorted([x1, x2])
                     for x in range(x_min + 1, x_max):
                         set_cell(x, '│')
+
+                if self._is_tick_point(y):
+                    self._cell_at(x_max, y).fg = tick_point_color
 
     def _cell_at(self, x: int, y: int) -> Cell:
         return self[self._last_row_index - x][y]
@@ -78,7 +85,7 @@ class ChartGrid(List[List[Cell]]):
             # to one comprising both the sequence and axis segment in color
             # of respective sequence
 
-            is_data_point = self._is_data_point(i)
+            is_data_point = self._is_tick_point(i)
 
             if cell.is_empty:
                 self[-1][i].replace_string('┬' if is_data_point else '─')
@@ -115,7 +122,7 @@ class ChartGrid(List[List[Cell]]):
                 )
             )
 
-    def _is_data_point(self, point_index: int) -> bool:
+    def _is_tick_point(self, point_index: int) -> bool:
         """ Returns:
                 boolean, indicating whether point corresponding to point_index is actual
                 data point denoted in original sequences, instead of interpolated

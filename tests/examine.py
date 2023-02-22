@@ -20,6 +20,8 @@ if __name__ == '__main__':
     #     y_axis_tick_label_decimal_places=2
     # )
 
+    print()
+
     x = np.linspace(0, 2 * np.pi, 10)
     y_sin = [np.sin(x_i) for x_i in x]
     y_cos = [np.cos(x_i) for x_i in x]
@@ -28,7 +30,7 @@ if __name__ == '__main__':
         asciiize(
             y_sin,
             y_cos,
-            title="Sin & Cos",
+            # title="Sin & Cos",
             title_color=Color.DARK_GOLDENROD,
             sequence_colors=[Color.PURPLE_3, Color.RED_1],
             background_color=Color.BLACK,
@@ -50,6 +52,7 @@ if __name__ == '__main__':
             inter_points_margin=5,
             sequence_colors=[Color.BLUE_3B],
             label_color=Color.BLUE_VIOLET,
+            tick_point_color=Color.RED_1,
             title='Fibonacci',
             title_color=Color.RED_1,
             center_horizontally=True,
@@ -60,17 +63,23 @@ if __name__ == '__main__':
         )
     )
 
-    # chart = asciiize(
-    #     [17, 21, 19, 19, 5, 7, 12, 4],
-    #     [7, 8, 3, 17, 19, 18, 5, 2, 20],
-    #     sequence_colors=[Color.RED, Color.BLUE_VIOLET],
-    #     inter_points_margin=5,
-    #     height=20,
-    #     background_color=Color.GREY_7,
-    #     title='Random Sequences',
-    #     title_color=Color.MEDIUM_PURPLE,
-    #     label_color=Color.MEDIUM_PURPLE,
-    #     x_axis_description='x',
-    #     y_axis_description='y',
-    #     center_horizontally=True
-    # )
+    print('\n' * 3)
+
+    print(
+        asciiize(
+            [17, 21, 19, 19, 5, 7, 12, 4],
+            [7, 8, 3, 17, 19, 18, 5, 2, 20],
+            sequence_colors=[Color.RED, Color.BLUE_VIOLET],
+            inter_points_margin=5,
+            height=20,
+            background_color=Color.GREY_7,
+            title='Random Sequences',
+            title_color=Color.MEDIUM_PURPLE,
+            label_color=Color.MEDIUM_PURPLE,
+            x_axis_description='x',
+            y_axis_description='y',
+            center_horizontally=True
+        )
+    )
+
+    print('\n' * 3)
