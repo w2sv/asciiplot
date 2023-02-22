@@ -15,14 +15,15 @@ from asciiplot._utils.numerical import clamp_value
 
 class ChartGrid(List[List[Cell]]):
     def __init__(self, plot_sequences: PlotSequences, config: Config, params: Params):
+        super().__init__(
+            [[Cell(bg=config.background_color) for _ in range(params.x_axis_width)] for _ in
+             range(config.height)]
+        )
+
         self._config = config
         self._params = params
 
         self._last_row_index = self._config.height - 1
-
-        super().__init__(
-            [[Cell(bg=config.background_color) for _ in range(self._params.x_axis_width)] for _ in range(self._config.height)]
-        )
 
         self._add_sequences(plot_sequences)
 
@@ -64,7 +65,7 @@ class ChartGrid(List[List[Cell]]):
                     for y in range(min(y0, y1) + 1, max(y0, y1)):
                         set_cell_at_col('│', y)
 
-    def _set_cell(self, segment: str, i_row: int, i_col, color: Color):
+    def _set_cell(self, segment: str, i_row: int, i_col: int, color: Color):
         self[self._last_row_index - i_row][i_col] = Cell(
             segment,
             fg=color,
@@ -113,7 +114,8 @@ class ChartGrid(List[List[Cell]]):
                 axis_cell = axis_cell.replace_string_if_applicable(
                     replacements={
                         '─': '┤',
-                        '|': '┼'
+                        '|': '┼',
+                        '┬': '┼'
                     }
                 )
 
