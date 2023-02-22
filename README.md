@@ -20,13 +20,13 @@ pip install asciiplot
 
 You may set the/a
 - chart height & title
-- color of virtually all chart components and areas, picked from a wide array of shades due to the integration of [colored](https://pypi.org/project/colored/)
-- margin between consecutive data points to widen your chart
-  - tick point color, to make the tick points visually stand out in case of a margin having been set 
-- chart indentation within its hosting terminal, or whether it ought to be centered in it, respectively
+- color of virtually all chart components, picked from a wide array of shades due to the integration of [colored](https://pypi.org/project/colored/)
+- margin between consecutive data points
+- tick point color, to make the tick points visually stand out in case of a margin having been set 
+- indentation of the entire chart, or whether it ought to be centered within its hosting terminal, respectively
 - axes descriptions
-- x-axis tick labels, which may be set to contain strings instead of just numeric values
-- y-axis tick label decimal places
+- x-axis tick labels, which may be composed of strings instead of just numeric values
+- y-axis tick label decimal places; the labels themselves will be computed auomatically from the passed sequences
 
 ## Usage Examples
 
@@ -86,7 +86,7 @@ The core sequence asciiization algorithm was adopted from [asciichartpy](https:/
 git clone https://github.com/w2sv/asciiplot.git
 cd asciiplot
 poetry install
-make test  # runs mypy, pytest doctest and outputs test coverage
+make test  # runs mypy, pytest, doctest and outputs test coverage
 ```
 
 ## License
