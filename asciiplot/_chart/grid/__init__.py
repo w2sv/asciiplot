@@ -81,9 +81,6 @@ class ChartGrid(List[List[Cell]]):
             upper_bound=self._last_row_index
         )
 
-    def serialized(self) -> str:
-        return '\n'.join((''.join(str(cell) for cell in row).rstrip() for row in self))
-
     def add_x_axis(self):
         for i, cell in enumerate(self[-1]):
             # add straight horizontal axis segment if parcel doesn't contain
@@ -92,6 +89,7 @@ class ChartGrid(List[List[Cell]]):
             # of respective sequence
 
             is_data_point = self._is_data_point(i)
+
             if cell.is_empty:
                 self[-1][i].replace_string('┬' if is_data_point else '─')
             elif is_data_point:
@@ -105,9 +103,6 @@ class ChartGrid(List[List[Cell]]):
                 )
 
     def add_y_axis_with_tick_labels(self):
-        """ Besets first parcel of each row with respective y-axis segment
-            preceded by colored, adjusted tick value """
-
         for i in range(len(self)):
             if self[i][0].is_empty:
                 self[i][0].replace_string('┤')
@@ -142,3 +137,6 @@ class ChartGrid(List[List[Cell]]):
         if self._params.indentation:
             for i in range(len(self)):
                 self[i].insert(0, Cell(indentation(self._params.indentation)))
+
+    def serialized(self) -> str:
+        return '\n'.join((''.join(str(cell) for cell in row).rstrip() for row in self))

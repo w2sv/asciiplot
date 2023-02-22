@@ -51,7 +51,9 @@ class Params:
         )
 
         self.y_tick_column_width: int = max_element_length(self.y_axis_tick_labels)
+        self.chart_width: int = self.y_tick_column_width + self.x_axis_width + self.x_axis_description_len + 1
         self.indentation: int = self._indentation(config, self.chart_width)
+        self.y_axis_column: int = self.indentation + self.y_tick_column_width
 
     @staticmethod
     def _x_axis_tick_label_values(tick_label_input: TickLabelInput, n_points: int) -> Optional[TickLabelValues]:
@@ -70,10 +72,6 @@ class Params:
         elif config.center_horizontally:
             return centering_indentation_len(chart_width, reference_length=console_width())
         return 0
-
-    @property
-    def chart_width(self) -> int:
-        return self.y_tick_column_width + self.x_axis_width + self.x_axis_description_len + 1
 
     def _y_axis_tick_labels(self, chart_height: int, decimal_places: int) -> Iterator[str]:
         delta_y_per_row = self.y_range / (chart_height - 1)

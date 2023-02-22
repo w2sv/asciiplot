@@ -34,7 +34,7 @@ def with_layout_elements(serialized_chart: str, config: Config, params: Params) 
             params.x_axis_tick_label_values,
             config.label_color,
             config.tick_label_background_color,
-            params.indentation,
+            params.y_axis_column,
             config.inter_points_margin
         )
 
