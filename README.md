@@ -78,7 +78,7 @@ print(
 ![alt text](https://github.com/w2sv/asciiplot/blob/master/assets/random.png?raw=true)
 
 ## Credits
-Core sequence asciiization algorithm adopted from [asciichartpy](https://github.com/kroitor/asciichart/blob/master/asciichartpy/)
+The core sequence asciiization algorithm was adopted from [asciichartpy](https://github.com/kroitor/asciichart/blob/master/asciichartpy/).
 
 ## Run Tests
 
