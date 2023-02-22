@@ -26,5 +26,5 @@ class Config:
 
     title: Optional[ColoredString]
 
-    horizontal_indentation: int
+    indentation: int
     center_horizontally: bool

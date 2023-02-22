@@ -1,14 +1,34 @@
 import itertools as itt
+
 import math
-from typing import Iterator, List, Optional
 
 from asciiplot._config import Config
 from asciiplot._constants import AUTO
 from asciiplot._type_aliases import PlotSequences, TickLabelInput, TickLabelValues
+from asciiplot._utils.console import console_width
+from asciiplot._utils.formatting import centering_indentation_len
 from asciiplot._utils.iterables import max_element_length
+from typing import Iterator, List, Optional
 
 
 class Params:
+
+    @classmethod
+    def compute(cls, plot_sequences: PlotSequences, config: Config):
+        value_entirety: List[float] = list(itt.chain.from_iterable(plot_sequences))
+
+        return cls(
+            y_min=int(math.floor(min(value_entirety))),
+            y_max=int(math.ceil(max(value_entirety))),
+            x_axis_width=max_element_length(plot_sequences),
+            x_axis_tick_label_values=cls._x_axis_tick_label_values(
+                config.x_axis_tick_label_input,
+                config.n_points
+            ),
+            x_axis_description_len=len(config.x_axis_description) if config.x_axis_description else 0,
+            config=config
+        )
+
     def __init__(self,
                  y_min: int,
                  y_max: int,
@@ -29,24 +49,9 @@ class Params:
         self.y_axis_tick_labels: List[str] = list(
             self._y_axis_tick_labels(config.height, config.y_axis_tick_label_decimal_places)
         )
-        self.y_tick_columns: int = max_element_length(self.y_axis_tick_labels)
-        self.columns_to_y_axis_ticks: int = self.y_tick_columns + config.horizontal_indentation
 
-    @classmethod
-    def compute(cls, plot_sequences: PlotSequences, config: Config):
-        values: List[float] = list(itt.chain.from_iterable(plot_sequences))
-
-        return cls(
-            y_min=int(math.floor(min(values))),
-            y_max=int(math.ceil(max(values))),
-            x_axis_width=max_element_length(plot_sequences),
-            x_axis_tick_label_values=cls._x_axis_tick_label_values(
-                config.x_axis_tick_label_input,
-                config.n_points
-            ),
-            x_axis_description_len=len(config.x_axis_description) if config.x_axis_description else 0,
-            config=config
-        )
+        self.y_tick_column_width: int = max_element_length(self.y_axis_tick_labels)
+        self.indentation: int = self._indentation(config, self.chart_width)
 
     @staticmethod
     def _x_axis_tick_label_values(tick_label_input: TickLabelInput, n_points: int) -> Optional[TickLabelValues]:
@@ -58,9 +63,17 @@ class Params:
             return range(1, n_points + 1)
         return tick_label_input
 
+    @staticmethod
+    def _indentation(config: Config, chart_width: int) -> int:
+        if config.indentation:
+            return config.indentation
+        elif config.center_horizontally:
+            return centering_indentation_len(chart_width, reference_length=console_width())
+        return 0
+
     @property
-    def total_width(self) -> int:
-        return self.columns_to_y_axis_ticks + self.x_axis_width + self.x_axis_description_len + 1
+    def chart_width(self) -> int:
+        return self.y_tick_column_width + self.x_axis_width + self.x_axis_description_len + 1
 
     def _y_axis_tick_labels(self, chart_height: int, decimal_places: int) -> Iterator[str]:
         delta_y_per_row = self.y_range / (chart_height - 1)

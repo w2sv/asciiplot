@@ -30,7 +30,7 @@ def asciiize(*sequences: List[float],
              title: Optional[str] = None,
              title_color: Color = Color.DEFAULT,
 
-             horizontal_indentation: int = 0,
+             indentation: int = 0,
              center_horizontally: bool = False) -> str:
     r"""
     >>> print(asciiize(
@@ -38,7 +38,7 @@ def asciiize(*sequences: List[float],
     ... height=20,
     ... inter_points_margin=7,
     ...
-    ... x_axis_tick_labels='auto',
+    ... x_axis_tick_labels=AUTO,
     ... y_axis_tick_label_decimal_places=0,
     ...
     ... x_axis_description='iteration',
@@ -75,7 +75,7 @@ def asciiize(*sequences: List[float],
     ... height=14,
     ... inter_points_margin=3,
     ...
-    ... x_axis_tick_labels='auto',
+    ... x_axis_tick_labels=AUTO,
     ... x_axis_description='x',
     ... y_axis_description='y',
     ...
@@ -107,10 +107,12 @@ def asciiize(*sequences: List[float],
     3.3┤│
     2.1┤│
     1.0┼┤┬
-       123"""
+       123 """
 
     if len(sequence_colors) > len(sequences):
         raise ValueError('Number of received sequence colors exceeds number of sequences')
+    if indentation and center_horizontally:
+        raise ValueError('Pass either an indentation OR set center_horizontally to True')
 
     config = Config(
         height=height,
@@ -125,7 +127,7 @@ def asciiize(*sequences: List[float],
         x_axis_description=ColoredString.make_if_string_present(x_axis_description, axis_description_color),
         y_axis_description=ColoredString.make_if_string_present(y_axis_description, axis_description_color),
         title=ColoredString.make_if_string_present(title, title_color),
-        horizontal_indentation=horizontal_indentation,
+        indentation=indentation,
         center_horizontally=center_horizontally
     )
 
@@ -133,7 +135,7 @@ def asciiize(*sequences: List[float],
     params = Params.compute(plot_sequences, config=config)
 
     return with_layout_elements(
-        ChartGrid(plot_sequences, config=config, params=params).serialized(),
+        ChartGrid.get_fully_rendered(plot_sequences, config=config, params=params).serialized(),
         config,
         params
     )

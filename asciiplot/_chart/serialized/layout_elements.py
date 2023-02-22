@@ -16,7 +16,7 @@ def with_layout_elements(serialized_chart: str, config: Config, params: Params) 
                 config.y_axis_description,
                 by=centering_indentation_len(
                     len(config.y_axis_description),
-                    reference_length=params.columns_to_y_axis_ticks * 2
+                    reference_length=params.indentation * 2
                 )
             )
         )
@@ -26,7 +26,7 @@ def with_layout_elements(serialized_chart: str, config: Config, params: Params) 
         serialized_chart = _title_row(
             config.title,
             params.x_axis_width,
-            params.columns_to_y_axis_ticks
+            params.indentation
         ) + serialized_chart
 
     if params.x_axis_tick_label_values:
@@ -34,7 +34,7 @@ def with_layout_elements(serialized_chart: str, config: Config, params: Params) 
             params.x_axis_tick_label_values,
             config.label_color,
             config.tick_label_background_color,
-            params.columns_to_y_axis_ticks,
+            params.indentation,
             config.inter_points_margin
         )
 

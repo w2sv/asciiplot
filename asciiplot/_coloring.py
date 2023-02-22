@@ -289,21 +289,18 @@ def colored(obj: Any, fg=Color.DEFAULT, bg=Color.DEFAULT) -> str:
     return f'{fg.fg_code}{bg.bg_code}{obj}{trailing_token}'
 
 
-class ColoredString(str):
+class ColoredString:
     @classmethod
     def make_if_string_present(cls, string: Optional[str], fg=Color.DEFAULT, bg=Color.DEFAULT) -> Optional['ColoredString']:
         if string is None:
             return None
         return cls(string, fg, bg)
 
-    def __new__(cls, string: str, fg=Color.DEFAULT, bg=Color.DEFAULT):
-        return super().__new__(cls, colored(string, fg, bg))
-
     def __init__(self, string: str, fg=Color.DEFAULT, bg=Color.DEFAULT):
         r"""
-        >>> str(ColoredString('yauoi'))
+        >>> ColoredString('yauoi')
         'yauoi'
-        >>> str(ColoredString('yauoi', fg=Color.TAN, bg=Color.AQUAMARINE_3))
+        >>> ColoredString('yauoi', fg=Color.TAN, bg=Color.AQUAMARINE_3)
         '\x1b[38;5;180m\x1b[48;5;79myauoi\x1b[0m' """
 
         self.string = string
@@ -318,23 +315,30 @@ class ColoredString(str):
 
         return len(self.string)
 
-    def replace_string(self, replacement: str):
-        return self.__class__(
-            replacement,
-            fg=self.fg,
-            bg=self.bg
-        )
-
-    def replace_string_if_applicable(self, replacements: Dict[str, str]):
+    def replace_string(self, replacement: str) -> 'ColoredString':
         r"""
-        >>> SEGMENT_REPLACEMENTS = {'┤': '┼'}
-        >>> ColoredString('┤').replace_string_if_applicable(SEGMENT_REPLACEMENTS)
-        '┼'
-        >>> repr(ColoredString('┤', fg=Color.RED).replace_string_if_applicable(SEGMENT_REPLACEMENTS))
+        >>> ColoredString('a').replace_string('b')
+        'b' """
+
+        self.string = replacement
+        return self
+
+    def replace_string_if_applicable(self, replacements: Dict[str, str]) -> 'ColoredString':
+        r"""
+        >>> s = ColoredString('┤').replace_string_if_applicable({'┤': '┼'})
+        >>> repr(s)
+        "'┼'"
+        >>> repr(ColoredString('┤', fg=Color.RED).replace_string_if_applicable({'┤': '┼'}))
         "'\\x1b[38;5;1m┼\\x1b[0m'" """
 
-        return self.__class__(
-            replacements.get(self.string, self.string),
-            fg=self.fg,
-            bg=self.bg
-        )
+        self.string = replacements.get(self.string, self.string)
+        return self
+
+    def __str__(self):
+        return colored(self.string, self.fg, self.bg)
+
+    def __repr__(self):
+        return repr(str(self))
+
+    def __len__(self):
+        return len(str(self))

@@ -32,7 +32,7 @@ def config() -> Config:
         title=ColoredString('title'),
         x_axis_tick_label_input=range(3),
         center_horizontally=False,
-        horizontal_indentation=4,
+        indentation=4,
         sequence_colors=[Color.DEFAULT],
         n_points=3,
         tick_label_background_color=Color.CHARTREUSE_2B

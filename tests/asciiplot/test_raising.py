@@ -12,12 +12,3 @@ def test_raising_on_too_many_colors(sequences):
         asciiize(*sequences[:-1], sequence_colors=SEQUENCE_COLORS)
 
     asciiize(*sequences, sequence_colors=SEQUENCE_COLORS)
-
-
-def test_raising_on_terminal_columns_exceeded(sequences):
-    n_terminal_columns = console_width()
-
-    with pytest.raises(ValueError):
-        asciiize(*sequences, horizontal_indentation=int(n_terminal_columns * 1.5))
-
-    asciiize(*sequences, horizontal_indentation=int(n_terminal_columns * 0.8))
